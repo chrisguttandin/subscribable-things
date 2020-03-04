@@ -1,7 +1,11 @@
 import { TPermissionStateFactory } from '../types';
 
-export const createPermissionState: TPermissionStateFactory = (window, wrapSubscribeFunction) => {
+export const createPermissionState: TPermissionStateFactory = (emitNotSupportedError, window, wrapSubscribeFunction) => {
     return (permissionDescriptor) => wrapSubscribeFunction((observer) => {
+        if (window === null) {
+            return emitNotSupportedError(observer);
+        }
+
         let isActive = true;
         let unsubscribe = () => { isActive = false; };
 

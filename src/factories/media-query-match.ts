@@ -1,7 +1,11 @@
 import { TMediaQueryMatchFactory } from '../types';
 
-export const createMediaQueryMatch: TMediaQueryMatchFactory = (window, wrapSubscribeFunction) => {
+export const createMediaQueryMatch: TMediaQueryMatchFactory = (emitNotSupportedError, window, wrapSubscribeFunction) => {
     return (mediaQueryString) => wrapSubscribeFunction((observer) => {
+        if (window === null) {
+            return emitNotSupportedError(observer);
+        }
+
         const mediaQueryList = window.matchMedia(mediaQueryString);
 
         observer.next(mediaQueryList.matches);

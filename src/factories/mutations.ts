@@ -1,7 +1,11 @@
 import { TMutationsFactory } from '../types';
 
-export const createMutations: TMutationsFactory = (window, wrapSubscribeFunction) => {
+export const createMutations: TMutationsFactory = (emitNotSupportedError, window, wrapSubscribeFunction) => {
     return (htmlElement, options) => wrapSubscribeFunction((observer) => {
+        if (window === null) {
+            return emitNotSupportedError(observer);
+        }
+
         const mutationObserver = new window.MutationObserver((records) => observer.next(records));
 
         try {

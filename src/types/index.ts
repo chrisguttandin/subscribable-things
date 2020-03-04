@@ -1,3 +1,4 @@
+export * from './emit-not-supported-error-function';
 export * from './flexible-subscribe-function';
 export * from './media-query-match-factory';
 export * from './media-query-match-function';
