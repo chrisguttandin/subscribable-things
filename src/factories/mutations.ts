@@ -2,7 +2,7 @@ import { TMutationsFactory } from '../types';
 
 export const createMutations: TMutationsFactory = (emitNotSupportedError, window, wrapSubscribeFunction) => {
     return (htmlElement, options) => wrapSubscribeFunction((observer) => {
-        if (window === null) {
+        if (window === null || window.MutationObserver === undefined) {
             return emitNotSupportedError(observer);
         }
 

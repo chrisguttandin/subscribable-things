@@ -2,7 +2,10 @@ import { TPermissionStateFactory } from '../types';
 
 export const createPermissionState: TPermissionStateFactory = (emitNotSupportedError, window, wrapSubscribeFunction) => {
     return (permissionDescriptor) => wrapSubscribeFunction((observer) => {
-        if (window === null) {
+        if (window === null
+                || window.navigator === undefined
+                || window.navigator.permissions === undefined
+                || window.navigator.permissions.query === undefined) {
             return emitNotSupportedError(observer);
         }
 
