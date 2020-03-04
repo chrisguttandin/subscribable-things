@@ -13,6 +13,8 @@ describe('emitNotSupportedError()', () => {
         emitNotSupportedError(observer);
 
         expect(observer.error).to.have.been.calledOnce;
+
+        expect(observer.error.firstCall.args.length).to.equal(1);
         expect(observer.error.firstCall.args[0]).to.be.an.instanceOf(Error);
     });
 
