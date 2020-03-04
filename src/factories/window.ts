@@ -1,3 +1,4 @@
-import { TWindowFactory } from '../types';
+import { TWindow, TWindowFactory } from '../types';
 
-export const createWindow: TWindowFactory = () => (typeof window === 'undefined') ? null : window;
+// @todo TypeScript does not include type definitions for the Reporting API yet.
+export const createWindow: TWindowFactory = () => (typeof window === 'undefined') ? null : <TWindow> window;

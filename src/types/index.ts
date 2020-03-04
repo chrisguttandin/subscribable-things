@@ -8,6 +8,8 @@ export * from './observer-parameters';
 export * from './optional-unsubscribe-function';
 export * from './permission-state-factory';
 export * from './permission-state-function';
+export * from './reports-factory';
+export * from './reports-function';
 export * from './subscribable-thing';
 export * from './subscribe-function';
 export * from './unsubscribe-function';

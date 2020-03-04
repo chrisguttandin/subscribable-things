@@ -77,3 +77,7 @@ This function is a wrapper for the [`MutationObserver`](https://developer.mozill
 ### permissionState(permissionDescriptor: PermissionDescriptor): SubscribableThing\<PermissionState>
 
 This function is a wrapper for the [`query()`](https://developer.mozilla.org/docs/Web/API/Permissions/query) method of the [Permissions API](https://w3c.github.io/permissions).
+
+### reports(options: IReportingObserverOptions): SubscribableThing\<IReport[]>
+
+This function is a wrapper for the [`ReportingObserver`](https://developer.mozilla.org/docs/Web/API/ReportingObserver) of the [Reporting API](https://w3c.github.io/reporting).
