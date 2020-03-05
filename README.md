@@ -50,10 +50,10 @@ import { mediaQueryMatch } from 'subscribable-things';
 
 const source = fromObs(mediaQueryMatch('(max-width:600px)'));
 
-observe(isMatching => console.log(isMatching))(source);
+observe((isMatching) => console.log(isMatching))(source);
 ```
 
-... or [XStream](https://staltz.github.io/xstream).
+... or [XStream](https://staltz.github.io/xstream) ...
 
 ```js
 import { mediaQueryMatch } from 'subscribable-things';
@@ -61,7 +61,20 @@ import { fromObservable } from 'xstream';
 
 const stream = fromObservable(mediaQueryMatch('(max-width:600px)'));
 
-const unsubscribe = stream.subscribe(isMatching => console.log(isMatching));
+const unsubscribe = stream.subscribe((isMatching) => console.log(isMatching));
+
+unsubscribe();
+```
+
+... or [Bacon.js](https://baconjs.github.io).
+
+```js
+import { fromESObservable } from 'baconjs';
+import { mediaQueryMatch } from 'subscribable-things';
+
+const eventStream = fromESObservable(mediaQueryMatch('(max-width:600px)'));
+
+const unsubscribe = eventStream.onValue((isMatching) => console.log(isMatching));
 
 unsubscribe();
 ```
