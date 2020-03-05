@@ -66,7 +66,7 @@ const unsubscribe = stream.subscribe((isMatching) => console.log(isMatching));
 unsubscribe();
 ```
 
-... or [Bacon.js](https://baconjs.github.io).
+... or [Bacon.js](https://baconjs.github.io) ...
 
 ```js
 import { fromESObservable } from 'baconjs';
@@ -77,6 +77,19 @@ const eventStream = fromESObservable(mediaQueryMatch('(max-width:600px)'));
 const unsubscribe = eventStream.onValue((isMatching) => console.log(isMatching));
 
 unsubscribe();
+```
+
+... or [Kefir.js](https://kefirjs.github.io/kefir).
+
+```js
+import { fromESObservable } from 'kefir';
+import { mediaQueryMatch } from 'subscribable-things';
+
+const stream = fromESObservable(mediaQueryMatch('(max-width:600px)'));
+
+const subscription = stream.observe({ value (isMatching) { console.log(isMatching); } });
+
+subscription.unsubscribe();
 ```
 
 ### mediaQueryMatch(mediaQueryString: string): SubscribableThing\<boolean>
