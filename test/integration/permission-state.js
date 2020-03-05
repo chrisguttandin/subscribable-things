@@ -1,7 +1,8 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
-import { fromESObservable } from 'baconjs';
+import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
+import { fromESObservable as fromESObservableKefirJs } from 'kefir';
 import { permissionState } from '../../src/module';
 import xs from 'xstream';
 
@@ -42,8 +43,18 @@ describe('permissionState', () => {
     });
 
     it('should work with Bacon.js', (done) => {
-        fromESObservable(permissionState({ name: 'geolocation' }))
+        fromESObservableBaconJs(permissionState({ name: 'geolocation' }))
             .first()
+            .onValue((state) => {
+                expect(state).to.equal('prompt');
+
+                done();
+            });
+    });
+
+    it('should work with Kefir.js', (done) => {
+        fromESObservableKefirJs(permissionState({ name: 'geolocation' }))
+            .take(1)
             .onValue((state) => {
                 expect(state).to.equal('prompt');
 

@@ -1,7 +1,8 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
-import { fromESObservable } from 'baconjs';
+import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
+import { fromESObservable as fromESObservableKefirJs } from 'kefir';
 import { mediaQueryMatch } from '../../src/module';
 import xs from 'xstream';
 
@@ -42,8 +43,18 @@ describe('mediaQueryMatch', () => {
     });
 
     it('should work with Bacon.js', (done) => {
-        fromESObservable(mediaQueryMatch('(max-width:600px)'))
+        fromESObservableBaconJs(mediaQueryMatch('(max-width:600px)'))
             .first()
+            .onValue((isMatching) => {
+                expect(isMatching).to.be.a('boolean');
+
+                done();
+            });
+    });
+
+    it('should work with Kefir.js', (done) => {
+        fromESObservableKefirJs(mediaQueryMatch('(max-width:600px)'))
+            .take(1)
             .onValue((isMatching) => {
                 expect(isMatching).to.be.a('boolean');
 

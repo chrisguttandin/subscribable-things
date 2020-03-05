@@ -1,7 +1,8 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
-import { fromESObservable } from 'baconjs';
+import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
+import { fromESObservable as fromESObservableKefirJs } from 'kefir';
 import { mutations } from '../../src/module';
 import xs from 'xstream';
 
@@ -55,8 +56,19 @@ describe('mutations', () => {
     });
 
     it('should work with Bacon.js', (done) => {
-        fromESObservable(mutations(document.body, { childList: true }))
+        fromESObservableBaconJs(mutations(document.body, { childList: true }))
             .first()
+            .onValue((records) => {
+                expect(records.length).to.equal(1);
+                expect(records[0]).to.be.an.instanceof(MutationRecord);
+
+                done();
+            });
+    });
+
+    it('should work with Kefir.js', (done) => {
+        fromESObservableKefirJs(mutations(document.body, { childList: true }))
+            .take(1)
             .onValue((records) => {
                 expect(records.length).to.equal(1);
                 expect(records[0]).to.be.an.instanceof(MutationRecord);
