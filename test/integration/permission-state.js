@@ -1,6 +1,7 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { fromESObservable } from 'baconjs';
 import { permissionState } from '../../src/module';
 import xs from 'xstream';
 
@@ -38,6 +39,16 @@ describe('permissionState', () => {
                 done();
             })
         );
+    });
+
+    it('should work with Bacon.js', (done) => {
+        fromESObservable(permissionState({ name: 'geolocation' }))
+            .first()
+            .onValue((state) => {
+                expect(state).to.equal('prompt');
+
+                done();
+            });
     });
 
 });

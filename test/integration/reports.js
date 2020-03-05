@@ -1,6 +1,7 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { fromESObservable } from 'baconjs';
 import { reports } from '../../src/module';
 import xs from 'xstream';
 
@@ -72,6 +73,26 @@ describe('reports', () => {
                     done();
                 })
             );
+        }
+    });
+
+    it('should work with Bacon.js', (done) => {
+        if (window.ReportingObserver === undefined) {
+            fromESObservable(reports({ buffered: true }))
+                .onError((err) => {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                    done();
+                });
+        } else {
+            fromESObservable(reports({ buffered: true }))
+                .first()
+                .onValue((reportList) => {
+                    expect(reportList.length).to.equal(1);
+                    expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+
+                    done();
+                });
         }
     });
 

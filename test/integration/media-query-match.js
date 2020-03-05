@@ -1,6 +1,7 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
+import { fromESObservable } from 'baconjs';
 import { mediaQueryMatch } from '../../src/module';
 import xs from 'xstream';
 
@@ -38,6 +39,16 @@ describe('mediaQueryMatch', () => {
                 done();
             })
         );
+    });
+
+    it('should work with Bacon.js', (done) => {
+        fromESObservable(mediaQueryMatch('(max-width:600px)'))
+            .first()
+            .onValue((isMatching) => {
+                expect(isMatching).to.be.a('boolean');
+
+                done();
+            });
     });
 
 });
