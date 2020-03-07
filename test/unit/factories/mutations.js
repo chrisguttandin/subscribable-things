@@ -171,7 +171,7 @@ describe('mutations()', () => {
                 window.MutationObserver.returns(mutationObserver);
                 wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
 
-                mutations('a fake HTML element');
+                mutations('a fake HTML element', { });
             });
 
             it('should call disonnect()', () => {

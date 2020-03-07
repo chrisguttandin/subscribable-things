@@ -23,7 +23,7 @@ describe('reports()', () => {
         });
 
         it('should call wrapSubscribeFunction()', () => {
-            reports({ });
+            reports();
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
 
@@ -36,7 +36,7 @@ describe('reports()', () => {
 
             wrapSubscribeFunction.returns(value);
 
-            expect(reports({ })).to.equal(value);
+            expect(reports()).to.equal(value);
         });
 
         describe('subscribe()', () => {
@@ -49,7 +49,7 @@ describe('reports()', () => {
 
                 wrapSubscribeFunction.callsFake((value) => subscribe = value);
 
-                reports({ });
+                reports();
             });
 
             it('should call emitNotSupportedError() with the given observer', () => {
@@ -81,7 +81,7 @@ describe('reports()', () => {
         });
 
         it('should call wrapSubscribeFunction()', () => {
-            reports({ });
+            reports();
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
 
@@ -94,7 +94,7 @@ describe('reports()', () => {
 
             wrapSubscribeFunction.returns(value);
 
-            expect(reports({ })).to.equal(value);
+            expect(reports()).to.equal(value);
         });
 
         describe('subscribe()', () => {
@@ -163,7 +163,7 @@ describe('reports()', () => {
                 window.ReportingObserver.returns(reportingObserver);
                 wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
 
-                reports('a fake HTML element');
+                reports();
             });
 
             it('should call disonnect()', () => {
