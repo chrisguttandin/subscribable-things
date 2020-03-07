@@ -111,3 +111,7 @@ This function is a wrapper for the [`query()`](https://developer.mozilla.org/doc
 ### reports(options?: IReportingObserverOptions): SubscribableThing\<IReport[]>
 
 This function is a wrapper for the [`ReportingObserver`](https://developer.mozilla.org/docs/Web/API/ReportingObserver) of the [Reporting API](https://w3c.github.io/reporting).
+
+### resizes(htmlElement: HTMLElement, options?: IResizesObserverOptions): SubscribableThing\<IResizeObserverEntry[]>
+
+This function is a wrapper for the [`ResizeObserver`](https://developer.mozilla.org/docs/Web/API/ResizeObserver) of the [Resize Observer specification](https://drafts.csswg.org/resize-observer).
