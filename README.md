@@ -92,6 +92,10 @@ const subscription = stream.observe({ value (isMatching) { console.log(isMatchi
 subscription.unsubscribe();
 ```
 
+### mediaDevices(): SubscribableThing\<MediaDeviceInfo[]>
+
+This function is a wrapper for the [`enumerateDevices()`](https://developer.mozilla.org/docs/Web/API/MediaDevices/enumerateDevices) method of the [Media Capture and Streams specification](https://w3c.github.io/mediacapture-main). It will also listen for the [`devicechange` event](https://developer.mozilla.org/docs/Web/API/MediaDevices/devicechange_event) to emit a fresh list of devices whenever they change.
+
 ### mediaQueryMatch(mediaQueryString: string): SubscribableThing\<boolean>
 
 This function is a wrapper for the [`matchMedia()`](https://developer.mozilla.org/docs/Web/API/Window/matchMedia) method. It will emit a new value whenever the result of `matchMedia()` changes.

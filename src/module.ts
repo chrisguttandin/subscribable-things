@@ -1,4 +1,5 @@
 import { patch, toObserver } from 'rxjs-interop';
+import { createMediaDevices } from './factories/media-devices';
 import { createMediaQueryMatch } from './factories/media-query-match';
 import { createMutations } from './factories/mutations';
 import { createPermissionState } from './factories/permission-state';
@@ -16,6 +17,8 @@ export * from './types/index';
 
 const window = createWindow();
 const wrapSubscribeFunction = createWrapSubscribeFunction(patch, toObserver);
+
+export const mediaDevices = createMediaDevices(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const mediaQueryMatch = createMediaQueryMatch(emitNotSupportedError, window, wrapSubscribeFunction);
 
