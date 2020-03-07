@@ -7,7 +7,7 @@ export type TWindow = Window & typeof globalThis & {
 
         prototype: IReportingObserver;
 
-        new(callback: (reports: IReport[]) => void, options?: IReportingObserverOptions): IReportingObserver;
+        new(callback: (reports: IReport[], observer: IReportingObserver) => void, options?: IReportingObserverOptions): IReportingObserver;
 
     };
 
