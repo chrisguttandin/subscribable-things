@@ -1,5 +1,7 @@
 export * from './emit-not-supported-error-function';
 export * from './flexible-subscribe-function';
+export * from './intersections-factory';
+export * from './intersections-function';
 export * from './media-devices-factory';
 export * from './media-devices-function';
 export * from './media-query-match-factory';

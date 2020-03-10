@@ -1,4 +1,5 @@
 import { patch, toObserver } from 'rxjs-interop';
+import { createIntersections } from './factories/intersections';
 import { createMediaDevices } from './factories/media-devices';
 import { createMediaQueryMatch } from './factories/media-query-match';
 import { createMutations } from './factories/mutations';
@@ -18,6 +19,8 @@ export * from './types/index';
 
 const window = createWindow();
 const wrapSubscribeFunction = createWrapSubscribeFunction(patch, toObserver);
+
+export const intersections = createIntersections(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const mediaDevices = createMediaDevices(emitNotSupportedError, window, wrapSubscribeFunction);
 
