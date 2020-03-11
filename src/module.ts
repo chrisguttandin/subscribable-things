@@ -3,6 +3,7 @@ import { createIntersections } from './factories/intersections';
 import { createMediaDevices } from './factories/media-devices';
 import { createMediaQueryMatch } from './factories/media-query-match';
 import { createMidiInputs } from './factories/midi-inputs';
+import { createMidiOutputs } from './factories/midi-outputs';
 import { createMutations } from './factories/mutations';
 import { createPermissionState } from './factories/permission-state';
 import { createReports } from './factories/reports';
@@ -28,6 +29,8 @@ export const mediaDevices = createMediaDevices(emitNotSupportedError, window, wr
 export const mediaQueryMatch = createMediaQueryMatch(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const midiInputs = createMidiInputs(wrapSubscribeFunction);
+
+export const midiOutputs = createMidiOutputs(wrapSubscribeFunction);
 
 export const mutations = createMutations(emitNotSupportedError, window, wrapSubscribeFunction);
 

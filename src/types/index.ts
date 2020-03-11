@@ -11,6 +11,8 @@ export * from './midi-connection-event-handler';
 export * from './midi-inputs-factory';
 export * from './midi-inputs-function';
 export * from './midi-message-event-handler';
+export * from './midi-outputs-factory';
+export * from './midi-outputs-function';
 export * from './midi-port-connection-state';
 export * from './midi-port-device-state';
 export * from './midi-port-type';

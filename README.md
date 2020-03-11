@@ -108,6 +108,10 @@ This function is a wrapper for the [`matchMedia()`](https://developer.mozilla.or
 
 This function returns the currently available MIDI input devices. It accepts a [`MIDIAccess`](https://developer.mozilla.org/docs/Web/API/MIDIAccess) object of the [Web MIDI API](https://webaudio.github.io/web-midi-api).
 
+### midiOutputs(midiAccess: IMidiAccess): SubscribableThing\<IMidiOutput[]>
+
+This function returns the currently available MIDI output devices. It accepts a [`MIDIAccess`](https://developer.mozilla.org/docs/Web/API/MIDIAccess) object of the [Web MIDI API](https://webaudio.github.io/web-midi-api).
+
 ### mutations(htmlElement: HTMLElement, options: MutationObserverInit): SubscribableThing\<MutationRecord[]>
 
 This function is a wrapper for the [`MutationObserver`](https://developer.mozilla.org/docs/Web/API/MutationObserver).
