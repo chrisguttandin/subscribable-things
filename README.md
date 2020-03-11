@@ -104,6 +104,10 @@ This function is a wrapper for the [`enumerateDevices()`](https://developer.mozi
 
 This function is a wrapper for the [`matchMedia()`](https://developer.mozilla.org/docs/Web/API/Window/matchMedia) method. It will emit a new value whenever the result of `matchMedia()` changes.
 
+### midiInputs(midiAccess: IMidiAccess): SubscribableThing\<IMidiInput[]>
+
+This function returns the currently available MIDI input devices. It accepts a [`MIDIAccess`](https://developer.mozilla.org/docs/Web/API/MIDIAccess) object of the [Web MIDI API](https://webaudio.github.io/web-midi-api).
+
 ### mutations(htmlElement: HTMLElement, options: MutationObserverInit): SubscribableThing\<MutationRecord[]>
 
 This function is a wrapper for the [`MutationObserver`](https://developer.mozilla.org/docs/Web/API/MutationObserver).

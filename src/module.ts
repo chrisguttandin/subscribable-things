@@ -2,6 +2,7 @@ import { patch, toObserver } from 'rxjs-interop';
 import { createIntersections } from './factories/intersections';
 import { createMediaDevices } from './factories/media-devices';
 import { createMediaQueryMatch } from './factories/media-query-match';
+import { createMidiInputs } from './factories/midi-inputs';
 import { createMutations } from './factories/mutations';
 import { createPermissionState } from './factories/permission-state';
 import { createReports } from './factories/reports';
@@ -25,6 +26,8 @@ export const intersections = createIntersections(emitNotSupportedError, window, 
 export const mediaDevices = createMediaDevices(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const mediaQueryMatch = createMediaQueryMatch(emitNotSupportedError, window, wrapSubscribeFunction);
+
+export const midiInputs = createMidiInputs(wrapSubscribeFunction);
 
 export const mutations = createMutations(emitNotSupportedError, window, wrapSubscribeFunction);
 
