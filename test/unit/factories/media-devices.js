@@ -100,13 +100,13 @@ describe('mediaDevices()', () => {
         describe('subscribe()', () => {
 
             let eventListener;
-            let observer;
             let mediaDeviceInfos;
+            let observer;
             let subscribe;
 
             beforeEach(() => {
-                observer = { error: spy(), next: spy() };
                 mediaDeviceInfos = [ 'a', 'fake', 'array', 'of', 'media', 'device', 'infos' ];
+                observer = { error: spy(), next: spy() };
 
                 window.navigator.mediaDevices.addEventListener.callsFake((_, value) => eventListener = value);
                 window.navigator.mediaDevices.enumerateDevices.callsFake(() => Promise.resolve(mediaDeviceInfos));
