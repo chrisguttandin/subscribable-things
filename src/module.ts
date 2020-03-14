@@ -8,6 +8,7 @@ import { createMutations } from './factories/mutations';
 import { createPermissionState } from './factories/permission-state';
 import { createReports } from './factories/reports';
 import { createResizes } from './factories/resizes';
+import { createUnhandledRejection } from './factories/unhandled-rejection';
 import { createWindow } from './factories/window';
 import { createWrapSubscribeFunction } from './factories/wrap-subscribe-function';
 import { emitNotSupportedError } from './functions/emit-not-supported-error';
@@ -39,3 +40,5 @@ export const permissionState = createPermissionState(emitNotSupportedError, wind
 export const reports = createReports(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const resizes = createResizes(emitNotSupportedError, window, wrapSubscribeFunction);
+
+export const unhandledRejection = createUnhandledRejection(emitNotSupportedError, window, wrapSubscribeFunction);

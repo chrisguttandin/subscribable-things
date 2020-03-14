@@ -129,3 +129,7 @@ This function is a wrapper for the [`ReportingObserver`](https://developer.mozil
 ### resizes(htmlElement: HTMLElement, options?: IResizesObserverOptions): SubscribableThing\<IResizeObserverEntry[]>
 
 This function is a wrapper for the [`ResizeObserver`](https://developer.mozilla.org/docs/Web/API/ResizeObserver) of the [Resize Observer specification](https://drafts.csswg.org/resize-observer).
+
+### unhandledRejection(coolingOffPeriod: number): SubscribableThing\<any>
+
+This function emits unhandled rejections. It will listen for the [`unhandledrejection` event](https://developer.mozilla.org/docs/Web/API/Window/unhandledrejection_event) to register possibly unhandled rejections. It will then wait for the cooling-off period to elapse before it emits the reason (aka the error) that caused the unhandled rejection. It is possible that a previously unhandled rejection gets handled later on in which case a [`rejectionhandled` event](https://developer.mozilla.org/docs/Web/API/Window/rejectionhandled_event) will be fired. If that happens during the cooling-off period nothing will be emitted by this function.

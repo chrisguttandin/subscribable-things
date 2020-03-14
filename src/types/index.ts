@@ -29,6 +29,8 @@ export * from './resizes-factory';
 export * from './resizes-function';
 export * from './subscribable-thing';
 export * from './subscribe-function';
+export * from './unhandled-rejection-factory';
+export * from './unhandled-rejection-function';
 export * from './unsubscribe-function';
 export * from './window';
 export * from './window-factory';
