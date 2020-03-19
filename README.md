@@ -94,6 +94,20 @@ const subscription = stream.observe({ value (isMatching) { console.log(isMatchi
 subscription.unsubscribe();
 ```
 
+It is even possible to consume `subscribable-things` as an async iterable by taking the little detour over RxJS and [rxjs-for-await](https://github.com/benlesh/rxjs-for-await).
+
+```js
+import { eachValueFrom } from 'rxjs-for-await';
+import { from } from 'rxjs';
+import { mediaQueryMatch } from 'subscribable-things';
+
+const source$ = from(mediaQueryMatch('(max-width:600px)'));
+
+for await (const isMatching of eachValueFrom(source$)) {
+    console.log(isMatching);
+}
+```
+
 ### intersections(htmlElement: HTMLElement, options?: IntersectionObserverInit): SubscribableThing\<IntersectionObserverEntry[]>
 
 This function is a wrapper for the [`IntersectionObserver`](https://developer.mozilla.org/docs/Web/API/IntersectionObserver).
