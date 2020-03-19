@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -75,6 +76,17 @@ describe('mutations', () => {
 
                 done();
             });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(mutations(document.body, { childList: true }));
+
+        for await (const records of eachValueFrom(source$)) {
+            expect(records.length).to.equal(1);
+            expect(records[0]).to.be.an.instanceof(MutationRecord);
+
+            break;
+        }
     });
 
 });

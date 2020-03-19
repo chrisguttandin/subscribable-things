@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -60,6 +61,16 @@ describe('mediaQueryMatch', () => {
 
                 done();
             });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(mediaQueryMatch('(max-width:600px)'));
+
+        for await (const isMatching of eachValueFrom(source$)) {
+            expect(isMatching).to.be.a('boolean');
+
+            break;
+        }
     });
 
 });

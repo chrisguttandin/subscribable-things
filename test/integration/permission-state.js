@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -60,6 +61,16 @@ describe('permissionState', () => {
 
                 done();
             });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(permissionState({ name: 'geolocation' }));
+
+        for await (const state of eachValueFrom(source$)) {
+            expect(state).to.equal('prompt');
+
+            break;
+        }
     });
 
 });

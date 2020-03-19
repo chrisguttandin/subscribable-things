@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -80,6 +81,20 @@ describe('mediaDevices', () => {
 
                 done();
             });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(mediaDevices());
+
+        for await (const mediaDeviceInfos of eachValueFrom(source$)) {
+            expect(mediaDeviceInfos.length).to.be.above(0);
+
+            for (const mediaDeviceInfo of mediaDeviceInfos) {
+                expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+            }
+
+            break;
+        }
     });
 
 });

@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -114,6 +115,27 @@ describe('reports', () => {
 
                     done();
                 });
+        }
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(reports({ buffered: true }));
+
+        if (window.ReportingObserver === undefined) {
+            try {
+                for await (const _ of eachValueFrom(source$)) { // eslint-disable-line no-unused-vars
+                    throw new Error('This should never happen.');
+                }
+            } catch (err) {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
+            }
+        } else {
+            for await (const reportList of eachValueFrom(source$)) {
+                expect(reportList.length).to.equal(1);
+                expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+
+                break;
+            }
         }
     });
 

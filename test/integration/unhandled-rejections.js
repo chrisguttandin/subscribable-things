@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -68,6 +69,16 @@ describe('unhandledRejection', () => {
 
                 done();
             });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(unhandledRejection(100));
+
+        for await (const reason of eachValueFrom(source$)) {
+            expect(reason).to.equal(err);
+
+            break;
+        }
     });
 
 });

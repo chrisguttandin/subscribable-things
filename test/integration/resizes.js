@@ -1,4 +1,5 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
 import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
@@ -75,6 +76,17 @@ describe('resizes', () => {
 
                 done();
             });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(resizes(htmlElement));
+
+        for await (const entries of eachValueFrom(source$)) {
+            expect(entries.length).to.equal(1);
+            expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
+
+            break;
+        }
     });
 
 });
