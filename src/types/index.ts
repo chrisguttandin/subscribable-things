@@ -7,6 +7,8 @@ export * from './media-devices-factory';
 export * from './media-devices-function';
 export * from './media-query-match-factory';
 export * from './media-query-match-function';
+export * from './metrics-factory';
+export * from './metrics-function';
 export * from './midi-connection-event-handler';
 export * from './midi-inputs-factory';
 export * from './midi-inputs-function';

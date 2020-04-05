@@ -128,6 +128,10 @@ This function returns the currently available MIDI input devices. It accepts a [
 
 This function returns the currently available MIDI output devices. It accepts a [`MIDIAccess`](https://developer.mozilla.org/docs/Web/API/MIDIAccess) object of the [Web MIDI API](https://webaudio.github.io/web-midi-api).
 
+### metrics(options: PerformanceObserverInit): SubscribableThing\<PerformanceEntry[]>
+
+This function is a wrapper for the [`PerformanceObserver`](https://developer.mozilla.org/docs/Web/API/PerformanceObserver) as defined by the [Performance Timeline Level 2 specification](https://w3c.github.io/performance-timeline).
+
 ### mutations(htmlElement: HTMLElement, options: MutationObserverInit): SubscribableThing\<MutationRecord[]>
 
 This function is a wrapper for the [`MutationObserver`](https://developer.mozilla.org/docs/Web/API/MutationObserver).
