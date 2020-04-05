@@ -198,13 +198,13 @@ describe('unhandledRejection()', () => {
 
                 unhandledRejectionEventListener({ preventDefault () { }, reason });
 
-                setTimeout(() => rejectionHandledEventListener({ reason }), coolingOffPeriod - 1);
+                setTimeout(() => rejectionHandledEventListener({ reason }), coolingOffPeriod / 2);
 
                 setTimeout(() => {
                     expect(observer.next).to.have.not.been.called;
 
                     done();
-                }, coolingOffPeriod);
+                }, coolingOffPeriod * 2);
             });
 
             it('should call clearInterval() when there is no remaining possibly unhandled rejection', (done) => {
