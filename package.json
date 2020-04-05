@@ -88,5 +88,5 @@
     "test": "grunt lint && grunt test"
   },
   "types": "build/es2019/module.d.ts",
-  "version": "1.5.1"
+  "version": "1.6.0"
 }
