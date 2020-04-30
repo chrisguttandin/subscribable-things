@@ -197,8 +197,7 @@ describe('unhandledRejection()', () => {
                 const reason = 'a fake reason';
 
                 unhandledRejectionEventListener({ preventDefault () { }, reason });
-
-                setTimeout(() => rejectionHandledEventListener({ reason }), coolingOffPeriod / 2);
+                rejectionHandledEventListener({ reason });
 
                 setTimeout(() => {
                     expect(observer.next).to.have.not.been.called;
@@ -219,7 +218,7 @@ describe('unhandledRejection()', () => {
                     expect(window.clearInterval).to.have.been.calledOnce.and.calledWithExactly(intervalId);
 
                     done();
-                }, coolingOffPeriod);
+                }, coolingOffPeriod * 2);
             });
 
             it('should return a function', () => {
