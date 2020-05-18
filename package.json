@@ -46,7 +46,7 @@
     "rollup": "^2.10.2",
     "rollup-plugin-babel": "^4.4.0",
     "rxjs": "^6.5.5",
-    "rxjs-for-await": "0.0.1",
+    "rxjs-for-await": "0.0.2",
     "sinon": "^9.0.2",
     "sinon-chai": "^3.5.0",
     "ts-loader": "^7.0.4",
