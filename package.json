@@ -43,7 +43,7 @@
     "kefir": "^3.8.7",
     "load-grunt-config": "^3.0.1",
     "mocha": "^7.2.0",
-    "rollup": "^2.11.0",
+    "rollup": "^2.11.2",
     "rollup-plugin-babel": "^4.4.0",
     "rxjs": "^6.5.5",
     "rxjs-for-await": "0.0.2",
