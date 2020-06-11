@@ -42,7 +42,7 @@
     "karma-webpack": "^4.0.2",
     "kefir": "^3.8.7",
     "load-grunt-config": "^3.0.1",
-    "mocha": "^7.2.0",
+    "mocha": "^8.0.1",
     "rollup": "^2.14.0",
     "rollup-plugin-babel": "^4.4.0",
     "rxjs": "^6.5.5",
