@@ -2,7 +2,6 @@ import { emitNotSupportedError } from '../../../src/functions/emit-not-supported
 import { spy } from 'sinon';
 
 describe('emitNotSupportedError()', () => {
-
     let observer;
 
     beforeEach(() => {
@@ -25,5 +24,4 @@ describe('emitNotSupportedError()', () => {
     it('should return undefined', () => {
         expect(emitNotSupportedError(observer)()).to.be.undefined;
     });
-
 });

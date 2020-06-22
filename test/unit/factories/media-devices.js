@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createMediaDevices } from '../../../src/factories/media-devices';
 
 describe('mediaDevices()', () => {
-
     let emitNotSupportedError;
     let mediaDevices;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('mediaDevices()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('mediaDevices()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 mediaDevices();
             });
@@ -65,13 +62,10 @@ describe('mediaDevices()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,19 +92,18 @@ describe('mediaDevices()', () => {
         });
 
         describe('subscribe()', () => {
-
             let eventListener;
             let mediaDeviceInfos;
             let observer;
             let subscribe;
 
             beforeEach(() => {
-                mediaDeviceInfos = [ 'a', 'fake', 'array', 'of', 'media', 'device', 'infos' ];
+                mediaDeviceInfos = ['a', 'fake', 'array', 'of', 'media', 'device', 'infos'];
                 observer = { error: spy(), next: spy() };
 
-                window.navigator.mediaDevices.addEventListener.callsFake((_, value) => eventListener = value);
+                window.navigator.mediaDevices.addEventListener.callsFake((_, value) => (eventListener = value));
                 window.navigator.mediaDevices.enumerateDevices.callsFake(() => Promise.resolve(mediaDeviceInfos));
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 mediaDevices();
             });
@@ -124,7 +117,10 @@ describe('mediaDevices()', () => {
             it('should register a devicechange event listener', () => {
                 subscribe(observer);
 
-                expect(window.navigator.mediaDevices.addEventListener).to.have.been.calledOnce.and.calledWithExactly('devicechange', eventListener);
+                expect(window.navigator.mediaDevices.addEventListener).to.have.been.calledOnce.and.calledWithExactly(
+                    'devicechange',
+                    eventListener
+                );
             });
 
             it('should call next() with the mediaDeviceInfos when the promise is resolved', async () => {
@@ -158,7 +154,10 @@ describe('mediaDevices()', () => {
                 await Promise.resolve();
                 await Promise.resolve();
 
-                expect(window.navigator.mediaDevices.removeEventListener).to.have.been.calledOnce.and.calledWithExactly('devicechange', eventListener);
+                expect(window.navigator.mediaDevices.removeEventListener).to.have.been.calledOnce.and.calledWithExactly(
+                    'devicechange',
+                    eventListener
+                );
             });
 
             it('should call enumerateDevices() on each devicechange event', async () => {
@@ -180,7 +179,7 @@ describe('mediaDevices()', () => {
 
                 observer.next.resetHistory();
 
-                mediaDeviceInfos = [ 'another', 'fake', 'array', 'of', 'media', 'device', 'infos' ];
+                mediaDeviceInfos = ['another', 'fake', 'array', 'of', 'media', 'device', 'infos'];
 
                 eventListener();
 
@@ -224,27 +223,28 @@ describe('mediaDevices()', () => {
                 await Promise.resolve();
                 await Promise.resolve();
 
-                expect(window.navigator.mediaDevices.removeEventListener).to.have.been.calledOnce.and.calledWithExactly('devicechange', eventListener);
+                expect(window.navigator.mediaDevices.removeEventListener).to.have.been.calledOnce.and.calledWithExactly(
+                    'devicechange',
+                    eventListener
+                );
             });
 
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let eventListener;
             let mediaDeviceInfos;
             let unsubscribe;
 
             beforeEach(() => {
-                mediaDeviceInfos = [ 'a', 'fake', 'array', 'of', 'media', 'device', 'infos' ];
+                mediaDeviceInfos = ['a', 'fake', 'array', 'of', 'media', 'device', 'infos'];
 
-                window.navigator.mediaDevices.addEventListener.callsFake((_, value) => eventListener = value);
+                window.navigator.mediaDevices.addEventListener.callsFake((_, value) => (eventListener = value));
                 window.navigator.mediaDevices.enumerateDevices.resolves(mediaDeviceInfos);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe({ next () { } }));
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 mediaDevices();
             });
@@ -252,15 +252,15 @@ describe('mediaDevices()', () => {
             it('should remove the devicechange event listener', () => {
                 unsubscribe();
 
-                expect(window.navigator.mediaDevices.removeEventListener).to.have.been.calledOnce.and.calledWithExactly('devicechange', eventListener);
+                expect(window.navigator.mediaDevices.removeEventListener).to.have.been.calledOnce.and.calledWithExactly(
+                    'devicechange',
+                    eventListener
+                );
             });
 
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

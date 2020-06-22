@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createResizes } from '../../../src/factories/resizes';
 
 describe('resizes()', () => {
-
     let emitNotSupportedError;
     let resizes;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('resizes()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('resizes()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 resizes('a fake HTML element');
             });
@@ -65,13 +62,10 @@ describe('resizes()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,7 +92,6 @@ describe('resizes()', () => {
         });
 
         describe('subscribe()', () => {
-
             let htmlElement;
             let callback;
             let observer;
@@ -117,7 +110,7 @@ describe('resizes()', () => {
 
                     return resizeObserver;
                 });
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 resizes(htmlElement, options);
             });
@@ -137,7 +130,7 @@ describe('resizes()', () => {
             it('should call next() with the current resizes on each invocation of the callback', () => {
                 subscribe(observer);
 
-                const entries = [ 'a', 'fake', 'array', 'of', 'entries' ];
+                const entries = ['a', 'fake', 'array', 'of', 'entries'];
 
                 callback(entries);
 
@@ -147,11 +140,9 @@ describe('resizes()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let resizeObserver;
             let unsubscribe;
 
@@ -159,7 +150,7 @@ describe('resizes()', () => {
                 resizeObserver = { disconnect: spy(), observe: spy() };
 
                 window.ResizeObserver.returns(resizeObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
 
                 resizes('a fake HTML element');
             });
@@ -173,9 +164,6 @@ describe('resizes()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

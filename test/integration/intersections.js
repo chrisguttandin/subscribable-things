@@ -8,7 +8,6 @@ import { intersections } from '../../src/module';
 import xs from 'xstream';
 
 describe('intersections', () => {
-
     let htmlElement;
 
     afterEach(() => htmlElement.remove());
@@ -34,7 +33,7 @@ describe('intersections', () => {
         xs.fromObservable(intersections(document.body))
             .take(1)
             .subscribe({
-                next (entries) {
+                next(entries) {
                     expect(entries.length).to.equal(1);
                     expect(entries[0]).to.be.an.instanceof(IntersectionObserverEntry);
 
@@ -88,5 +87,4 @@ describe('intersections', () => {
             break;
         }
     });
-
 });

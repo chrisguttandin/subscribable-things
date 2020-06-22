@@ -1,12 +1,10 @@
 import { IReport } from './report';
 
 // @todo TypeScript does not include type definitions for the Reporting API yet.
-export interface IReportingObserver  {
+export interface IReportingObserver {
+    disconnect(): void;
 
-    disconnect (): void;
+    observe(): void;
 
-    observe (): void;
-
-    takeRecords (): IReport[];
-
+    takeRecords(): IReport[];
 }

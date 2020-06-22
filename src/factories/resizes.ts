@@ -1,19 +1,20 @@
 import { TResizesFactory } from '../types';
 
 export const createResizes: TResizesFactory = (emitNotSupportedError, window, wrapSubscribeFunction) => {
-    return (htmlElement, options) => wrapSubscribeFunction((observer) => {
-        if (window === null || window.ResizeObserver === undefined) {
-            return emitNotSupportedError(observer);
-        }
+    return (htmlElement, options) =>
+        wrapSubscribeFunction((observer) => {
+            if (window === null || window.ResizeObserver === undefined) {
+                return emitNotSupportedError(observer);
+            }
 
-        const resizeObserver = new window.ResizeObserver((entries) => observer.next(entries));
+            const resizeObserver = new window.ResizeObserver((entries) => observer.next(entries));
 
-        try {
-            resizeObserver.observe(htmlElement, options);
-        } catch (err) {
-            observer.error(err);
-        }
+            try {
+                resizeObserver.observe(htmlElement, options);
+            } catch (err) {
+                observer.error(err);
+            }
 
-        return () => resizeObserver.disconnect();
-    });
+            return () => resizeObserver.disconnect();
+        });
 };

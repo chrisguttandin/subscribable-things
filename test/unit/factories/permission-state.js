@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createPermissionState } from '../../../src/factories/permission-state';
 
 describe('permissionState()', () => {
-
     let emitNotSupportedError;
     let permissionState;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('permissionState()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('permissionState()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 permissionState({ name: 'midi' });
             });
@@ -65,13 +62,10 @@ describe('permissionState()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,7 +92,6 @@ describe('permissionState()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let permissionDescriptor;
             let permissionStatus;
@@ -110,7 +103,7 @@ describe('permissionState()', () => {
                 permissionStatus = { state: 'granted' };
 
                 window.navigator.permissions.query.resolves(permissionStatus);
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 permissionState(permissionDescriptor);
             });
@@ -158,11 +151,9 @@ describe('permissionState()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let permissionStatus;
             let unsubscribe;
 
@@ -170,7 +161,7 @@ describe('permissionState()', () => {
                 permissionStatus = { state: true };
 
                 window.navigator.permissions.query.resolves(permissionStatus);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe({ next () { } }));
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 permissionState({ name: 'midi' });
             });
@@ -194,9 +185,6 @@ describe('permissionState()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

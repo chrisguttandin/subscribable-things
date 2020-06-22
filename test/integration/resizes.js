@@ -8,7 +8,6 @@ import { resizes } from '../../src/module';
 import xs from 'xstream';
 
 describe('resizes', () => {
-
     let htmlElement;
 
     afterEach(() => htmlElement.remove());
@@ -34,7 +33,7 @@ describe('resizes', () => {
         xs.fromObservable(resizes(htmlElement))
             .take(1)
             .subscribe({
-                next (entries) {
+                next(entries) {
                     expect(entries.length).to.equal(1);
                     expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
 
@@ -88,5 +87,4 @@ describe('resizes', () => {
             break;
         }
     });
-
 });

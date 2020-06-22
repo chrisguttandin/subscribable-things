@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createMetrics } from '../../../src/factories/metrics';
 
 describe('metrics()', () => {
-
     let emitNotSupportedError;
     let metrics;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('metrics()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -23,7 +21,7 @@ describe('metrics()', () => {
         });
 
         it('should call wrapSubscribeFunction()', () => {
-            metrics({ });
+            metrics({});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
 
@@ -36,20 +34,19 @@ describe('metrics()', () => {
 
             wrapSubscribeFunction.returns(value);
 
-            expect(metrics({ })).to.equal(value);
+            expect(metrics({})).to.equal(value);
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
-                metrics({ });
+                metrics({});
             });
 
             it('should call emitNotSupportedError() with the given observer', () => {
@@ -65,13 +62,10 @@ describe('metrics()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -81,7 +75,7 @@ describe('metrics()', () => {
         });
 
         it('should call wrapSubscribeFunction()', () => {
-            metrics({ });
+            metrics({});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
 
@@ -94,11 +88,10 @@ describe('metrics()', () => {
 
             wrapSubscribeFunction.returns(value);
 
-            expect(metrics({ })).to.equal(value);
+            expect(metrics({})).to.equal(value);
         });
 
         describe('subscribe()', () => {
-
             let callback;
             let observer;
             let options;
@@ -115,7 +108,7 @@ describe('metrics()', () => {
 
                     return performanceObserver;
                 });
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 metrics(options);
             });
@@ -145,7 +138,7 @@ describe('metrics()', () => {
             it('should call next() with the current metrics on each invocation of the callback', () => {
                 subscribe(observer);
 
-                const entries = [ 'a', 'fake', 'array', 'of', 'metrics' ];
+                const entries = ['a', 'fake', 'array', 'of', 'metrics'];
                 const entryList = { getEntries: () => entries };
 
                 callback(entryList);
@@ -156,11 +149,9 @@ describe('metrics()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let performanceObserver;
             let unsubscribe;
 
@@ -168,9 +159,9 @@ describe('metrics()', () => {
                 performanceObserver = { disconnect: spy(), observe: spy() };
 
                 window.PerformanceObserver.returns(performanceObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
 
-                metrics({ });
+                metrics({});
             });
 
             it('should call disonnect()', () => {
@@ -182,9 +173,6 @@ describe('metrics()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

@@ -8,7 +8,6 @@ import { mediaQueryMatch } from '../../src/module';
 import xs from 'xstream';
 
 describe('mediaQueryMatch', () => {
-
     it('should work with RxJS', (done) => {
         from(mediaQueryMatch('(max-width:600px)'))
             .pipe(first())
@@ -23,7 +22,7 @@ describe('mediaQueryMatch', () => {
         xs.fromObservable(mediaQueryMatch('(max-width:600px)'))
             .take(1)
             .subscribe({
-                next (isMatching) {
+                next(isMatching) {
                     expect(isMatching).to.be.a('boolean');
 
                     done();
@@ -72,5 +71,4 @@ describe('mediaQueryMatch', () => {
             break;
         }
     });
-
 });

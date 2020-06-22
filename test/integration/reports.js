@@ -8,23 +8,21 @@ import { reports } from '../../src/module';
 import xs from 'xstream';
 
 describe('reports', () => {
-
     before(() => navigator.vibrate(0));
 
     it('should work with RxJS', (done) => {
         if (window.ReportingObserver === undefined) {
-            from(reports({ buffered: true }))
-                .subscribe(null, (err) => {
-                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+            from(reports({ buffered: true })).subscribe(null, (err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
-                });
+                done();
+            });
         } else {
             from(reports({ buffered: true }))
                 .pipe(first())
                 .subscribe((reportList) => {
                     expect(reportList.length).to.equal(1);
-                    expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+                    expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 });
@@ -33,21 +31,20 @@ describe('reports', () => {
 
     it('should work with XStream', (done) => {
         if (window.ReportingObserver === undefined) {
-            xs.fromObservable(reports({ buffered: true }))
-                .subscribe({
-                    error (err) {
-                        expect(err.message).to.equal('The required browser API seems to be not supported.');
+            xs.fromObservable(reports({ buffered: true })).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                        done();
-                    }
-                });
+                    done();
+                }
+            });
         } else {
             xs.fromObservable(reports({ buffered: true }))
                 .take(1)
                 .subscribe({
-                    next (reportList) {
+                    next(reportList) {
                         expect(reportList.length).to.equal(1);
-                        expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+                        expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                         done();
                     }
@@ -57,20 +54,20 @@ describe('reports', () => {
 
     it('should work with callbags', (done) => {
         if (window.ReportingObserver === undefined) {
-            fromObs(reports({ buffered: true }))(0, ((code, err) => {
+            fromObs(reports({ buffered: true }))(0, (code, err) => {
                 if (code === 2) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
                 }
 
                 done();
-            }));
+            });
         } else {
             pipe(
                 fromObs(reports({ buffered: true })),
                 take(1),
                 forEach((reportList) => {
                     expect(reportList.length).to.equal(1);
-                    expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+                    expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 })
@@ -80,18 +77,17 @@ describe('reports', () => {
 
     it('should work with Bacon.js', (done) => {
         if (window.ReportingObserver === undefined) {
-            fromESObservableBaconJs(reports({ buffered: true }))
-                .onError((err) => {
-                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+            fromESObservableBaconJs(reports({ buffered: true })).onError((err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
-                });
+                done();
+            });
         } else {
             fromESObservableBaconJs(reports({ buffered: true }))
                 .first()
                 .onValue((reportList) => {
                     expect(reportList.length).to.equal(1);
-                    expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+                    expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 });
@@ -100,18 +96,17 @@ describe('reports', () => {
 
     it('should work with Kefir.js', (done) => {
         if (window.ReportingObserver === undefined) {
-            fromESObservableKefirJs(reports({ buffered: true }))
-                .onError((err) => {
-                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+            fromESObservableKefirJs(reports({ buffered: true })).onError((err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
-                });
+                done();
+            });
         } else {
             fromESObservableKefirJs(reports({ buffered: true }))
                 .take(1)
                 .onValue((reportList) => {
                     expect(reportList.length).to.equal(1);
-                    expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+                    expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 });
@@ -123,7 +118,8 @@ describe('reports', () => {
 
         if (window.ReportingObserver === undefined) {
             try {
-                for await (const _ of eachValueFrom(source$)) { // eslint-disable-line no-unused-vars
+                // eslint-disable-next-line no-unused-vars
+                for await (const _ of eachValueFrom(source$)) {
                     throw new Error('This should never happen.');
                 }
             } catch (err) {
@@ -132,11 +128,10 @@ describe('reports', () => {
         } else {
             for await (const reportList of eachValueFrom(source$)) {
                 expect(reportList.length).to.equal(1);
-                expect(reportList[0].toJSON()).to.have.keys([ 'body', 'type', 'url' ]);
+                expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                 break;
             }
         }
     });
-
 });

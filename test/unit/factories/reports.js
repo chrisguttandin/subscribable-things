@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createReports } from '../../../src/factories/reports';
 
 describe('reports()', () => {
-
     let emitNotSupportedError;
     let reports;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('reports()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('reports()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 reports();
             });
@@ -65,13 +62,10 @@ describe('reports()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,7 +92,6 @@ describe('reports()', () => {
         });
 
         describe('subscribe()', () => {
-
             let callback;
             let observer;
             let options;
@@ -115,7 +108,7 @@ describe('reports()', () => {
 
                     return reportingObserver;
                 });
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 reports(options);
             });
@@ -139,7 +132,7 @@ describe('reports()', () => {
             it('should call next() with the current reports on each invocation of the callback', () => {
                 subscribe(observer);
 
-                const reportList = [ 'a', 'fake', 'list', 'of', 'reports' ];
+                const reportList = ['a', 'fake', 'list', 'of', 'reports'];
 
                 callback(reportList);
 
@@ -149,11 +142,9 @@ describe('reports()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let reportingObserver;
             let unsubscribe;
 
@@ -161,7 +152,7 @@ describe('reports()', () => {
                 reportingObserver = { disconnect: spy(), observe: spy() };
 
                 window.ReportingObserver.returns(reportingObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
 
                 reports();
             });
@@ -175,9 +166,6 @@ describe('reports()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

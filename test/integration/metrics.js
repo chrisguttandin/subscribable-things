@@ -8,7 +8,6 @@ import { metrics } from '../../src/module';
 import xs from 'xstream';
 
 describe('metrics', () => {
-
     beforeEach(() => setTimeout(() => performance.mark('a fake name')));
 
     it('should work with RxJS', (done) => {
@@ -17,7 +16,7 @@ describe('metrics', () => {
             .subscribe((entries) => {
                 expect(entries.length).to.equal(1);
 
-                const [ entry ] = entries;
+                const [entry] = entries;
 
                 expect(entry).to.be.an.instanceof(PerformanceEntry);
                 expect(entry.entryType).to.equal('mark');
@@ -31,10 +30,10 @@ describe('metrics', () => {
         xs.fromObservable(metrics({ type: 'mark' }))
             .take(1)
             .subscribe({
-                next (entries) {
+                next(entries) {
                     expect(entries.length).to.equal(1);
 
-                    const [ entry ] = entries;
+                    const [entry] = entries;
 
                     expect(entry).to.be.an.instanceof(PerformanceEntry);
                     expect(entry.entryType).to.equal('mark');
@@ -52,7 +51,7 @@ describe('metrics', () => {
             forEach((entries) => {
                 expect(entries.length).to.equal(1);
 
-                const [ entry ] = entries;
+                const [entry] = entries;
 
                 expect(entry).to.be.an.instanceof(PerformanceEntry);
                 expect(entry.entryType).to.equal('mark');
@@ -69,7 +68,7 @@ describe('metrics', () => {
             .onValue((entries) => {
                 expect(entries.length).to.equal(1);
 
-                const [ entry ] = entries;
+                const [entry] = entries;
 
                 expect(entry).to.be.an.instanceof(PerformanceEntry);
                 expect(entry.entryType).to.equal('mark');
@@ -85,7 +84,7 @@ describe('metrics', () => {
             .onValue((entries) => {
                 expect(entries.length).to.equal(1);
 
-                const [ entry ] = entries;
+                const [entry] = entries;
 
                 expect(entry).to.be.an.instanceof(PerformanceEntry);
                 expect(entry.entryType).to.equal('mark');
@@ -101,7 +100,7 @@ describe('metrics', () => {
         for await (const entries of eachValueFrom(source$)) {
             expect(entries.length).to.equal(1);
 
-            const [ entry ] = entries;
+            const [entry] = entries;
 
             expect(entry).to.be.an.instanceof(PerformanceEntry);
             expect(entry.entryType).to.equal('mark');
@@ -110,5 +109,4 @@ describe('metrics', () => {
             break;
         }
     });
-
 });

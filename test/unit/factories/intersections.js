@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createIntersections } from '../../../src/factories/intersections';
 
 describe('intersections()', () => {
-
     let emitNotSupportedError;
     let intersections;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('intersections()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('intersections()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 intersections('a fake HTML element');
             });
@@ -65,13 +62,10 @@ describe('intersections()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,7 +92,6 @@ describe('intersections()', () => {
         });
 
         describe('subscribe()', () => {
-
             let callback;
             let htmlElement;
             let intersectionObserver;
@@ -117,7 +110,7 @@ describe('intersections()', () => {
 
                     return intersectionObserver;
                 });
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 intersections(htmlElement, options);
             });
@@ -141,7 +134,7 @@ describe('intersections()', () => {
             it('should call next() with the current intersections on each invocation of the callback', () => {
                 subscribe(observer);
 
-                const entries = [ 'a', 'fake', 'array', 'of', 'entries' ];
+                const entries = ['a', 'fake', 'array', 'of', 'entries'];
 
                 callback(entries);
 
@@ -151,11 +144,9 @@ describe('intersections()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let intersectionObserver;
             let unsubscribe;
 
@@ -163,7 +154,7 @@ describe('intersections()', () => {
                 intersectionObserver = { disconnect: spy(), observe: spy() };
 
                 window.IntersectionObserver.returns(intersectionObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
 
                 intersections('a fake HTML element');
             });
@@ -177,9 +168,6 @@ describe('intersections()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

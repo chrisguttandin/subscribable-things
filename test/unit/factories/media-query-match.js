@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createMediaQueryMatch } from '../../../src/factories/media-query-match';
 
 describe('mediaQueryMatch()', () => {
-
     let emitNotSupportedError;
     let mediaQueryMatch;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('mediaQueryMatch()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('mediaQueryMatch()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 mediaQueryMatch('(max-width:600px)');
             });
@@ -65,13 +62,10 @@ describe('mediaQueryMatch()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,7 +92,6 @@ describe('mediaQueryMatch()', () => {
         });
 
         describe('subscribe()', () => {
-
             let mediaQueryList;
             let mediaQueryString;
             let observer;
@@ -110,7 +103,7 @@ describe('mediaQueryMatch()', () => {
                 observer = { next: spy() };
 
                 window.matchMedia.returns(mediaQueryList);
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 mediaQueryMatch(mediaQueryString);
             });
@@ -141,11 +134,9 @@ describe('mediaQueryMatch()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let mediaQueryList;
             let unsubscribe;
 
@@ -153,7 +144,7 @@ describe('mediaQueryMatch()', () => {
                 mediaQueryList = { matches: true };
 
                 window.matchMedia.returns(mediaQueryList);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe({ next () { } }));
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 mediaQueryMatch('(max-width:600px)');
             });
@@ -167,9 +158,6 @@ describe('mediaQueryMatch()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

@@ -8,7 +8,6 @@ import { mutations } from '../../src/module';
 import xs from 'xstream';
 
 describe('mutations', () => {
-
     let htmlElement;
 
     afterEach(() => htmlElement.remove());
@@ -34,7 +33,7 @@ describe('mutations', () => {
         xs.fromObservable(mutations(document.body, { childList: true }))
             .take(1)
             .subscribe({
-                next (records) {
+                next(records) {
                     expect(records.length).to.equal(1);
                     expect(records[0]).to.be.an.instanceof(MutationRecord);
 
@@ -88,5 +87,4 @@ describe('mutations', () => {
             break;
         }
     });
-
 });

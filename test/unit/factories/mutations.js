@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createMutations } from '../../../src/factories/mutations';
 
 describe('mutations()', () => {
-
     let emitNotSupportedError;
     let mutations;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('mutations()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -23,7 +21,7 @@ describe('mutations()', () => {
         });
 
         it('should call wrapSubscribeFunction()', () => {
-            mutations('a fake HTML element', { });
+            mutations('a fake HTML element', {});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
 
@@ -36,20 +34,19 @@ describe('mutations()', () => {
 
             wrapSubscribeFunction.returns(value);
 
-            expect(mutations('a fake HTML element', { })).to.equal(value);
+            expect(mutations('a fake HTML element', {})).to.equal(value);
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
-                mutations('a fake HTML element', { });
+                mutations('a fake HTML element', {});
             });
 
             it('should call emitNotSupportedError() with the given observer', () => {
@@ -65,13 +62,10 @@ describe('mutations()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -81,7 +75,7 @@ describe('mutations()', () => {
         });
 
         it('should call wrapSubscribeFunction()', () => {
-            mutations('a fake HTML element', { });
+            mutations('a fake HTML element', {});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
 
@@ -94,11 +88,10 @@ describe('mutations()', () => {
 
             wrapSubscribeFunction.returns(value);
 
-            expect(mutations('a fake HTML element', { })).to.equal(value);
+            expect(mutations('a fake HTML element', {})).to.equal(value);
         });
 
         describe('subscribe()', () => {
-
             let htmlElement;
             let mutationCallback;
             let mutationObserver;
@@ -117,7 +110,7 @@ describe('mutations()', () => {
 
                     return mutationObserver;
                 });
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 mutations(htmlElement, options);
             });
@@ -147,7 +140,7 @@ describe('mutations()', () => {
             it('should call next() with the current records on each invocation of the mutation callback', () => {
                 subscribe(observer);
 
-                const records = [ 'a', 'fake', 'array', 'of', 'mutation', 'records' ];
+                const records = ['a', 'fake', 'array', 'of', 'mutation', 'records'];
 
                 mutationCallback(records);
 
@@ -157,11 +150,9 @@ describe('mutations()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let mutationObserver;
             let unsubscribe;
 
@@ -169,9 +160,9 @@ describe('mutations()', () => {
                 mutationObserver = { disconnect: spy(), observe: spy() };
 
                 window.MutationObserver.returns(mutationObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe());
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
 
-                mutations('a fake HTML element', { });
+                mutations('a fake HTML element', {});
             });
 
             it('should call disonnect()', () => {
@@ -183,9 +174,6 @@ describe('mutations()', () => {
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

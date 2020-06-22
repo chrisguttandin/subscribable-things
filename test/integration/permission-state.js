@@ -8,7 +8,6 @@ import { permissionState } from '../../src/module';
 import xs from 'xstream';
 
 describe('permissionState', () => {
-
     it('should work with RxJS', (done) => {
         from(permissionState({ name: 'geolocation' }))
             .pipe(first())
@@ -23,7 +22,7 @@ describe('permissionState', () => {
         xs.fromObservable(permissionState({ name: 'geolocation' }))
             .take(1)
             .subscribe({
-                next (state) {
+                next(state) {
                     expect(state).to.equal('prompt');
 
                     done();
@@ -72,5 +71,4 @@ describe('permissionState', () => {
             break;
         }
     });
-
 });

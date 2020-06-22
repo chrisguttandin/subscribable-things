@@ -8,7 +8,6 @@ import { mediaDevices } from '../../src/module';
 import xs from 'xstream';
 
 describe('mediaDevices', () => {
-
     it('should work with RxJS', (done) => {
         from(mediaDevices())
             .pipe(first())
@@ -27,7 +26,7 @@ describe('mediaDevices', () => {
         xs.fromObservable(mediaDevices())
             .take(1)
             .subscribe({
-                next (mediaDeviceInfos) {
+                next(mediaDeviceInfos) {
                     expect(mediaDeviceInfos.length).to.be.above(0);
 
                     for (const mediaDeviceInfo of mediaDeviceInfos) {
@@ -96,5 +95,4 @@ describe('mediaDevices', () => {
             break;
         }
     });
-
 });

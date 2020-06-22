@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createUnhandledRejection } from '../../../src/factories/unhandled-rejection';
 
 describe('unhandledRejection()', () => {
-
     let emitNotSupportedError;
     let unhandledRejection;
     let wrapSubscribeFunction;
@@ -13,7 +12,6 @@ describe('unhandledRejection()', () => {
     });
 
     describe('without a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -40,14 +38,13 @@ describe('unhandledRejection()', () => {
         });
 
         describe('subscribe()', () => {
-
             let observer;
             let subscribe;
 
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 unhandledRejection(100);
             });
@@ -65,13 +62,10 @@ describe('unhandledRejection()', () => {
 
                 expect(subscribe(observer)).to.equal(value);
             });
-
         });
-
     });
 
     describe('with a window object', () => {
-
         let window;
 
         beforeEach(() => {
@@ -98,7 +92,6 @@ describe('unhandledRejection()', () => {
         });
 
         describe('subscribe()', () => {
-
             let coolingOffPeriod;
             let intervalId;
             let observer;
@@ -124,7 +117,7 @@ describe('unhandledRejection()', () => {
 
                     return intervalId;
                 });
-                wrapSubscribeFunction.callsFake((value) => subscribe = value);
+                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 unhandledRejection(coolingOffPeriod);
             });
@@ -132,13 +125,19 @@ describe('unhandledRejection()', () => {
             it('should register a rejectionhandled event listener', () => {
                 subscribe(observer);
 
-                expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly('rejectionhandled', rejectionHandledEventListener);
+                expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly(
+                    'rejectionhandled',
+                    rejectionHandledEventListener
+                );
             });
 
             it('should register a unhandledrejection event listener', () => {
                 subscribe(observer);
 
-                expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly('unhandledrejection', unhandledRejectionEventListener);
+                expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly(
+                    'unhandledrejection',
+                    unhandledRejectionEventListener
+                );
             });
 
             it('should call preventDefault() on each unhandledrejection event', () => {
@@ -154,7 +153,7 @@ describe('unhandledRejection()', () => {
             it('should call setInterval() on the first unhandledrejection event', () => {
                 subscribe(observer);
 
-                unhandledRejectionEventListener({ preventDefault () { } });
+                unhandledRejectionEventListener({ preventDefault() {} });
 
                 expect(window.setInterval).to.have.been.calledOnce;
 
@@ -166,11 +165,11 @@ describe('unhandledRejection()', () => {
             it('should not call setInterval() on consecutive unhandledrejection events', () => {
                 subscribe(observer);
 
-                unhandledRejectionEventListener({ preventDefault () { } });
+                unhandledRejectionEventListener({ preventDefault() {} });
 
                 window.setInterval.resetHistory();
 
-                unhandledRejectionEventListener({ preventDefault () { } });
+                unhandledRejectionEventListener({ preventDefault() {} });
 
                 expect(window.setInterval).to.have.not.been.called;
             });
@@ -180,7 +179,7 @@ describe('unhandledRejection()', () => {
 
                 const reason = 'a fake reason';
 
-                unhandledRejectionEventListener({ preventDefault () { }, reason });
+                unhandledRejectionEventListener({ preventDefault() {}, reason });
 
                 expect(observer.next).to.have.not.been.called;
 
@@ -196,7 +195,7 @@ describe('unhandledRejection()', () => {
 
                 const reason = 'a fake reason';
 
-                unhandledRejectionEventListener({ preventDefault () { }, reason });
+                unhandledRejectionEventListener({ preventDefault() {}, reason });
                 rejectionHandledEventListener({ reason });
 
                 setTimeout(() => {
@@ -211,7 +210,7 @@ describe('unhandledRejection()', () => {
 
                 const reason = 'a fake reason';
 
-                unhandledRejectionEventListener({ preventDefault () { }, reason });
+                unhandledRejectionEventListener({ preventDefault() {}, reason });
                 rejectionHandledEventListener({ reason });
 
                 setTimeout(() => {
@@ -224,11 +223,9 @@ describe('unhandledRejection()', () => {
             it('should return a function', () => {
                 expect(subscribe(observer)).to.be.a('function');
             });
-
         });
 
         describe('unsubscribe()', () => {
-
             let intervalId;
             let rejectionHandledEventListener;
             let unhandledRejectionEventListener;
@@ -245,7 +242,7 @@ describe('unhandledRejection()', () => {
                     }
                 });
                 window.setInterval.returns(intervalId);
-                wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe({ next () { } }));
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 unhandledRejection(100);
             });
@@ -257,7 +254,7 @@ describe('unhandledRejection()', () => {
             });
 
             it('should call clearInterval()', () => {
-                unhandledRejectionEventListener({ preventDefault () { } });
+                unhandledRejectionEventListener({ preventDefault() {} });
 
                 unsubscribe();
 
@@ -267,21 +264,24 @@ describe('unhandledRejection()', () => {
             it('should remove the rejectionhandled event listener', () => {
                 unsubscribe();
 
-                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWithExactly('rejectionhandled', rejectionHandledEventListener);
+                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWithExactly(
+                    'rejectionhandled',
+                    rejectionHandledEventListener
+                );
             });
 
             it('should remove the unhandledrejection event listener', () => {
                 unsubscribe();
 
-                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWithExactly('unhandledrejection', unhandledRejectionEventListener);
+                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWithExactly(
+                    'unhandledrejection',
+                    unhandledRejectionEventListener
+                );
             });
 
             it('should return undefined', () => {
                 expect(unsubscribe()).to.be.undefined;
             });
-
         });
-
     });
-
 });

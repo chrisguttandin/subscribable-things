@@ -4,9 +4,7 @@ import { IMidiMessageEvent } from './midi-message-event';
 
 // @todo TypeScript does not include type definitions for the Web MIDI API yet.
 export interface IMidiInputEventMap<T extends IMidiInput> {
-
     midimessage: IMidiMessageEvent;
 
     statechange: IMidiConnectionEvent<T>;
-
 }

@@ -2,7 +2,6 @@ import { spy, stub } from 'sinon';
 import { createMidiOutputs } from '../../../src/factories/midi-outputs';
 
 describe('midiOutputs()', () => {
-
     let midiOutputs;
     let wrapSubscribeFunction;
 
@@ -30,7 +29,6 @@ describe('midiOutputs()', () => {
     });
 
     describe('subscribe()', () => {
-
         let eventListener;
         let midiAccess;
         let observer;
@@ -39,13 +37,13 @@ describe('midiOutputs()', () => {
         beforeEach(() => {
             midiAccess = {
                 addEventListener: stub(),
-                outputs: new Map([ [ 'a-fake-id', { a: 'fake midi output', id: 'a-fake-id' } ] ]),
+                outputs: new Map([['a-fake-id', { a: 'fake midi output', id: 'a-fake-id' }]]),
                 removeEventListener: spy()
             };
             observer = { next: spy() };
 
-            midiAccess.addEventListener.callsFake((_, value) => eventListener = value);
-            wrapSubscribeFunction.callsFake((value) => subscribe = value);
+            midiAccess.addEventListener.callsFake((_, value) => (eventListener = value));
+            wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
             midiOutputs(midiAccess);
         });
@@ -67,7 +65,7 @@ describe('midiOutputs()', () => {
 
             observer.next.resetHistory();
 
-            midiAccess.outputs = new Map([ [ 'another-fake-id', { another: 'fake midi output', id: 'another-fake-id' } ] ]);
+            midiAccess.outputs = new Map([['another-fake-id', { another: 'fake midi output', id: 'another-fake-id' }]]);
 
             eventListener();
 
@@ -79,7 +77,7 @@ describe('midiOutputs()', () => {
 
             observer.next.resetHistory();
 
-            midiAccess.outputs = new Map([ [ 'a-fake-id', { a: 'fake midi output', id: 'a-fake-id' } ] ]);
+            midiAccess.outputs = new Map([['a-fake-id', { a: 'fake midi output', id: 'a-fake-id' }]]);
 
             eventListener();
 
@@ -89,11 +87,9 @@ describe('midiOutputs()', () => {
         it('should return a function', () => {
             expect(subscribe(observer)).to.be.a('function');
         });
-
     });
 
     describe('unsubscribe()', () => {
-
         let eventListener;
         let midiAccess;
         let unsubscribe;
@@ -105,8 +101,8 @@ describe('midiOutputs()', () => {
                 removeEventListener: spy()
             };
 
-            midiAccess.addEventListener.callsFake((_, value) => eventListener = value);
-            wrapSubscribeFunction.callsFake((subscribe) => unsubscribe = subscribe({ next () { } }));
+            midiAccess.addEventListener.callsFake((_, value) => (eventListener = value));
+            wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
             midiOutputs(midiAccess);
         });
@@ -120,7 +116,5 @@ describe('midiOutputs()', () => {
         it('should return undefined', () => {
             expect(unsubscribe()).to.be.undefined;
         });
-
     });
-
 });

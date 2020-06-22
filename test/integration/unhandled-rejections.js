@@ -8,7 +8,6 @@ import { unhandledRejection } from '../../src/module';
 import xs from 'xstream';
 
 describe('unhandledRejection', () => {
-
     let err;
 
     beforeEach(() => {
@@ -31,7 +30,7 @@ describe('unhandledRejection', () => {
         xs.fromObservable(unhandledRejection(100))
             .take(1)
             .subscribe({
-                next (reason) {
+                next(reason) {
                     expect(reason).to.equal(err);
 
                     done();
@@ -80,5 +79,4 @@ describe('unhandledRejection', () => {
             break;
         }
     });
-
 });
