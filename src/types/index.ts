@@ -1,3 +1,5 @@
+export * from './animation-frame-factory';
+export * from './animation-frame-function';
 export * from './emit-not-supported-error-function';
 export * from './event-handler';
 export * from './flexible-subscribe-function';

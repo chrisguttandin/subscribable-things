@@ -89,7 +89,11 @@ import { mediaQueryMatch } from 'subscribable-things';
 
 const stream = fromESObservable(mediaQueryMatch('(max-width:600px)'));
 
-const subscription = stream.observe({ value (isMatching) { console.log(isMatching); } });
+const subscription = stream.observe({
+    value(isMatching) {
+        console.log(isMatching);
+    }
+});
 
 subscription.unsubscribe();
 ```
@@ -107,6 +111,10 @@ for await (const isMatching of eachValueFrom(source$)) {
     console.log(isMatching);
 }
 ```
+
+### animationFrame(): SubscribableThing\<number>
+
+This function wraps the [`requestAnimationFrame()`](https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#dom-animationframeprovider-requestanimationframe) method. It emits the current timestamp of each animation frame.
 
 ### intersections(htmlElement: HTMLElement, options?: IntersectionObserverInit): SubscribableThing\<IntersectionObserverEntry[]>
 
