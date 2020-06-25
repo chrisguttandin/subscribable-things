@@ -42,6 +42,7 @@
         "karma-webpack": "^4.0.2",
         "kefir": "^3.8.7",
         "load-grunt-config": "^3.0.1",
+        "midi-test": "^1.1.4",
         "mocha": "^8.0.1",
         "prettier": "^2.0.5",
         "pretty-quick": "^2.0.1",
