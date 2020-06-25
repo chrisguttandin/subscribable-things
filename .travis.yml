@@ -1,21 +1,30 @@
+addons:
+    apt:
+        packages:
+            - g++-4.8
+            - libasound2-dev
+        sources:
+            - ubuntu-toolchain-r-test
+    chrome: stable
 before_install: npm install npm@latest --global
 cache:
-  directories:
-    - $HOME/.npm
+    directories:
+        - $HOME/.npm
 dist: xenial
 env:
-  global:
-    - secure: mPrBsrk9UkmpESmxWGZ7jLOneXAcjei1g30ylCjQwFdG9Jg2qaEgopZIqjA7JMliuZbi8f3Ojx93NVnv6XSXodaKwdYrABXLH6SNI+kpUIXn4qN5lsbqlxrNxNa91Q/NObfdOTYfiulcFNeTv/bpkzUKhnw2/EZC4yuj2NhPWFitjR2LPwlgxkznNOmRyKN6soigxkTNs2ThK6ID7tk6GsWwWDJxz9Im1u37itCdt2wcT6w6lLGQ1VE/newOKctd32C4w3t2ek5fKE7RQDEsF1lRQPy2yE3pBN2qv2qzAFsiFp/s5CH87tDybUoUd1gY/yIlu/7j+wpglOpsqjyInV4GJDrTEtBME214o/g4peDT6bjrcWIUu69XOlxhZ4ej2hpyEozknn1VCNH1wuXuc7sFRi3WzEWSm5rbJPdRIfMpKDDbZeWJpaeFSy3Vxd3Hr/PUcqui6l+F6lq6e3QefuOuuekMns9Qnel5SGgF9fcrLCCd4tqsdyrry/miW8xdtD17IfQHlAwIkqAn4+qnnzxg6DTA59qh8c0Eua4AVMlk9OZ4vaovYQy3EGhss8YWXSacMZcNHZ8WOJAayUXo1h369PD5RkKimajQBIAJS51BmgslRRZI9anJ6lHig7QImXFpvRpk8t2Awm8O5jtR6yZxJWikunVErJMk0L45kwo=
-    - secure: mBMHbzKRunAp94ofo2MpQDwLbIrMhqKa2tM5ZqGpO59l870AMwKdMzADSD1uqdQHhLhAle3iSLeiL3aLLcXBwP12CbtcgR60jIii8f99iaJ8sNCAeUh799Hc9IxlKsWUSBmdvM40vC4/yyvzjNgTjsVEA2XpQdQWyZevE/3rvCsdktyGz1r5OHFFZyVGyhKftHmZ5UpKefFjLFSqAdvhRY2Rxw/3ZrBmj7edB4BDQYGKpd894ydfJFGkuYDG5MHKWrcDlVUaBaNKb3cVYd3+BFtKWtzrq/OpHCOxphJOrICP9DvyjeDPrOgB+iuZLIRLvz7QFpjIAxWemAs1TyXBTiIUWesU1baTuZoZCfWY7tE+KgsVcEKGTsmKgbk2jXOUZ49sJu12iN6buXIqFlxH3SkDRJoozsqw1Y9gHCTSfwY863Jc42rsCSt4PJpr8rYpuRJshdpw+B8glqBzEqVWFg8PUnoSktc25XMuhKPgZBbPrbej8dUGEvWeIKSzJ30IFhIIYwdP/tjefyD8NMdubIFHCWhFc+DnB7wHPQxbz1ZRKhkltitZ5ee4tKAeODpvhm1wJ32KWFHxgLHJkQp+5AVQp1iEsGK1ov/8otkSG7SA1dqfpSKJjXtsosFyyTPVZkzCsprIirFPNBuhywfXq6wToPqzw2LyV5X2t+UG4pg=
+    global:
+        - secure: mPrBsrk9UkmpESmxWGZ7jLOneXAcjei1g30ylCjQwFdG9Jg2qaEgopZIqjA7JMliuZbi8f3Ojx93NVnv6XSXodaKwdYrABXLH6SNI+kpUIXn4qN5lsbqlxrNxNa91Q/NObfdOTYfiulcFNeTv/bpkzUKhnw2/EZC4yuj2NhPWFitjR2LPwlgxkznNOmRyKN6soigxkTNs2ThK6ID7tk6GsWwWDJxz9Im1u37itCdt2wcT6w6lLGQ1VE/newOKctd32C4w3t2ek5fKE7RQDEsF1lRQPy2yE3pBN2qv2qzAFsiFp/s5CH87tDybUoUd1gY/yIlu/7j+wpglOpsqjyInV4GJDrTEtBME214o/g4peDT6bjrcWIUu69XOlxhZ4ej2hpyEozknn1VCNH1wuXuc7sFRi3WzEWSm5rbJPdRIfMpKDDbZeWJpaeFSy3Vxd3Hr/PUcqui6l+F6lq6e3QefuOuuekMns9Qnel5SGgF9fcrLCCd4tqsdyrry/miW8xdtD17IfQHlAwIkqAn4+qnnzxg6DTA59qh8c0Eua4AVMlk9OZ4vaovYQy3EGhss8YWXSacMZcNHZ8WOJAayUXo1h369PD5RkKimajQBIAJS51BmgslRRZI9anJ6lHig7QImXFpvRpk8t2Awm8O5jtR6yZxJWikunVErJMk0L45kwo=
+        - secure: mBMHbzKRunAp94ofo2MpQDwLbIrMhqKa2tM5ZqGpO59l870AMwKdMzADSD1uqdQHhLhAle3iSLeiL3aLLcXBwP12CbtcgR60jIii8f99iaJ8sNCAeUh799Hc9IxlKsWUSBmdvM40vC4/yyvzjNgTjsVEA2XpQdQWyZevE/3rvCsdktyGz1r5OHFFZyVGyhKftHmZ5UpKefFjLFSqAdvhRY2Rxw/3ZrBmj7edB4BDQYGKpd894ydfJFGkuYDG5MHKWrcDlVUaBaNKb3cVYd3+BFtKWtzrq/OpHCOxphJOrICP9DvyjeDPrOgB+iuZLIRLvz7QFpjIAxWemAs1TyXBTiIUWesU1baTuZoZCfWY7tE+KgsVcEKGTsmKgbk2jXOUZ49sJu12iN6buXIqFlxH3SkDRJoozsqw1Y9gHCTSfwY863Jc42rsCSt4PJpr8rYpuRJshdpw+B8glqBzEqVWFg8PUnoSktc25XMuhKPgZBbPrbej8dUGEvWeIKSzJ30IFhIIYwdP/tjefyD8NMdubIFHCWhFc+DnB7wHPQxbz1ZRKhkltitZ5ee4tKAeODpvhm1wJ32KWFHxgLHJkQp+5AVQp1iEsGK1ov/8otkSG7SA1dqfpSKJjXtsosFyyTPVZkzCsprIirFPNBuhywfXq6wToPqzw2LyV5X2t+UG4pg=
 install: npm ci || (rm -rf node_modules && npm install)
 language: node_js
 matrix:
-  include:
-    - env: [TARGET=chrome, TYPE=integration]
-      node_js: 12
-    - env: [TARGET=chrome, TYPE=unit]
-      node_js: 12
-    - env: [TARGET=firefox, TYPE=integration]
-      node_js: 12
-    - env: [TARGET=firefox, TYPE=unit]
-      node_js: 12
+    include:
+        - env: [TARGET=chrome, TYPE=integration]
+          node_js: 12
+        - env: [TARGET=chrome, TYPE=unit]
+          node_js: 12
+        - env: [TARGET=firefox, TYPE=integration]
+          node_js: 12
+        - env: [TARGET=firefox, TYPE=unit]
+          node_js: 12
+script: sudo env "PATH=$PATH" npm test
