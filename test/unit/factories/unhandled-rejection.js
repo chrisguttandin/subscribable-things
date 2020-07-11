@@ -131,7 +131,7 @@ describe('unhandledRejection()', () => {
                 );
             });
 
-            it('should register a unhandledrejection event listener', () => {
+            it('should register an unhandledrejection event listener', () => {
                 subscribe(observer);
 
                 expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly(
