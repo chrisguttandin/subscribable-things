@@ -11,6 +11,7 @@ describe('module', () => {
             'midiInputs',
             'midiOutputs',
             'mutations',
+            'online',
             'permissionState',
             'reports',
             'resizes',

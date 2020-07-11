@@ -144,6 +144,10 @@ This function is a wrapper for the [`PerformanceObserver`](https://developer.moz
 
 This function is a wrapper for the [`MutationObserver`](https://developer.mozilla.org/docs/Web/API/MutationObserver).
 
+### online(): SubscribableThing\<boolean>
+
+This function wraps the [`onLine`](https://developer.mozilla.org/docs/Web/API/NavigatorOnLine/onLine) property of the [`Navigator`](https://developer.mozilla.org/docs/Web/API/Navigator) and listens for the corresponding [`'online'`](https://developer.mozilla.org/docs/Web/API/Window/online_event) and [`'offline'`](https://developer.mozilla.org/docs/Web/API/Window/offline_event) events on the [`Window`](https://developer.mozilla.org/docs/Web/API/Window) to emit updates.
+
 ### permissionState(permissionDescriptor: PermissionDescriptor): SubscribableThing\<PermissionState>
 
 This function is a wrapper for the [`query()`](https://developer.mozilla.org/docs/Web/API/Permissions/query) method of the [Permissions API](https://w3c.github.io/permissions). It will monitor the permission status to emit a new state whenever it gets updated.

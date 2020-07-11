@@ -23,6 +23,8 @@ export * from './midi-port-type';
 export * from './mutations-factory';
 export * from './mutations-function';
 export * from './observer-parameters';
+export * from './online-factory';
+export * from './online-function';
 export * from './optional-unsubscribe-function';
 export * from './permission-state-factory';
 export * from './permission-state-function';
