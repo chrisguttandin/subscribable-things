@@ -9,7 +9,7 @@
         }
     },
     "dependencies": {
-        "@babel/runtime": "^7.10.4",
+        "@babel/runtime": "^7.10.5",
         "rxjs-interop": "^1.0.1",
         "tslib": "^2.0.0"
     },
