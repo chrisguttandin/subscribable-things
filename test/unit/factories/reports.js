@@ -126,7 +126,7 @@ describe('reports()', () => {
             it('should call observe()', () => {
                 subscribe(observer);
 
-                expect(reportingObserver.observe).to.have.been.calledOnce;
+                expect(reportingObserver.observe).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should call next() with the current reports on each invocation of the callback', () => {
@@ -160,7 +160,7 @@ describe('reports()', () => {
             it('should call disonnect()', () => {
                 unsubscribe();
 
-                expect(reportingObserver.disconnect).to.have.been.calledOnce;
+                expect(reportingObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should return undefined', () => {

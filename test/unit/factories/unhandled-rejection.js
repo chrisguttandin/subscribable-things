@@ -147,7 +147,7 @@ describe('unhandledRejection()', () => {
 
                 unhandledRejectionEventListener({ preventDefault });
 
-                expect(preventDefault).to.have.been.calledOnce;
+                expect(preventDefault).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should call setInterval() on the first unhandledrejection event', () => {

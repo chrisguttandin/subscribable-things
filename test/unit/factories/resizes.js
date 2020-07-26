@@ -119,6 +119,9 @@ describe('resizes()', () => {
                 subscribe(observer);
 
                 expect(window.ResizeObserver).to.have.been.calledOnce;
+
+                expect(window.ResizeObserver.firstCall.args.length).to.equal(1);
+                expect(window.ResizeObserver.firstCall.args[0]).to.be.a('function');
             });
 
             it('should call observe() with the given htmlElement and options object', () => {
@@ -158,7 +161,7 @@ describe('resizes()', () => {
             it('should call disonnect()', () => {
                 unsubscribe();
 
-                expect(resizeObserver.disconnect).to.have.been.calledOnce;
+                expect(resizeObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should return undefined', () => {

@@ -119,6 +119,9 @@ describe('mutations()', () => {
                 subscribe(observer);
 
                 expect(window.MutationObserver).to.have.been.calledOnce;
+
+                expect(window.MutationObserver.firstCall.args.length).to.equal(1);
+                expect(window.MutationObserver.firstCall.args[0]).to.be.a('function');
             });
 
             it('should call observe() with the given htmlElement and options object', () => {
@@ -168,7 +171,7 @@ describe('mutations()', () => {
             it('should call disonnect()', () => {
                 unsubscribe();
 
-                expect(mutationObserver.disconnect).to.have.been.calledOnce;
+                expect(mutationObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should return undefined', () => {

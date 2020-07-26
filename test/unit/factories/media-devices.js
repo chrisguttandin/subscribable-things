@@ -111,7 +111,7 @@ describe('mediaDevices()', () => {
             it('should call enumerateDevices()', () => {
                 subscribe(observer);
 
-                expect(window.navigator.mediaDevices.enumerateDevices).to.have.been.calledOnce;
+                expect(window.navigator.mediaDevices.enumerateDevices).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should register a devicechange event listener', () => {
@@ -169,7 +169,7 @@ describe('mediaDevices()', () => {
 
                 eventListener();
 
-                expect(window.navigator.mediaDevices.enumerateDevices).to.have.been.calledOnce;
+                expect(window.navigator.mediaDevices.enumerateDevices).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should call next() with the mediaDeviceInfos on each devicechange event when the promise is resolved', async () => {

@@ -162,7 +162,7 @@ describe('intersections()', () => {
             it('should call disonnect()', () => {
                 unsubscribe();
 
-                expect(intersectionObserver.disconnect).to.have.been.calledOnce;
+                expect(intersectionObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should return undefined', () => {

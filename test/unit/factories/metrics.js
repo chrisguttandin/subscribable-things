@@ -117,6 +117,9 @@ describe('metrics()', () => {
                 subscribe(observer);
 
                 expect(window.PerformanceObserver).to.have.been.calledOnce;
+
+                expect(window.PerformanceObserver.firstCall.args.length).to.equal(1);
+                expect(window.PerformanceObserver.firstCall.args[0]).to.be.a('function');
             });
 
             it('should call observe() with the given options object', () => {
@@ -167,7 +170,7 @@ describe('metrics()', () => {
             it('should call disonnect()', () => {
                 unsubscribe();
 
-                expect(performanceObserver.disconnect).to.have.been.calledOnce;
+                expect(performanceObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
             });
 
             it('should return undefined', () => {
