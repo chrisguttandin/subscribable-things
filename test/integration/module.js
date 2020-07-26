@@ -15,7 +15,8 @@ describe('module', () => {
             'permissionState',
             'reports',
             'resizes',
-            'unhandledRejection'
+            'unhandledRejection',
+            'wakeLock'
         );
     });
 });

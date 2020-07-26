@@ -14,3 +14,6 @@ export * from './resize-observer';
 export * from './resize-observer-entry';
 export * from './resize-observer-options';
 export * from './resize-observer-size';
+export * from './wake-lock';
+export * from './wake-lock-sentinel';
+export * from './wake-lock-sentinel-event-map';

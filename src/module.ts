@@ -12,6 +12,7 @@ import { createPermissionState } from './factories/permission-state';
 import { createReports } from './factories/reports';
 import { createResizes } from './factories/resizes';
 import { createUnhandledRejection } from './factories/unhandled-rejection';
+import { createWakeLock } from './factories/wake-lock';
 import { createWindow } from './factories/window';
 import { createWrapSubscribeFunction } from './factories/wrap-subscribe-function';
 import { emitNotSupportedError } from './functions/emit-not-supported-error';
@@ -51,3 +52,5 @@ export const reports = createReports(emitNotSupportedError, window, wrapSubscrib
 export const resizes = createResizes(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const unhandledRejection = createUnhandledRejection(emitNotSupportedError, window, wrapSubscribeFunction);
+
+export const wakeLock = createWakeLock(emitNotSupportedError, window, wrapSubscribeFunction);

@@ -163,3 +163,7 @@ This function is a wrapper for the [`ResizeObserver`](https://developer.mozilla.
 ### unhandledRejection(coolingOffPeriod: number): SubscribableThing\<any>
 
 This function emits unhandled rejections. It will listen for the [`unhandledrejection` event](https://developer.mozilla.org/docs/Web/API/Window/unhandledrejection_event) to register possibly unhandled rejections. It will then wait for the cooling-off period to elapse before it emits the reason (aka the error) that caused the unhandled rejection. It is possible that a previously unhandled rejection gets handled later on in which case a [`rejectionhandled` event](https://developer.mozilla.org/docs/Web/API/Window/rejectionhandled_event) will be fired. If that happens during the cooling-off period nothing will be emitted by this function.
+
+### wakeLock(type: TWakeLockType): SubscribableThing\<boolen>
+
+This function simplifies the usage of the [Screen Wake Lock API](https://w3c.github.io/screen-wake-lock). It emits true when a wake lock could be acquired and emits false once the wake lock gets released by the browser. As long as the subscription is alive it will continuosly try to get a new wake lock if the current one gets released.
