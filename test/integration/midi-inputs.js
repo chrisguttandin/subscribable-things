@@ -14,7 +14,11 @@ describe('midiInputs()', () => {
         after(() => fetch('/reset-permissions'));
 
         before(async () => {
-            await fetch('/grant-permissions');
+            await fetch('/grant-permissions', {
+                body: JSON.stringify(['midi', 'midiSysex']),
+                headers: { 'content-type': 'application/json' },
+                method: 'POST'
+            });
 
             midiAccess = await navigator.requestMIDIAccess({ sysex: true });
         });

@@ -1,4 +1,5 @@
 const { env } = require('process');
+const { json } = require('body-parser');
 const { DefinePlugin } = require('webpack');
 const { request } = require('http');
 const { Buffer } = require('buffer');
@@ -60,27 +61,33 @@ module.exports = (config) => {
                 'middleware:dev-tools': [
                     'factory',
                     function () {
+                        const jsonMiddleware = json();
+
                         let virtualInputDevice;
                         let virtualOutputDevice;
 
                         return (req, res, next) => {
                             if (req.url === '/grant-permissions') {
-                                fetch('http://localhost:9222/json')
-                                    .then(([{ webSocketDebuggerUrl }]) =>
-                                        send(webSocketDebuggerUrl, 'Browser.grantPermissions', {
-                                            origin: 'http://localhost:9876',
-                                            permissions: ['midi', 'midiSysex']
-                                        })
-                                    )
-                                    .then(() => {
-                                        virtualInputDevice = new MidiSrc('Virtual Input Device');
-                                        virtualInputDevice.connect();
+                                jsonMiddleware(req, res, () => {
+                                    fetch('http://localhost:9222/json')
+                                        .then(([{ webSocketDebuggerUrl }]) =>
+                                            send(webSocketDebuggerUrl, 'Browser.grantPermissions', {
+                                                origin: 'http://localhost:9876',
+                                                permissions: req.body
+                                            })
+                                        )
+                                        .then(() => {
+                                            if (req.body.includes('midi')) {
+                                                virtualInputDevice = new MidiSrc('Virtual Input Device');
+                                                virtualInputDevice.connect();
 
-                                        virtualOutputDevice = new MidiDst('Virtual Output Device');
-                                        virtualOutputDevice.connect();
+                                                virtualOutputDevice = new MidiDst('Virtual Output Device');
+                                                virtualOutputDevice.connect();
+                                            }
 
-                                        respond(res);
-                                    });
+                                            respond(res);
+                                        });
+                                });
                             } else if (req.url === '/reset-permissions') {
                                 fetch('http://localhost:9222/json')
                                     .then(([{ webSocketDebuggerUrl }]) =>
