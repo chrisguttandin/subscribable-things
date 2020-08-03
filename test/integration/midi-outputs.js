@@ -105,6 +105,7 @@ describe('midiOutputs()', () => {
         it('should work with rxjs-for-await', async () => {
             const source$ = from(midiOutputs(midiAccess));
 
+            // eslint-disable-next-line no-unreachable-loop
             for await (const midiOutputsArray of eachValueFrom(source$)) {
                 expect(midiOutputsArray.length).to.be.above(0);
 

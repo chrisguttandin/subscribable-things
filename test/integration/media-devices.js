@@ -85,6 +85,7 @@ describe('mediaDevices', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(mediaDevices());
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const mediaDeviceInfos of eachValueFrom(source$)) {
             expect(mediaDeviceInfos.length).to.be.above(0);
 

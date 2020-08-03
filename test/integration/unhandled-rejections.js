@@ -73,6 +73,7 @@ describe('unhandledRejection', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(unhandledRejection(100));
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const reason of eachValueFrom(source$)) {
             expect(reason).to.equal(err);
 

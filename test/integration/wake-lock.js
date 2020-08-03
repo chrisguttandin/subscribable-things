@@ -76,6 +76,7 @@ describe('wakeLock', () => {
         it('should work with rxjs-for-await', async () => {
             const source$ = from(wakeLock('screen'));
 
+            // eslint-disable-next-line no-unreachable-loop
             for await (const isLocked of eachValueFrom(source$)) {
                 expect(isLocked).to.be.true;
 

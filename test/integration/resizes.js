@@ -80,6 +80,7 @@ describe('resizes', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(resizes(htmlElement));
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const entries of eachValueFrom(source$)) {
             expect(entries.length).to.equal(1);
             expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);

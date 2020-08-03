@@ -80,6 +80,7 @@ describe('mutations', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(mutations(document.body, { childList: true }));
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const records of eachValueFrom(source$)) {
             expect(records.length).to.equal(1);
             expect(records[0]).to.be.an.instanceof(MutationRecord);

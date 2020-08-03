@@ -118,7 +118,7 @@ describe('reports', () => {
 
         if (window.ReportingObserver === undefined) {
             try {
-                // eslint-disable-next-line no-unused-vars
+                // eslint-disable-next-line no-unreachable-loop, no-unused-vars
                 for await (const _ of eachValueFrom(source$)) {
                     throw new Error('This should never happen.');
                 }
@@ -126,6 +126,7 @@ describe('reports', () => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
             }
         } else {
+            // eslint-disable-next-line no-unreachable-loop
             for await (const reportList of eachValueFrom(source$)) {
                 expect(reportList.length).to.equal(1);
                 expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);

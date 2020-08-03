@@ -65,6 +65,7 @@ describe('animationFrame', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(animationFrame());
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const timestamp of eachValueFrom(source$)) {
             expect(timestamp).to.be.a('number');
 

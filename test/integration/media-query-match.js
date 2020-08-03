@@ -65,6 +65,7 @@ describe('mediaQueryMatch', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(mediaQueryMatch('(max-width:600px)'));
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const isMatching of eachValueFrom(source$)) {
             expect(isMatching).to.be.a('boolean');
 

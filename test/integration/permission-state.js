@@ -65,6 +65,7 @@ describe('permissionState', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(permissionState({ name: 'geolocation' }));
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const state of eachValueFrom(source$)) {
             expect(state).to.equal('prompt');
 

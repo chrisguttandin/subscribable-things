@@ -65,6 +65,7 @@ describe('online', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(online());
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const isOnline of eachValueFrom(source$)) {
             expect(isOnline).to.be.true;
 

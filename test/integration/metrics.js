@@ -97,6 +97,7 @@ describe('metrics', () => {
     it('should work with rxjs-for-await', async () => {
         const source$ = from(metrics({ type: 'mark' }));
 
+        // eslint-disable-next-line no-unreachable-loop
         for await (const entries of eachValueFrom(source$)) {
             expect(entries.length).to.equal(1);
 
