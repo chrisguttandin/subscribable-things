@@ -1,11 +1,11 @@
 import { IReport, IReportingObserver, IReportingObserverOptions, IResizeObserver, IResizeObserverEntry, IWakeLock } from '../interfaces';
 
-// @todo TypeScript does not include type definitions for the Reporting API yet.
 export type TWindow = Window &
     typeof globalThis & {
         // @todo TypeScript does not include type definitions for the Screen Wake Lock API yet.
         readonly navigator: Navigator & { wakeLock: IWakeLock };
 
+        // @todo TypeScript does not include type definitions for the Reporting API yet.
         ReportingObserver: {
             prototype: IReportingObserver;
 
