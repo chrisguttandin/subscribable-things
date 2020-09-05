@@ -21,7 +21,7 @@
         "@babel/preset-env": "^7.11.5",
         "@commitlint/cli": "^11.0.0",
         "@commitlint/config-angular": "^11.0.0",
-        "baconjs": "^3.0.13",
+        "baconjs": "^3.0.15",
         "body-parser": "^1.19.0",
         "callbag-basics": "^3.2.0",
         "chai": "^4.2.0",
