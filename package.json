@@ -49,7 +49,7 @@
         "pretty-quick": "^3.0.0",
         "rollup": "^2.26.11",
         "rollup-plugin-babel": "^4.4.0",
-        "rxjs": "^6.6.2",
+        "rxjs": "^6.6.3",
         "rxjs-for-await": "0.0.2",
         "sinon": "^9.0.3",
         "sinon-chai": "^3.5.0",
