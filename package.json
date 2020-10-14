@@ -21,6 +21,7 @@
         "@babel/preset-env": "^7.11.5",
         "@commitlint/cli": "^11.0.0",
         "@commitlint/config-angular": "^11.0.0",
+        "@rollup/plugin-babel": "^5.2.1",
         "baconjs": "^3.0.15",
         "body-parser": "^1.19.0",
         "callbag-basics": "^3.2.0",
