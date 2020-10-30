@@ -7,6 +7,7 @@ import { createMetrics } from './factories/metrics';
 import { createMidiInputs } from './factories/midi-inputs';
 import { createMidiOutputs } from './factories/midi-outputs';
 import { createMutations } from './factories/mutations';
+import { createOn } from './factories/on';
 import { createOnline } from './factories/online';
 import { createPermissionState } from './factories/permission-state';
 import { createReports } from './factories/reports';
@@ -43,6 +44,8 @@ export const midiInputs = createMidiInputs(wrapSubscribeFunction);
 export const midiOutputs = createMidiOutputs(wrapSubscribeFunction);
 
 export const mutations = createMutations(emitNotSupportedError, window, wrapSubscribeFunction);
+
+export const on = createOn(wrapSubscribeFunction);
 
 export const online = createOnline(emitNotSupportedError, window, wrapSubscribeFunction);
 

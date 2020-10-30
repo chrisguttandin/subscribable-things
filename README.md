@@ -144,6 +144,10 @@ This function is a wrapper for the [`PerformanceObserver`](https://developer.moz
 
 This function is a wrapper for the [`MutationObserver`](https://developer.mozilla.org/docs/Web/API/MutationObserver).
 
+### on(target: EventTarget, type: string, options?: boolean | AddEventListenerOptions): SubscribableThing\<Event>
+
+This function can be used to subscribe to events of a certain type dispatched from an [`EventTarget`](https://dom.spec.whatwg.org/#interface-eventtarget).
+
 ### online(): SubscribableThing\<boolean>
 
 This function wraps the [`onLine`](https://developer.mozilla.org/docs/Web/API/NavigatorOnLine/onLine) property of the [`Navigator`](https://developer.mozilla.org/docs/Web/API/Navigator) and listens for the corresponding [`'online'`](https://developer.mozilla.org/docs/Web/API/Window/online_event) and [`'offline'`](https://developer.mozilla.org/docs/Web/API/Window/offline_event) events on the [`Window`](https://developer.mozilla.org/docs/Web/API/Window) to emit updates.

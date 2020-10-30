@@ -1,0 +1,85 @@
+import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { eachValueFrom } from 'rxjs-for-await';
+import { first } from 'rxjs/operators';
+import { from } from 'rxjs';
+import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
+import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { on } from '../../src/module';
+import xs from 'xstream';
+
+describe('on', () => {
+    let htmlElement;
+
+    afterEach(() => htmlElement.remove());
+
+    beforeEach(() => {
+        htmlElement = document.createElement('a');
+
+        setTimeout(() => htmlElement.dispatchEvent(new MouseEvent('click')));
+    });
+
+    it('should work with RxJS', (done) => {
+        from(on(htmlElement, 'click'))
+            .pipe(first())
+            .subscribe((event) => {
+                expect(event).to.be.an.instanceof(MouseEvent);
+
+                done();
+            });
+    });
+
+    it('should work with XStream', (done) => {
+        xs.fromObservable(on(htmlElement, 'click'))
+            .take(1)
+            .subscribe({
+                next(event) {
+                    expect(event).to.be.an.instanceof(MouseEvent);
+
+                    done();
+                }
+            });
+    });
+
+    it('should work with callbags', (done) => {
+        pipe(
+            fromObs(on(htmlElement, 'click')),
+            take(1),
+            forEach((event) => {
+                expect(event).to.be.an.instanceof(MouseEvent);
+
+                done();
+            })
+        );
+    });
+
+    it('should work with Bacon.js', (done) => {
+        fromESObservableBaconJs(on(htmlElement, 'click'))
+            .first()
+            .onValue((event) => {
+                expect(event).to.be.an.instanceof(MouseEvent);
+
+                done();
+            });
+    });
+
+    it('should work with Kefir.js', (done) => {
+        fromESObservableKefirJs(on(htmlElement, 'click'))
+            .take(1)
+            .onValue((event) => {
+                expect(event).to.be.an.instanceof(MouseEvent);
+
+                done();
+            });
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(on(htmlElement, 'click'));
+
+        // eslint-disable-next-line no-unreachable-loop
+        for await (const event of eachValueFrom(source$)) {
+            expect(event).to.be.an.instanceof(MouseEvent);
+
+            break;
+        }
+    });
+});
