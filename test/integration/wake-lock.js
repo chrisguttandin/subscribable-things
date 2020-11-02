@@ -8,7 +8,7 @@ import { wakeLock } from '../../src/module';
 import xs from 'xstream';
 
 describe('wakeLock', () => {
-    if (navigator.wakeLock) {
+    if (navigator.wakeLock !== undefined) {
         after(() => fetch('/reset-permissions'));
 
         before(() =>
@@ -18,8 +18,18 @@ describe('wakeLock', () => {
                 method: 'POST'
             })
         );
+    }
 
-        it('should work with RxJS', (done) => {
+    it('should work with RxJS', (done) => {
+        if (navigator.wakeLock === undefined) {
+            from(wakeLock('screen')).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                    done();
+                }
+            });
+        } else {
             from(wakeLock('screen'))
                 .pipe(first())
                 .subscribe((isLocked) => {
@@ -27,9 +37,19 @@ describe('wakeLock', () => {
 
                     done();
                 });
-        });
+        }
+    });
 
-        it('should work with XStream', (done) => {
+    it('should work with XStream', (done) => {
+        if (navigator.wakeLock === undefined) {
+            xs.fromObservable(wakeLock('screen')).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                    done();
+                }
+            });
+        } else {
             xs.fromObservable(wakeLock('screen'))
                 .take(1)
                 .subscribe({
@@ -39,9 +59,19 @@ describe('wakeLock', () => {
                         done();
                     }
                 });
-        });
+        }
+    });
 
-        it('should work with callbags', (done) => {
+    it('should work with callbags', (done) => {
+        if (navigator.wakeLock === undefined) {
+            fromObs(wakeLock('screen'))(0, (code, err) => {
+                if (code === 2) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+                }
+
+                done();
+            });
+        } else {
             pipe(
                 fromObs(wakeLock('screen')),
                 take(1),
@@ -51,9 +81,17 @@ describe('wakeLock', () => {
                     done();
                 })
             );
-        });
+        }
+    });
 
-        it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', (done) => {
+        if (navigator.wakeLock === undefined) {
+            fromESObservableBaconJs(wakeLock('screen')).onError((err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                done();
+            });
+        } else {
             fromESObservableBaconJs(wakeLock('screen'))
                 .first()
                 .onValue((isLocked) => {
@@ -61,9 +99,17 @@ describe('wakeLock', () => {
 
                     done();
                 });
-        });
+        }
+    });
 
-        it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', (done) => {
+        if (navigator.wakeLock === undefined) {
+            fromESObservableKefirJs(wakeLock('screen')).onError((err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                done();
+            });
+        } else {
             fromESObservableKefirJs(wakeLock('screen'))
                 .take(1)
                 .onValue((isLocked) => {
@@ -71,17 +117,25 @@ describe('wakeLock', () => {
 
                     done();
                 });
-        });
+        }
+    });
 
-        it('should work with rxjs-for-await', async () => {
-            const source$ = from(wakeLock('screen'));
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(wakeLock('screen'));
 
+        if (navigator.wakeLock === undefined) {
+            try {
+                eachValueFrom(source$)[Symbol.asyncIterator]();
+            } catch (err) {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
+            }
+        } else {
             // eslint-disable-next-line no-unreachable-loop
             for await (const isLocked of eachValueFrom(source$)) {
                 expect(isLocked).to.be.true;
 
                 break;
             }
-        });
-    }
+        }
+    });
 });
