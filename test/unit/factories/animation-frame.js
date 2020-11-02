@@ -92,20 +92,14 @@ describe('animationFrame()', () => {
         });
 
         describe('subscribe()', () => {
-            let animationFrameHandle;
             let callback;
             let observer;
             let subscribe;
 
             beforeEach(() => {
-                animationFrameHandle = 'a fake animation frame handle';
                 observer = { error: spy(), next: spy() };
 
-                window.requestAnimationFrame.callsFake((value) => {
-                    callback = value;
-
-                    return animationFrameHandle;
-                });
+                window.requestAnimationFrame.callsFake((value) => (callback = value));
                 wrapSubscribeFunction.callsFake((value) => (subscribe = value));
 
                 animationFrame();
