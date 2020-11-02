@@ -39,10 +39,12 @@ describe('videoFrame', () => {
 
     it('should work with RxJS', (done) => {
         if (videoElement.requestVideoFrameCallback === undefined) {
-            from(videoFrame(videoElement)).subscribe(null, (err) => {
-                expect(err.message).to.equal('The required browser API seems to be not supported.');
+            from(videoFrame(videoElement)).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                    done();
+                }
             });
         } else {
             from(videoFrame(videoElement))

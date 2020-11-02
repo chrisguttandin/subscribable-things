@@ -12,10 +12,12 @@ describe('reports', () => {
 
     it('should work with RxJS', (done) => {
         if (window.ReportingObserver === undefined) {
-            from(reports({ buffered: true })).subscribe(null, (err) => {
-                expect(err.message).to.equal('The required browser API seems to be not supported.');
+            from(reports({ buffered: true })).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                    done();
+                }
             });
         } else {
             from(reports({ buffered: true }))
