@@ -123,10 +123,7 @@ describe('reports', () => {
 
         if (window.ReportingObserver === undefined) {
             try {
-                // eslint-disable-next-line no-unreachable-loop, no-unused-vars
-                for await (const _ of eachValueFrom(source$)) {
-                    throw new Error('This should never happen.');
-                }
+                eachValueFrom(source$)[Symbol.asyncIterator]();
             } catch (err) {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
             }
