@@ -1,3 +1,4 @@
+export * from './html-video-element';
 export * from './midi-access';
 export * from './midi-connection-event';
 export * from './midi-input';
@@ -14,6 +15,7 @@ export * from './resize-observer';
 export * from './resize-observer-entry';
 export * from './resize-observer-options';
 export * from './resize-observer-size';
+export * from './video-frame-metadata';
 export * from './wake-lock';
 export * from './wake-lock-sentinel';
 export * from './wake-lock-sentinel-event-map';

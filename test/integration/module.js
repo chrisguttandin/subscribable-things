@@ -16,6 +16,7 @@ describe('module', () => {
             'reports',
             'resizes',
             'unhandledRejection',
+            'videoFrame',
             'wakeLock'
         );
     });
