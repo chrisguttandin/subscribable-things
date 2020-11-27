@@ -24,7 +24,7 @@
         "@rollup/plugin-babel": "^5.2.1",
         "baconjs": "^3.0.17",
         "body-parser": "^1.19.0",
-        "callbag-basics": "^3.2.0",
+        "callbag-basics": "^4.0.0",
         "chai": "^4.2.0",
         "commitizen": "^4.2.2",
         "cz-conventional-changelog": "^3.3.0",
