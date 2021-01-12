@@ -8,7 +8,11 @@ import { reports } from '../../src/module';
 import xs from 'xstream';
 
 describe('reports', () => {
-    before(() => navigator.vibrate(0));
+    before(() => {
+        if (navigator.vibrate) {
+            navigator.vibrate(0);
+        }
+    });
 
     it('should work with RxJS', (done) => {
         if (window.ReportingObserver === undefined) {
