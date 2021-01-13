@@ -9,91 +9,181 @@ import xs from 'xstream';
 
 describe('mediaDevices', () => {
     it('should work with RxJS', (done) => {
-        from(mediaDevices())
-            .pipe(first())
-            .subscribe((mediaDeviceInfos) => {
-                expect(mediaDeviceInfos.length).to.be.above(0);
+        // eslint-disable-next-line no-undef
+        if (process.env.CI && navigator.userAgent.includes('Firefox')) {
+            from(mediaDevices()).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                for (const mediaDeviceInfo of mediaDeviceInfos) {
-                    expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+                    done();
                 }
-
-                done();
             });
-    });
-
-    it('should work with XStream', (done) => {
-        xs.fromObservable(mediaDevices())
-            .take(1)
-            .subscribe({
-                next(mediaDeviceInfos) {
-                    expect(mediaDeviceInfos.length).to.be.above(0);
+        } else {
+            from(mediaDevices())
+                .pipe(first())
+                .subscribe((mediaDeviceInfos) => {
+                    // eslint-disable-next-line no-undef
+                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
+                        expect(mediaDeviceInfos.length).to.equal(0);
+                    } else {
+                        expect(mediaDeviceInfos.length).to.be.above(0);
+                    }
 
                     for (const mediaDeviceInfo of mediaDeviceInfos) {
                         expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
                     }
 
                     done();
+                });
+        }
+    });
+
+    it('should work with XStream', (done) => {
+        // eslint-disable-next-line no-undef
+        if (process.env.CI && navigator.userAgent.includes('Firefox')) {
+            xs.fromObservable(mediaDevices()).subscribe({
+                error(err) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                    done();
                 }
             });
+        } else {
+            xs.fromObservable(mediaDevices())
+                .take(1)
+                .subscribe({
+                    next(mediaDeviceInfos) {
+                        // eslint-disable-next-line no-undef
+                        if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
+                            expect(mediaDeviceInfos.length).to.equal(0);
+                        } else {
+                            expect(mediaDeviceInfos.length).to.be.above(0);
+                        }
+
+                        for (const mediaDeviceInfo of mediaDeviceInfos) {
+                            expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+                        }
+
+                        done();
+                    }
+                });
+        }
     });
 
     it('should work with callbags', (done) => {
-        pipe(
-            fromObs(mediaDevices()),
-            take(1),
-            forEach((mediaDeviceInfos) => {
-                expect(mediaDeviceInfos.length).to.be.above(0);
-
-                for (const mediaDeviceInfo of mediaDeviceInfos) {
-                    expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+        // eslint-disable-next-line no-undef
+        if (process.env.CI && navigator.userAgent.includes('Firefox')) {
+            fromObs(mediaDevices())(0, (code, err) => {
+                if (code === 2) {
+                    expect(err.message).to.equal('The required browser API seems to be not supported.');
                 }
 
                 done();
-            })
-        );
+            });
+        } else {
+            pipe(
+                fromObs(mediaDevices()),
+                take(1),
+                forEach((mediaDeviceInfos) => {
+                    // eslint-disable-next-line no-undef
+                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
+                        expect(mediaDeviceInfos.length).to.equal(0);
+                    } else {
+                        expect(mediaDeviceInfos.length).to.be.above(0);
+                    }
+
+                    for (const mediaDeviceInfo of mediaDeviceInfos) {
+                        expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+                    }
+
+                    done();
+                })
+            );
+        }
     });
 
     it('should work with Bacon.js', (done) => {
-        fromESObservableBaconJs(mediaDevices())
-            .first()
-            .onValue((mediaDeviceInfos) => {
-                expect(mediaDeviceInfos.length).to.be.above(0);
-
-                for (const mediaDeviceInfo of mediaDeviceInfos) {
-                    expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
-                }
+        // eslint-disable-next-line no-undef
+        if (process.env.CI && navigator.userAgent.includes('Firefox')) {
+            fromESObservableBaconJs(mediaDevices()).onError((err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
 
                 done();
             });
+        } else {
+            fromESObservableBaconJs(mediaDevices())
+                .first()
+                .onValue((mediaDeviceInfos) => {
+                    // eslint-disable-next-line no-undef
+                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
+                        expect(mediaDeviceInfos.length).to.equal(0);
+                    } else {
+                        expect(mediaDeviceInfos.length).to.be.above(0);
+                    }
+
+                    for (const mediaDeviceInfo of mediaDeviceInfos) {
+                        expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+                    }
+
+                    done();
+                });
+        }
     });
 
     it('should work with Kefir.js', (done) => {
-        fromESObservableKefirJs(mediaDevices())
-            .take(1)
-            .onValue((mediaDeviceInfos) => {
-                expect(mediaDeviceInfos.length).to.be.above(0);
-
-                for (const mediaDeviceInfo of mediaDeviceInfos) {
-                    expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
-                }
+        // eslint-disable-next-line no-undef
+        if (process.env.CI && navigator.userAgent.includes('Firefox')) {
+            fromESObservableKefirJs(mediaDevices()).onError((err) => {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
 
                 done();
             });
+        } else {
+            fromESObservableKefirJs(mediaDevices())
+                .take(1)
+                .onValue((mediaDeviceInfos) => {
+                    // eslint-disable-next-line no-undef
+                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
+                        expect(mediaDeviceInfos.length).to.equal(0);
+                    } else {
+                        expect(mediaDeviceInfos.length).to.be.above(0);
+                    }
+
+                    for (const mediaDeviceInfo of mediaDeviceInfos) {
+                        expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+                    }
+
+                    done();
+                });
+        }
     });
 
     it('should work with rxjs-for-await', async () => {
         const source$ = from(mediaDevices());
 
-        // eslint-disable-next-line no-unreachable-loop
-        for await (const mediaDeviceInfos of eachValueFrom(source$)) {
-            expect(mediaDeviceInfos.length).to.be.above(0);
-
-            for (const mediaDeviceInfo of mediaDeviceInfos) {
-                expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+        // eslint-disable-next-line no-undef
+        if (process.env.CI && navigator.userAgent.includes('Firefox')) {
+            try {
+                eachValueFrom(source$)[Symbol.asyncIterator]();
+            } catch (err) {
+                expect(err.message).to.equal('The required browser API seems to be not supported.');
             }
+        } else {
+            // eslint-disable-next-line no-unreachable-loop
+            for await (const mediaDeviceInfos of eachValueFrom(source$)) {
+                // eslint-disable-next-line no-undef
+                if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
+                    expect(mediaDeviceInfos.length).to.equal(0);
+                } else {
+                    expect(mediaDeviceInfos.length).to.be.above(0);
+                }
 
-            break;
+                for (const mediaDeviceInfo of mediaDeviceInfos) {
+                    expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
+                }
+
+                break;
+            }
         }
     });
 });
