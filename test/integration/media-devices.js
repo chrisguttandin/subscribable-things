@@ -22,12 +22,7 @@ describe('mediaDevices', () => {
             from(mediaDevices())
                 .pipe(first())
                 .subscribe((mediaDeviceInfos) => {
-                    // eslint-disable-next-line no-undef
-                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
-                        expect(mediaDeviceInfos.length).to.equal(0);
-                    } else {
-                        expect(mediaDeviceInfos.length).to.be.above(0);
-                    }
+                    expect(mediaDeviceInfos.length).to.be.above(0);
 
                     for (const mediaDeviceInfo of mediaDeviceInfos) {
                         expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
@@ -53,12 +48,7 @@ describe('mediaDevices', () => {
                 .take(1)
                 .subscribe({
                     next(mediaDeviceInfos) {
-                        // eslint-disable-next-line no-undef
-                        if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
-                            expect(mediaDeviceInfos.length).to.equal(0);
-                        } else {
-                            expect(mediaDeviceInfos.length).to.be.above(0);
-                        }
+                        expect(mediaDeviceInfos.length).to.be.above(0);
 
                         for (const mediaDeviceInfo of mediaDeviceInfos) {
                             expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
@@ -85,12 +75,7 @@ describe('mediaDevices', () => {
                 fromObs(mediaDevices()),
                 take(1),
                 forEach((mediaDeviceInfos) => {
-                    // eslint-disable-next-line no-undef
-                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
-                        expect(mediaDeviceInfos.length).to.equal(0);
-                    } else {
-                        expect(mediaDeviceInfos.length).to.be.above(0);
-                    }
+                    expect(mediaDeviceInfos.length).to.be.above(0);
 
                     for (const mediaDeviceInfo of mediaDeviceInfos) {
                         expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
@@ -114,12 +99,7 @@ describe('mediaDevices', () => {
             fromESObservableBaconJs(mediaDevices())
                 .first()
                 .onValue((mediaDeviceInfos) => {
-                    // eslint-disable-next-line no-undef
-                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
-                        expect(mediaDeviceInfos.length).to.equal(0);
-                    } else {
-                        expect(mediaDeviceInfos.length).to.be.above(0);
-                    }
+                    expect(mediaDeviceInfos.length).to.be.above(0);
 
                     for (const mediaDeviceInfo of mediaDeviceInfos) {
                         expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
@@ -142,12 +122,7 @@ describe('mediaDevices', () => {
             fromESObservableKefirJs(mediaDevices())
                 .take(1)
                 .onValue((mediaDeviceInfos) => {
-                    // eslint-disable-next-line no-undef
-                    if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
-                        expect(mediaDeviceInfos.length).to.equal(0);
-                    } else {
-                        expect(mediaDeviceInfos.length).to.be.above(0);
-                    }
+                    expect(mediaDeviceInfos.length).to.be.above(0);
 
                     for (const mediaDeviceInfo of mediaDeviceInfos) {
                         expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
@@ -171,12 +146,7 @@ describe('mediaDevices', () => {
         } else {
             // eslint-disable-next-line no-unreachable-loop
             for await (const mediaDeviceInfos of eachValueFrom(source$)) {
-                // eslint-disable-next-line no-undef
-                if (process.env.CI && !navigator.userAgent.includes('Chrome') && navigator.userAgent.includes('Safari')) {
-                    expect(mediaDeviceInfos.length).to.equal(0);
-                } else {
-                    expect(mediaDeviceInfos.length).to.be.above(0);
-                }
+                expect(mediaDeviceInfos.length).to.be.above(0);
 
                 for (const mediaDeviceInfo of mediaDeviceInfos) {
                     expect(mediaDeviceInfo).to.be.an.instanceOf(MediaDeviceInfo);
