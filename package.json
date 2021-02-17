@@ -42,7 +42,7 @@
         "karma-mocha": "^2.0.1",
         "karma-safari-launcher": "^1.0.0",
         "karma-sinon-chai": "^2.0.2",
-        "karma-webpack": "^4.0.2",
+        "karma-webpack": "^5.0.0",
         "kefir": "^3.8.8",
         "load-grunt-config": "^3.0.1",
         "midi-test": "^1.1.4",
