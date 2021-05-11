@@ -4,7 +4,6 @@
 
 **A collection of reactive wrappers for various browser APIs.**
 
-[![tests](https://img.shields.io/travis/chrisguttandin/subscribable-things/master.svg?style=flat-square)](https://travis-ci.org/chrisguttandin/subscribable-things)
 [![dependencies](https://img.shields.io/david/chrisguttandin/subscribable-things.svg?style=flat-square)](https://www.npmjs.com/package/subscribable-things)
 [![version](https://img.shields.io/npm/v/subscribable-things.svg?style=flat-square)](https://www.npmjs.com/package/subscribable-things)
 
