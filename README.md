@@ -4,7 +4,7 @@
 
 **A collection of reactive wrappers for various browser APIs.**
 
-[![dependencies](https://img.shields.io/david/chrisguttandin/subscribable-things.svg?style=flat-square)](https://www.npmjs.com/package/subscribable-things)
+[![dependencies](https://img.shields.io/david/chrisguttandin/subscribable-things.svg?style=flat-square)](https://github.com/chrisguttandin/subscribable-things/network/dependencies)
 [![version](https://img.shields.io/npm/v/subscribable-things.svg?style=flat-square)](https://www.npmjs.com/package/subscribable-things)
 
 This package provides factory functions which can be used to turn browser APIs into subscribable things. A subscribable thing can either be consumed directly with callback functions or by utilzing one of the popular libraries for reactive programming.
