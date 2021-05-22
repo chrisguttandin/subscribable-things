@@ -50,7 +50,7 @@
         "prettier": "^2.3.0",
         "pretty-quick": "^3.1.0",
         "rollup": "^2.48.0",
-        "rxjs": "^7.0.1",
+        "rxjs": "^7.1.0",
         "rxjs-for-await": "0.0.2",
         "sinon": "^10.0.1",
         "sinon-chai": "^3.6.0",
