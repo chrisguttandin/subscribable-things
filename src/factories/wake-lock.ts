@@ -30,7 +30,9 @@ export const createWakeLock: TWakeLockFactory = (emitNotSupportedError, window, 
                     .then((wakeLockSentinel) => {
                         if (isActive) {
                             observer.next(true);
+                        }
 
+                        if (isActive) {
                             wakeLockSentinel.onrelease = () => {
                                 observer.next(false);
 

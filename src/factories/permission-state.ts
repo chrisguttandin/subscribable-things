@@ -22,7 +22,9 @@ export const createPermissionState: TPermissionStateFactory = (emitNotSupportedE
                 .then((permissionStatus) => {
                     if (isActive) {
                         observer.next(permissionStatus.state);
+                    }
 
+                    if (isActive) {
                         permissionStatus.onchange = () => observer.next(permissionStatus.state);
 
                         unsubscribe = () => {

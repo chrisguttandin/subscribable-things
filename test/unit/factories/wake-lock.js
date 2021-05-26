@@ -175,19 +175,37 @@ describe('wakeLock()', () => {
         });
 
         describe('unsubscribe()', () => {
+            let observer;
             let unsubscribe;
             let wakeLockSentinel;
             let wakeLockType;
 
             beforeEach(() => {
+                observer = { next: () => {} };
                 wakeLockSentinel = { release: stub() };
                 wakeLockType = 'screen';
 
                 wakeLockSentinel.release.resolves();
                 window.navigator.wakeLock.request.resolves(wakeLockSentinel);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe(observer)));
 
                 wakeLock(wakeLockType);
+            });
+
+            it('should not assign the release event listener when calling unsubscribe() right away', async () => {
+                unsubscribe();
+
+                await Promise.resolve();
+
+                expect(wakeLockSentinel.onrelease).to.be.undefined;
+            });
+
+            it('should not assign the release event listener when calling unsubscribe() during the first emission', async () => {
+                observer.next = () => unsubscribe();
+
+                await Promise.resolve();
+
+                expect(wakeLockSentinel.onrelease).to.be.undefined;
             });
 
             it('should remove the release event listener', async () => {

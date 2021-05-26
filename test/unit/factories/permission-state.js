@@ -154,20 +154,30 @@ describe('permissionState()', () => {
         });
 
         describe('unsubscribe()', () => {
+            let observer;
             let permissionStatus;
             let unsubscribe;
 
             beforeEach(() => {
+                observer = { next: () => {} };
                 permissionStatus = { state: true };
 
                 window.navigator.permissions.query.resolves(permissionStatus);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe(observer)));
 
                 permissionState({ name: 'midi' });
             });
 
-            it('should not assign the change event listener', async () => {
+            it('should not assign the change event listener when calling unsubscribe() right away', async () => {
                 unsubscribe();
+
+                await Promise.resolve();
+
+                expect(permissionStatus.onchange).to.be.undefined;
+            });
+
+            it('should not assign the change event listener when calling unsubscribe() during the first emission', async () => {
+                observer.next = () => unsubscribe();
 
                 await Promise.resolve();
 
