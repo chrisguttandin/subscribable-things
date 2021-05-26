@@ -17,9 +17,8 @@ export const createPermissionState: TPermissionStateFactory = (emitNotSupportedE
                 isActive = false;
             };
 
-            window.navigator.permissions
-                .query(permissionDescriptor)
-                .then((permissionStatus) => {
+            window.navigator.permissions.query(permissionDescriptor).then(
+                (permissionStatus) => {
                     if (isActive) {
                         observer.next(permissionStatus.state);
                     }
@@ -31,12 +30,13 @@ export const createPermissionState: TPermissionStateFactory = (emitNotSupportedE
                             permissionStatus.onchange = null;
                         };
                     }
-                })
-                .catch((err) => {
+                },
+                (err) => {
                     if (isActive) {
                         observer.error(err);
                     }
-                });
+                }
+            );
 
             return () => unsubscribe();
         });

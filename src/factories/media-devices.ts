@@ -15,20 +15,20 @@ export const createMediaDevices: TMediaDevicesFactory = (emitNotSupportedError, 
             let isActive = true;
 
             const enumerateDevices = () => {
-                window.navigator.mediaDevices
-                    .enumerateDevices()
-                    .then((mediaDevices) => {
+                window.navigator.mediaDevices.enumerateDevices().then(
+                    (mediaDevices) => {
                         if (isActive) {
                             observer.next(mediaDevices);
                         }
-                    })
-                    .catch((err) => {
+                    },
+                    (err) => {
                         if (isActive) {
                             unsubscribe();
 
                             observer.error(err);
                         }
-                    });
+                    }
+                );
             };
             const unsubscribe = () => {
                 isActive = false;

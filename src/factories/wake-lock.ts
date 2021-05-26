@@ -25,9 +25,8 @@ export const createWakeLock: TWakeLockFactory = (emitNotSupportedError, window, 
             let unsubscribe = unsubscribeWhileRequesting;
 
             const requestWakeLock = () =>
-                window.navigator.wakeLock
-                    .request(type)
-                    .then((wakeLockSentinel) => {
+                window.navigator.wakeLock.request(type).then(
+                    (wakeLockSentinel) => {
                         if (isActive) {
                             observer.next(true);
                         }
@@ -49,12 +48,13 @@ export const createWakeLock: TWakeLockFactory = (emitNotSupportedError, window, 
                         } else {
                             releaseWakeLock(wakeLockSentinel);
                         }
-                    })
-                    .catch((err) => {
+                    },
+                    (err) => {
                         if (isActive) {
                             observer.error(err);
                         }
-                    });
+                    }
+                );
 
             requestWakeLock();
 
