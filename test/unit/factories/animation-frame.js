@@ -114,16 +114,6 @@ describe('animationFrame()', () => {
                 expect(window.requestAnimationFrame.firstCall.args[0]).to.be.a('function');
             });
 
-            it('should call next() with the given timestamp on each animation frame', () => {
-                subscribe(observer);
-
-                const timestamp = 'a fake timestamp';
-
-                callback(timestamp);
-
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(timestamp);
-            });
-
             it('should request another animation frame', () => {
                 subscribe(observer);
 
@@ -135,6 +125,26 @@ describe('animationFrame()', () => {
 
                 expect(window.requestAnimationFrame.firstCall.args.length).to.equal(1);
                 expect(window.requestAnimationFrame.firstCall.args[0]).to.be.a('function');
+            });
+
+            it('should call next() with the given timestamp on each animation frame', () => {
+                subscribe(observer);
+
+                const timestamp = 'a fake timestamp';
+
+                callback(timestamp);
+
+                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(timestamp);
+            });
+
+            it('should request another animation frame before calling next()', () => {
+                subscribe(observer);
+
+                window.requestAnimationFrame.reset();
+
+                callback('a fake timestamp'); // eslint-disable-line node/no-callback-literal
+
+                expect(window.requestAnimationFrame).to.have.been.calledBefore(observer.next);
             });
 
             it('should return a function', () => {

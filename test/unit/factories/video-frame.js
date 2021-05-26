@@ -58,17 +58,6 @@ describe('videoFrame()', () => {
             expect(videoElement.requestVideoFrameCallback.firstCall.args[0]).to.be.a('function');
         });
 
-        it('should call next() with the given timestamp combined with the metadata on each video frame', () => {
-            subscribe(observer);
-
-            const metadata = { a: 'fake', metadata: 'object' };
-            const now = 'a fake timestamp';
-
-            callback(now, metadata);
-
-            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly({ now, ...metadata });
-        });
-
         it('should request another video frame', () => {
             subscribe(observer);
 
@@ -80,6 +69,27 @@ describe('videoFrame()', () => {
 
             expect(videoElement.requestVideoFrameCallback.firstCall.args.length).to.equal(1);
             expect(videoElement.requestVideoFrameCallback.firstCall.args[0]).to.be.a('function');
+        });
+
+        it('should call next() with the given timestamp combined with the metadata on each video frame', () => {
+            subscribe(observer);
+
+            const metadata = { a: 'fake', metadata: 'object' };
+            const now = 'a fake timestamp';
+
+            callback(now, metadata);
+
+            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly({ now, ...metadata });
+        });
+
+        it('should request another video frame before calling next()', () => {
+            subscribe(observer);
+
+            videoElement.requestVideoFrameCallback.reset();
+
+            callback('a fake timestamp', { a: 'fake', metadata: 'object' }); // eslint-disable-line node/no-callback-literal
+
+            expect(videoElement.requestVideoFrameCallback).to.have.been.calledBefore(observer.next);
         });
 
         it('should return a function', () => {

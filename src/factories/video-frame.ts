@@ -8,9 +8,9 @@ export const createVideoFrame: TVideoFrameFactory = (emitNotSupportedError, wrap
             }
 
             let videoFrameHandle = videoElement.requestVideoFrameCallback(function videoFrameCallback(now, metadata): void {
-                observer.next({ ...metadata, now });
-
                 videoFrameHandle = videoElement.requestVideoFrameCallback(videoFrameCallback);
+
+                observer.next({ ...metadata, now });
             });
 
             return () => videoElement.cancelVideoFrameCallback(videoFrameHandle);

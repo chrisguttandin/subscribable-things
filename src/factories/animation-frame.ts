@@ -8,9 +8,9 @@ export const createAnimationFrame: TAnimationFrameFactory = (emitNotSupportedErr
             }
 
             let animationFrameHandle = window.requestAnimationFrame(function animationFrameCallback(timestamp): void {
-                observer.next(timestamp);
-
                 animationFrameHandle = window.requestAnimationFrame(animationFrameCallback);
+
+                observer.next(timestamp);
             });
 
             return () => window.cancelAnimationFrame(animationFrameHandle);
