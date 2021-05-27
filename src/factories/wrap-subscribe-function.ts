@@ -1,10 +1,10 @@
-import { TObserverParameters, TSubscribeFunction, TWrapSubscribeFunctionFactory } from '../types';
+import { TObserverParameters, TSubscribableThing, TSubscribeFunction, TWrapSubscribeFunctionFactory } from '../types';
 
 export const createWrapSubscribeFunction: TWrapSubscribeFunctionFactory = (patch, toObserver) => {
     const emptyFunction = () => {}; // tslint:disable-line:no-empty
 
     return <T>(innerSubscribe: TSubscribeFunction<T>) => {
-        const subscribe = (...args: TObserverParameters<T>) => {
+        const subscribe = <TSubscribableThing<T>>((...args: TObserverParameters<T>) => {
             const unsubscribe = innerSubscribe(toObserver(...args));
 
             if (unsubscribe !== undefined) {
@@ -12,7 +12,7 @@ export const createWrapSubscribeFunction: TWrapSubscribeFunctionFactory = (patch
             }
 
             return emptyFunction;
-        };
+        });
 
         subscribe[Symbol.observable] = () => ({ subscribe: (...args: TObserverParameters<T>) => ({ unsubscribe: subscribe(...args) }) });
 
