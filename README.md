@@ -115,6 +115,10 @@ for await (const isMatching of eachValueFrom(source$)) {
 
 This function wraps the [`requestAnimationFrame()`](https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#dom-animationframeprovider-requestanimationframe) method. It emits the current timestamp of each animation frame.
 
+### geolocation(options?: PositionOptions): SubscribableThing\<GeolocationPosition>
+
+This is a wrapper for the [Geolocation API](https://w3c.github.io/geolocation-api/). It uses [`watchPosition()`](https://w3c.github.io/geolocation-api/#watchposition-method) to gather the most recent [`GeolocationPosition`](https://w3c.github.io/geolocation-api/#dfn-a-new-geolocationposition) whenever it changes.
+
 ### intersections(htmlElement: HTMLElement, options?: IntersectionObserverInit): SubscribableThing\<IntersectionObserverEntry[]>
 
 This function is a wrapper for the [`IntersectionObserver`](https://developer.mozilla.org/docs/Web/API/IntersectionObserver).

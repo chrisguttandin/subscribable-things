@@ -10,7 +10,7 @@ import xs from 'xstream';
 describe('permissionState', () => {
     it('should work with RxJS', (done) => {
         if (navigator.permissions === undefined) {
-            from(permissionState({ name: 'geolocation' })).subscribe({
+            from(permissionState({ name: 'notifications' })).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
@@ -18,7 +18,7 @@ describe('permissionState', () => {
                 }
             });
         } else {
-            from(permissionState({ name: 'geolocation' }))
+            from(permissionState({ name: 'notifications' }))
                 .pipe(first())
                 .subscribe((state) => {
                     expect(state).to.equal('prompt');
@@ -30,7 +30,7 @@ describe('permissionState', () => {
 
     it('should work with XStream', (done) => {
         if (navigator.permissions === undefined) {
-            xs.fromObservable(permissionState({ name: 'geolocation' })).subscribe({
+            xs.fromObservable(permissionState({ name: 'notifications' })).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
@@ -38,7 +38,7 @@ describe('permissionState', () => {
                 }
             });
         } else {
-            xs.fromObservable(permissionState({ name: 'geolocation' }))
+            xs.fromObservable(permissionState({ name: 'notifications' }))
                 .take(1)
                 .subscribe({
                     next(state) {
@@ -52,7 +52,7 @@ describe('permissionState', () => {
 
     it('should work with callbags', (done) => {
         if (navigator.permissions === undefined) {
-            fromObs(permissionState({ name: 'geolocation' }))(0, (code, err) => {
+            fromObs(permissionState({ name: 'notifications' }))(0, (code, err) => {
                 if (code === 2) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
                 }
@@ -61,7 +61,7 @@ describe('permissionState', () => {
             });
         } else {
             pipe(
-                fromObs(permissionState({ name: 'geolocation' })),
+                fromObs(permissionState({ name: 'notifications' })),
                 take(1),
                 forEach((state) => {
                     expect(state).to.equal('prompt');
@@ -74,13 +74,13 @@ describe('permissionState', () => {
 
     it('should work with Bacon.js', (done) => {
         if (navigator.permissions === undefined) {
-            fromESObservableBaconJs(permissionState({ name: 'geolocation' })).onError((err) => {
+            fromESObservableBaconJs(permissionState({ name: 'notifications' })).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
                 done();
             });
         } else {
-            fromESObservableBaconJs(permissionState({ name: 'geolocation' }))
+            fromESObservableBaconJs(permissionState({ name: 'notifications' }))
                 .first()
                 .onValue((state) => {
                     expect(state).to.equal('prompt');
@@ -92,13 +92,13 @@ describe('permissionState', () => {
 
     it('should work with Kefir.js', (done) => {
         if (navigator.permissions === undefined) {
-            fromESObservableKefirJs(permissionState({ name: 'geolocation' })).onError((err) => {
+            fromESObservableKefirJs(permissionState({ name: 'notifications' })).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
                 done();
             });
         } else {
-            fromESObservableKefirJs(permissionState({ name: 'geolocation' }))
+            fromESObservableKefirJs(permissionState({ name: 'notifications' }))
                 .take(1)
                 .onValue((state) => {
                     expect(state).to.equal('prompt');
@@ -109,7 +109,7 @@ describe('permissionState', () => {
     });
 
     it('should work with rxjs-for-await', async () => {
-        const source$ = from(permissionState({ name: 'geolocation' }));
+        const source$ = from(permissionState({ name: 'notifications' }));
 
         if (navigator.permissions === undefined) {
             try {

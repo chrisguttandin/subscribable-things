@@ -7,6 +7,9 @@ const WebSocket = require('ws');
 const { MidiDst, MidiSrc } = require('midi-test');
 
 // eslint-disable-next-line padding-line-between-statements
+const GEOLOCATION = { accuracy: 1, latitude: 50, longitude: 50 };
+
+// eslint-disable-next-line padding-line-between-statements
 const fetch = () =>
     new Promise((resolve) => {
         request('http://localhost:9222/json', (response) => {
@@ -86,7 +89,11 @@ module.exports = (config) => {
                         let virtualOutputDevice;
 
                         return (req, res, next) => {
-                            if (req.url === '/grant-permissions') {
+                            if (req.url === '/clear-geolocation') {
+                                fetch('http://localhost:9222/json')
+                                    .then(([{ webSocketDebuggerUrl }]) => send(webSocketDebuggerUrl, 'Emulation.clearGeolocationOverride'))
+                                    .then(() => respond(res));
+                            } else if (req.url === '/grant-permissions') {
                                 jsonMiddleware(req, res, () => {
                                     fetch('http://localhost:9222/json')
                                         .then(([{ webSocketDebuggerUrl }]) =>
@@ -107,14 +114,20 @@ module.exports = (config) => {
                                             respond(res);
                                         });
                                 });
+                            } else if (req.url === '/emulate-geolocation') {
+                                fetch('http://localhost:9222/json')
+                                    .then(([{ webSocketDebuggerUrl }]) =>
+                                        send(webSocketDebuggerUrl, 'Emulation.setGeolocationOverride', GEOLOCATION)
+                                    )
+                                    .then(() => respond(res));
                             } else if (req.url === '/reset-permissions') {
                                 fetch('http://localhost:9222/json')
                                     .then(([{ webSocketDebuggerUrl }]) =>
                                         send(webSocketDebuggerUrl, 'Browser.resetPermissions', { origin: 'http://localhost:9876' })
                                     )
                                     .then(() => {
-                                        virtualInputDevice.disconnect();
-                                        virtualOutputDevice.disconnect();
+                                        virtualInputDevice?.disconnect();
+                                        virtualOutputDevice?.disconnect();
 
                                         respond(res);
                                     });
@@ -216,7 +229,32 @@ module.exports = (config) => {
         });
     } else {
         config.set({
-            browsers: ['ChromeCanaryHeadless', 'ChromeHeadless', 'FirefoxDeveloperHeadless', 'FirefoxHeadless', 'Safari']
+            browsers: ['ChromeCanaryHeadless', 'ChromeHeadless', 'FirefoxDeveloperWithPrefs', 'FirefoxHeadlessWithPrefs', 'Safari'],
+
+            customLaunchers: {
+                FirefoxDeveloperWithPrefs: {
+                    base: 'FirefoxDeveloperHeadless',
+                    prefs: {
+                        'geo.provider.network.url': `data:application/json,${JSON.stringify({
+                            accuracy: GEOLOCATION.accuracy,
+                            location: { lat: GEOLOCATION.latitude, lng: GEOLOCATION.longitude }
+                        })}`,
+                        'geo.provider.testing': true,
+                        'permissions.default.geo': 1
+                    }
+                },
+                FirefoxHeadlessWithPrefs: {
+                    base: 'FirefoxHeadless',
+                    prefs: {
+                        'geo.provider.network.url': `data:application/json,${JSON.stringify({
+                            accuracy: GEOLOCATION.accuracy,
+                            location: { lat: GEOLOCATION.latitude, lng: GEOLOCATION.longitude }
+                        })}`,
+                        'geo.provider.testing': true,
+                        'permissions.default.geo': 1
+                    }
+                }
+            }
         });
     }
 };

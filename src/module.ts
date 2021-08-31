@@ -1,5 +1,6 @@
 import { patch, toObserver } from 'rxjs-interop';
 import { createAnimationFrame } from './factories/animation-frame';
+import { createGeolocation } from './factories/geolocation';
 import { createIntersections } from './factories/intersections';
 import { createMediaDevices } from './factories/media-devices';
 import { createMediaQueryMatch } from './factories/media-query-match';
@@ -30,6 +31,8 @@ const window = createWindow();
 const wrapSubscribeFunction = createWrapSubscribeFunction(patch, toObserver);
 
 export const animationFrame = createAnimationFrame(emitNotSupportedError, window, wrapSubscribeFunction);
+
+export const geolocation = createGeolocation(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const intersections = createIntersections(emitNotSupportedError, window, wrapSubscribeFunction);
 
