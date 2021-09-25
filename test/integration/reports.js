@@ -27,9 +27,8 @@ describe('reports', () => {
             from(reports({ buffered: true }))
                 .pipe(first())
                 .subscribe((reportList) => {
-                    expect(reportList.length).to.equal(2);
+                    expect(reportList.length).to.equal(1);
                     expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
-                    expect(reportList[1].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 });
@@ -50,9 +49,8 @@ describe('reports', () => {
                 .take(1)
                 .subscribe({
                     next(reportList) {
-                        expect(reportList.length).to.equal(2);
+                        expect(reportList.length).to.equal(1);
                         expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
-                        expect(reportList[1].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                         done();
                     }
@@ -74,9 +72,8 @@ describe('reports', () => {
                 fromObs(reports({ buffered: true })),
                 take(1),
                 forEach((reportList) => {
-                    expect(reportList.length).to.equal(2);
+                    expect(reportList.length).to.equal(1);
                     expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
-                    expect(reportList[1].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 })
@@ -95,9 +92,8 @@ describe('reports', () => {
             fromESObservableBaconJs(reports({ buffered: true }))
                 .first()
                 .onValue((reportList) => {
-                    expect(reportList.length).to.equal(2);
+                    expect(reportList.length).to.equal(1);
                     expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
-                    expect(reportList[1].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 });
@@ -115,9 +111,8 @@ describe('reports', () => {
             fromESObservableKefirJs(reports({ buffered: true }))
                 .take(1)
                 .onValue((reportList) => {
-                    expect(reportList.length).to.equal(2);
+                    expect(reportList.length).to.equal(1);
                     expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
-                    expect(reportList[1].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                     done();
                 });
@@ -136,9 +131,8 @@ describe('reports', () => {
         } else {
             // eslint-disable-next-line no-unreachable-loop
             for await (const reportList of eachValueFrom(source$)) {
-                expect(reportList.length).to.equal(2);
+                expect(reportList.length).to.equal(1);
                 expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
-                expect(reportList[1].toJSON()).to.have.keys(['body', 'type', 'url']);
 
                 break;
             }
