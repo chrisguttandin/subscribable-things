@@ -111,6 +111,17 @@ for await (const isMatching of eachValueFrom(source$)) {
 }
 ```
 
+Also it's possible to output values directly to HTML via [spect/h.js](https://github.com/spectjs/spect) ([codepen](https://codepen.io/dyv/pen/xxLPRPK)).
+
+```js
+import h from 'spect/h';
+import { mediaQueryMatch } from 'subscribable-things';
+
+let el = h`<div>Is matching: ${mediaQueryMatch('(max-width:600px)')}</div>`
+document.body.appendChild(el)
+```
+
+
 ### animationFrame(): SubscribableThing\<number>
 
 This function wraps the [`requestAnimationFrame()`](https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#dom-animationframeprovider-requestanimationframe) method. It emits the current timestamp of each animation frame.
