@@ -4,6 +4,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
 import { permissionState } from '../../src/module';
 import xs from 'xstream';
 
@@ -126,4 +127,27 @@ describe('permissionState', () => {
             }
         }
     });
+
+    if (navigator.permissions !== undefined) {
+        it('should work with spect', async () => {
+            const test = h`<div id="test">${permissionState({ name: 'notifications' })}</div>`;
+
+            document.body.appendChild(test);
+
+            while (true) {
+                try {
+                    expect(document.getElementById('test').textContent).to.equal('prompt');
+
+                    break;
+                } catch {
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                }
+            }
+
+            document.body.removeChild(test);
+            test[Symbol.dispose]();
+        });
+    }
 });

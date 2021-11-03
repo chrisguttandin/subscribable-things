@@ -4,6 +4,8 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
+import { map } from '../helpers/map';
 import { videoFrame } from '../../src/module';
 import xs from 'xstream';
 
@@ -191,4 +193,27 @@ describe('videoFrame', () => {
             }
         }
     });
+
+    if (HTMLVideoElement.prototype.requestVideoFrameCallback !== undefined) {
+        it('should work with spect', async () => {
+            const test = h`<div id="test">${map(videoFrame(videoElement), ({ height, width }) => `${height}x${width}`)}</div>`;
+
+            document.body.appendChild(test);
+
+            while (true) {
+                try {
+                    expect(document.getElementById('test').textContent).to.equal('100x100');
+
+                    break;
+                } catch {
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                }
+            }
+
+            document.body.removeChild(test);
+            test[Symbol.dispose]();
+        });
+    }
 });

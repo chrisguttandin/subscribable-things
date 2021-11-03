@@ -4,6 +4,8 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
+import { map } from '../helpers/map';
 import { mutations } from '../../src/module';
 import xs from 'xstream';
 
@@ -87,5 +89,28 @@ describe('mutations', () => {
 
             break;
         }
+    });
+
+    it('should work with spect', async () => {
+        const test = h`<div id="test">${map(mutations(document.body, { childList: true }), (records) =>
+            records.map(({ target }) => target.nodeName).join(',')
+        )}</div>`;
+
+        document.body.appendChild(test);
+
+        while (true) {
+            try {
+                expect(document.getElementById('test').textContent).to.equal('BODY');
+
+                break;
+            } catch {
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                });
+            }
+        }
+
+        document.body.removeChild(test);
+        test[Symbol.dispose]();
     });
 });
