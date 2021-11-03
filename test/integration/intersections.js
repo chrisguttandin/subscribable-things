@@ -4,7 +4,9 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
 import { intersections } from '../../src/module';
+import { map } from '../helpers/map';
 import xs from 'xstream';
 
 describe('intersections', () => {
@@ -87,5 +89,26 @@ describe('intersections', () => {
 
             break;
         }
+    });
+
+    it('should work with spect', async () => {
+        const test = h`<div id="test">${map(intersections(document.body), (entries) => entries.length)}</div>`;
+
+        document.body.appendChild(test);
+
+        while (true) {
+            try {
+                expect(document.getElementById('test').textContent).to.equal('1');
+
+                break;
+            } catch {
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                });
+            }
+        }
+
+        document.body.removeChild(test);
+        test[Symbol.dispose]();
     });
 });

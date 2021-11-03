@@ -5,6 +5,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
 import xs from 'xstream';
 
 describe('animationFrame', () => {
@@ -71,5 +72,26 @@ describe('animationFrame', () => {
 
             break;
         }
+    });
+
+    it('should work with spect', async () => {
+        const test = h`<div id="test">${animationFrame()}</div>`;
+
+        document.body.appendChild(test);
+
+        while (true) {
+            try {
+                expect(document.getElementById('test').textContent).to.match(/[1-9]\d+/);
+
+                break;
+            } catch {
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                });
+            }
+        }
+
+        document.body.removeChild(test);
+        test[Symbol.dispose]();
     });
 });

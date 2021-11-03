@@ -4,6 +4,8 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
+import { map } from '../helpers/map';
 import { mediaDevices } from '../../src/module';
 import xs from 'xstream';
 
@@ -156,4 +158,32 @@ describe('mediaDevices', () => {
             }
         }
     });
+
+    // eslint-disable-next-line no-undef
+    if (!process.env.CI || !navigator.userAgent.includes('Firefox')) {
+        it('should work with spect', async () => {
+            const test = h`<div id="test">${map(mediaDevices(), (mediaDeviceInfos) =>
+                mediaDeviceInfos.map(({ kind }) => kind).join(',')
+            )}</div>`;
+
+            document.body.appendChild(test);
+
+            while (true) {
+                try {
+                    expect(document.getElementById('test').textContent).to.match(
+                        /(?:audioinput|audiooutput|videoinput)(?:,(?:audioinput|audiooutput|videoinput))*/
+                    );
+
+                    break;
+                } catch {
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                }
+            }
+
+            document.body.removeChild(test);
+            test[Symbol.dispose]();
+        });
+    }
 });

@@ -4,6 +4,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
+import { h } from 'spect';
 import { online } from '../../src/module';
 import xs from 'xstream';
 
@@ -71,5 +72,26 @@ describe('online', () => {
 
             break;
         }
+    });
+
+    it('should work with spect', async () => {
+        const test = h`<div id="test">${online()}</div>`;
+
+        document.body.appendChild(test);
+
+        while (true) {
+            try {
+                expect(document.getElementById('test').textContent).to.equal('true');
+
+                break;
+            } catch {
+                await new Promise((resolve) => {
+                    setTimeout(resolve, 100);
+                });
+            }
+        }
+
+        document.body.removeChild(test);
+        test[Symbol.dispose]();
     });
 });
