@@ -8,6 +8,12 @@
             "path": "cz-conventional-changelog"
         }
     },
+    "contributors": [
+        {
+            "email": "df.creative@gmail.com",
+            "name": "Dmitry Iv"
+        }
+    ],
     "dependencies": {
         "@babel/runtime": "^7.16.0",
         "rxjs-interop": "^2.0.0",
