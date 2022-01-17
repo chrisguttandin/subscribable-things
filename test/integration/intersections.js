@@ -4,7 +4,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
-import { h } from 'spect';
+import h from 'hyperf';
 import { intersections } from '../../src/module';
 import { map } from '../helpers/map';
 import xs from 'xstream';
@@ -91,7 +91,7 @@ describe('intersections', () => {
         }
     });
 
-    it('should work with spect', async () => {
+    it('should work with hyperf', async () => {
         const test = h`<div id="test">${map(intersections(document.body), (entries) => entries.length)}</div>`;
 
         document.body.appendChild(test);

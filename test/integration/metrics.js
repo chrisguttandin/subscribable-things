@@ -4,7 +4,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
-import { h } from 'spect';
+import h from 'hyperf';
 import { map } from '../helpers/map';
 import { metrics } from '../../src/module';
 import xs from 'xstream';
@@ -113,7 +113,7 @@ describe('metrics', () => {
         }
     });
 
-    it('should work with spect', async () => {
+    it('should work with hyperf', async () => {
         const test = h`<div id="test">${map(metrics({ type: 'mark' }), (entries) => entries.map(({ name }) => name).join(','))}</div>`;
 
         document.body.appendChild(test);

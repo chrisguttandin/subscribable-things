@@ -4,7 +4,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
-import { h } from 'spect';
+import h from 'hyperf';
 import { map } from '../helpers/map';
 import { unhandledRejection } from '../../src/module';
 import xs from 'xstream';
@@ -83,7 +83,7 @@ describe('unhandledRejection', () => {
         }
     });
 
-    it('should work with spect', async () => {
+    it('should work with hyperf', async () => {
         const test = h`<div id="test">${map(unhandledRejection(100), ({ message }) => message)}</div>`;
 
         document.body.appendChild(test);
