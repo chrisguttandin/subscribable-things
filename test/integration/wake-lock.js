@@ -4,7 +4,7 @@ import { first } from 'rxjs/operators';
 import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
-import { h } from 'spect';
+import h from 'hyperf';
 import { wakeLock } from '../../src/module';
 import xs from 'xstream';
 
@@ -141,7 +141,7 @@ describe('wakeLock', () => {
     });
 
     if (navigator.wakeLock !== undefined) {
-        it('should work with spect', async () => {
+        it('should work with hyperf', async () => {
             const test = h`<div id="test">${wakeLock('screen')}</div>`;
 
             document.body.appendChild(test);

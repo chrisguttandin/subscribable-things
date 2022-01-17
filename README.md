@@ -111,10 +111,10 @@ for await (const isMatching of eachValueFrom(source$)) {
 }
 ```
 
-Also it's possible to output values directly to HTML via [spect/h.js](https://github.com/spectjs/spect) ([codepen](https://codepen.io/dyv/pen/xxLPRPK)).
+Also it's possible to output values directly to HTML via [hyperf](https://github.com/spectjs/hyperf).
 
 ```js
-import { h } from 'spect';
+import h from 'hyperf';
 import { mediaQueryMatch } from 'subscribable-things';
 
 const element = h`<div>is matching: ${mediaQueryMatch('(max-width:600px)')}</div>`;
