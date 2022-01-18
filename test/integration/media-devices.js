@@ -183,7 +183,6 @@ describe('mediaDevices', () => {
             }
 
             document.body.removeChild(test);
-            test[Symbol.dispose]();
         });
     }
 });

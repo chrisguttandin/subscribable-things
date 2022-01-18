@@ -162,7 +162,6 @@ describe('reports', () => {
             }
 
             document.body.removeChild(test);
-            test[Symbol.dispose]();
         });
     }
 });

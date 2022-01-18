@@ -101,6 +101,5 @@ describe('unhandledRejection', () => {
         }
 
         document.body.removeChild(test);
-        test[Symbol.dispose]();
     });
 });

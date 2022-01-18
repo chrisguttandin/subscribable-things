@@ -140,7 +140,6 @@ describe('midiOutputs()', () => {
             }
 
             document.body.removeChild(test);
-            test[Symbol.dispose]();
         });
     }
 });

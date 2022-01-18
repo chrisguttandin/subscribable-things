@@ -92,6 +92,5 @@ describe('mediaQueryMatch', () => {
         }
 
         document.body.removeChild(test);
-        test[Symbol.dispose]();
     });
 });

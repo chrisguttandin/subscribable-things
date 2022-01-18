@@ -131,6 +131,5 @@ describe('metrics', () => {
         }
 
         document.body.removeChild(test);
-        test[Symbol.dispose]();
     });
 });

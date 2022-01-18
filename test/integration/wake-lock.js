@@ -159,7 +159,6 @@ describe('wakeLock', () => {
             }
 
             document.body.removeChild(test);
-            test[Symbol.dispose]();
         });
     }
 });
