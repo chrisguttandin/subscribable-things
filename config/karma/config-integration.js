@@ -27,7 +27,7 @@ const fetch = () =>
 const send = (webSocketDebuggerUrl, method, params) =>
     new Promise((resolve) => {
         const webSocket = new WebSocket(webSocketDebuggerUrl);
-        const id = 23;
+        const id = Math.round(Math.random() * 1000);
 
         webSocket.once('open', () => {
             const resolvePromise = (data) => {
