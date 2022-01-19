@@ -161,28 +161,57 @@ describe('mediaDevices', () => {
 
     // eslint-disable-next-line no-undef
     if (!process.env.CI || !navigator.userAgent.includes('Firefox')) {
-        it('should work with hyperf', async () => {
-            const test = h`<div id="test">${map(mediaDevices(), (mediaDeviceInfos) =>
-                mediaDeviceInfos.map(({ kind }) => kind).join(',')
-            )}</div>`;
+        describe('with a finalization registry', () => {
+            let finalizationRegistry;
+            let whenCollected;
 
-            document.body.appendChild(test);
+            afterEach(function (done) {
+                this.timeout(0);
 
-            while (true) {
-                try {
-                    expect(document.getElementById('test').textContent).to.match(
-                        /(?:audioinput|audiooutput|videoinput)(?:,(?:audioinput|audiooutput|videoinput))*/
-                    );
+                const arrayBuffers = [];
+                const interval = setInterval(() => {
+                    try {
+                        arrayBuffers.push(
+                            new ArrayBuffer(arrayBuffers.length === 0 ? 100 : arrayBuffers[arrayBuffers.length - 1].byteLength * 10)
+                        );
+                    } catch {
+                        arrayBuffers.pop();
+                    }
+                }, 100);
 
-                    break;
-                } catch {
-                    await new Promise((resolve) => {
-                        setTimeout(resolve, 100);
-                    });
+                whenCollected = () => {
+                    clearInterval(interval);
+                    done();
+                };
+            });
+
+            // eslint-disable-next-line no-undef
+            beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));
+
+            it('should work with hyperf', async () => {
+                const test = h`<div id="test">${map(mediaDevices(), (mediaDeviceInfos) =>
+                    mediaDeviceInfos.map(({ kind }) => kind).join(',')
+                )}</div>`;
+
+                document.body.appendChild(test);
+                finalizationRegistry.register(test);
+
+                while (true) {
+                    try {
+                        expect(document.getElementById('test').textContent).to.match(
+                            /(?:audioinput|audiooutput|videoinput)(?:,(?:audioinput|audiooutput|videoinput))*/
+                        );
+
+                        break;
+                    } catch {
+                        await new Promise((resolve) => {
+                            setTimeout(resolve, 100);
+                        });
+                    }
                 }
-            }
 
-            document.body.removeChild(test);
+                document.body.removeChild(test);
+            });
         });
     }
 });
