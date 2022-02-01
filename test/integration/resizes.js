@@ -17,6 +17,8 @@ describe('resizes', () => {
     beforeEach(() => {
         htmlElement = document.createElement('div');
 
+        htmlElement.style.display = 'block';
+
         setTimeout(() => document.body.append(htmlElement));
     });
 
