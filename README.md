@@ -122,70 +122,155 @@ const element = h`<div>is matching: ${mediaQueryMatch('(max-width:600px)')}</div
 document.body.appendChild(element);
 ```
 
-### animationFrame(): SubscribableThing\<number>
+### animationFrame()
+
+```ts
+function animationFrame(): SubscribableThing<number>;
+```
 
 This function wraps the [`requestAnimationFrame()`](https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#dom-animationframeprovider-requestanimationframe) method. It emits the current timestamp of each animation frame.
 
-### geolocation(options?: PositionOptions): SubscribableThing\<GeolocationPosition>
+### geolocation([options])
+
+```ts
+function geolocation(options?: PositionOptions): SubscribableThing<GeolocationPosition>;
+```
 
 This is a wrapper for the [Geolocation API](https://w3c.github.io/geolocation-api/). It uses [`watchPosition()`](https://w3c.github.io/geolocation-api/#watchposition-method) to gather the most recent [`GeolocationPosition`](https://w3c.github.io/geolocation-api/#dfn-a-new-geolocationposition) whenever it changes.
 
-### intersections(htmlElement: HTMLElement, options?: IntersectionObserverInit): SubscribableThing\<IntersectionObserverEntry[]>
+### intersections(htmlElement, [options])
+
+```ts
+function intersections(
+    htmlElement: HTMLElement,
+    options?: IntersectionObserverInit
+): SubscribableThing<IntersectionObserverEntry[]>;
+```
 
 This function is a wrapper for the [`IntersectionObserver`](https://developer.mozilla.org/docs/Web/API/IntersectionObserver).
 
-### mediaDevices(): SubscribableThing\<MediaDeviceInfo[]>
+### mediaDevices()
+
+```ts
+function mediaDevices(): SubscribableThing<MediaDeviceInfo[]>;
+```
 
 This function is a wrapper for the [`enumerateDevices()`](https://developer.mozilla.org/docs/Web/API/MediaDevices/enumerateDevices) method of the [Media Capture and Streams specification](https://w3c.github.io/mediacapture-main). It will also listen for the [`devicechange` event](https://developer.mozilla.org/docs/Web/API/MediaDevices/devicechange_event) to emit a fresh list of devices whenever they change.
 
-### mediaQueryMatch(mediaQueryString: string): SubscribableThing\<boolean>
+### mediaQueryMatch(mediaQueryString)
+
+```ts
+function mediaQueryMatch(mediaQueryString: string): SubscribableThing<boolean>;
+```
 
 This function is a wrapper for the [`matchMedia()`](https://developer.mozilla.org/docs/Web/API/Window/matchMedia) method. It will emit a new value whenever the result of `matchMedia()` changes.
 
-### midiInputs(midiAccess: IMidiAccess): SubscribableThing\<IMidiInput[]>
+### midiInputs(midiAccess)
+
+```ts
+function midiInputs(midiAccess: IMidiAccess): SubscribableThing<IMidiInput[]>;
+```
 
 This function returns the currently available MIDI input devices. It accepts a [`MIDIAccess`](https://developer.mozilla.org/docs/Web/API/MIDIAccess) object of the [Web MIDI API](https://webaudio.github.io/web-midi-api).
 
-### midiOutputs(midiAccess: IMidiAccess): SubscribableThing\<IMidiOutput[]>
+### midiOutputs(midiAccess)
+
+```ts
+function midiOutputs(midiAccess: IMidiAccess): SubscribableThing<IMidiOutput[]>;
+```
 
 This function returns the currently available MIDI output devices. It accepts a [`MIDIAccess`](https://developer.mozilla.org/docs/Web/API/MIDIAccess) object of the [Web MIDI API](https://webaudio.github.io/web-midi-api).
 
-### metrics(options: PerformanceObserverInit): SubscribableThing\<PerformanceEntry[]>
+### metrics(options)
+
+```ts
+function metrics(options: PerformanceObserverInit): SubscribableThing<PerformanceEntry[]>;
+```
 
 This function is a wrapper for the [`PerformanceObserver`](https://developer.mozilla.org/docs/Web/API/PerformanceObserver) as defined by the [Performance Timeline Level 2 specification](https://w3c.github.io/performance-timeline).
 
-### mutations(htmlElement: HTMLElement, options: MutationObserverInit): SubscribableThing\<MutationRecord[]>
+### mutations(htmlElement, options)
+
+```ts
+function mutations(
+    htmlElement: HTMLElement,
+    options: MutationObserverInit
+): SubscribableThing<MutationRecord[]>;
+```
 
 This function is a wrapper for the [`MutationObserver`](https://developer.mozilla.org/docs/Web/API/MutationObserver).
 
-### on(target: EventTarget, type: string, options?: boolean | AddEventListenerOptions): SubscribableThing\<Event>
+### on(target, type, [options])
+
+```ts
+function on(
+    target: EventTarget,
+    type: string,
+    options?: boolean | AddEventListenerOptions
+): SubscribableThing<Event>;
+```
 
 This function can be used to subscribe to events of a certain type dispatched from an [`EventTarget`](https://dom.spec.whatwg.org/#interface-eventtarget).
 
-### online(): SubscribableThing\<boolean>
+### online()
+
+```ts
+function online(): SubscribableThing<boolean>;
+```
 
 This function wraps the [`onLine`](https://developer.mozilla.org/docs/Web/API/NavigatorOnLine/onLine) property of the [`Navigator`](https://developer.mozilla.org/docs/Web/API/Navigator) and listens for the corresponding [`'online'`](https://developer.mozilla.org/docs/Web/API/Window/online_event) and [`'offline'`](https://developer.mozilla.org/docs/Web/API/Window/offline_event) events on the [`Window`](https://developer.mozilla.org/docs/Web/API/Window) to emit updates.
 
-### permissionState(permissionDescriptor: PermissionDescriptor): SubscribableThing\<PermissionState>
+### permissionState(permissionDescriptor)
+
+```ts
+function permissionState(
+    permissionDescriptor: PermissionDescriptor
+): SubscribableThing<PermissionState>;
+```
 
 This function is a wrapper for the [`query()`](https://developer.mozilla.org/docs/Web/API/Permissions/query) method of the [Permissions API](https://w3c.github.io/permissions). It will monitor the permission status to emit a new state whenever it gets updated.
 
-### reports(options?: IReportingObserverOptions): SubscribableThing\<IReport[]>
+### reports([options])
+
+```ts
+function reports(options?: IReportingObserverOptions): SubscribableThing<IReport[]>;
+```
 
 This function is a wrapper for the [`ReportingObserver`](https://developer.mozilla.org/docs/Web/API/ReportingObserver) of the [Reporting API](https://w3c.github.io/reporting).
 
-### resizes(htmlElement: HTMLElement, options?: IResizesObserverOptions): SubscribableThing\<IResizeObserverEntry[]>
+### resizes(htmlElement, [options])
+
+```ts
+function resizes(
+    htmlElement: HTMLElement,
+    options?: IResizesObserverOptions
+): SubscribableThing<IResizeObserverEntry[]>;
+```
 
 This function is a wrapper for the [`ResizeObserver`](https://developer.mozilla.org/docs/Web/API/ResizeObserver) of the [Resize Observer specification](https://drafts.csswg.org/resize-observer).
 
-### unhandledRejection(coolingOffPeriod: number): SubscribableThing\<any>
+### unhandledRejection(coolingOffPeriod)
+
+```ts
+function unhandledRejection(coolingOffPeriod: number): SubscribableThing<any>;
+```
 
 This function emits unhandled rejections. It will listen for the [`unhandledrejection` event](https://developer.mozilla.org/docs/Web/API/Window/unhandledrejection_event) to register possibly unhandled rejections. It will then wait for the cooling-off period to elapse before it emits the reason (aka the error) that caused the unhandled rejection. It is possible that a previously unhandled rejection gets handled later on in which case a [`rejectionhandled` event](https://developer.mozilla.org/docs/Web/API/Window/rejectionhandled_event) will be fired. If that happens during the cooling-off period nothing will be emitted by this function.
 
-### videoFrame(videoElement: HTMLVideoElement): SubscribableThing\<{ now: number } & IVideoFrameMetadata>
+### videoFrame(videoElement)
+
+```ts
+function videoFrame(
+    videoElement: HTMLVideoElement
+): SubscribableThing<{ now: number } & IVideoFrameMetadata>;
+```
 
 This function wraps the [`requestVideoFrameCallback()`](https://wicg.github.io/video-rvfc) method of the given [`HTMLVideoElement`](https://html.spec.whatwg.org/multipage/media.html#htmlvideoelement). It emits the current timestamp combined with the [`VideoFrameMetadata`](https://wicg.github.io/video-rvfc/#video-frame-metadata) object.
 
-### wakeLock(type: TWakeLockType): SubscribableThing\<boolen>
+### wakeLock(type)
+
+```ts
+function wakeLock(type: TWakeLockType): SubscribableThing<boolen>;
+```
 
 This function simplifies the usage of the [Screen Wake Lock API](https://w3c.github.io/screen-wake-lock). It emits true when a wake lock could be acquired and emits false once the wake lock gets released by the browser. As long as the subscription is alive it will continuosly try to get a new wake lock if the current one gets released.
