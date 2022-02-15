@@ -274,3 +274,7 @@ function wakeLock(type: TWakeLockType): SubscribableThing<boolen>;
 ```
 
 This function simplifies the usage of the [Screen Wake Lock API](https://w3c.github.io/screen-wake-lock). It emits true when a wake lock could be acquired and emits false once the wake lock gets released by the browser. As long as the subscription is alive it will continuosly try to get a new wake lock if the current one gets released.
+
+## Alternatives
+
+There are two similar packages available which are based directly on RxJS. They are [rx-use](https://github.com/streamich/rx-use) and [rxjs-web](https://github.com/niklas-wortmann/rxjs-web).
