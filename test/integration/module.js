@@ -4,6 +4,7 @@ describe('module', () => {
     it('should export all expected exports', () => {
         expect(subscribableThings).to.have.keys(
             'animationFrame',
+            'attribute',
             'geolocation',
             'intersections',
             'mediaDevices',

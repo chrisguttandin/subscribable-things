@@ -1,7 +1,9 @@
 import { patch, toObserver } from 'rxjs-interop';
 import { createAnimationFrame } from './factories/animation-frame';
+import { createAttribute } from './factories/attribute';
 import { createGeolocation } from './factories/geolocation';
 import { createIntersections } from './factories/intersections';
+import { createMapSubscribableThing } from './factories/map-subscribable-thing';
 import { createMediaDevices } from './factories/media-devices';
 import { createMediaQueryMatch } from './factories/media-query-match';
 import { createMetrics } from './factories/metrics';
@@ -11,6 +13,7 @@ import { createMutations } from './factories/mutations';
 import { createOn } from './factories/on';
 import { createOnline } from './factories/online';
 import { createPermissionState } from './factories/permission-state';
+import { createPrependSubscribableThing } from './factories/prepend-subscribable-thing';
 import { createReports } from './factories/reports';
 import { createResizes } from './factories/resizes';
 import { createUnhandledRejection } from './factories/unhandled-rejection';
@@ -32,6 +35,13 @@ const wrapSubscribeFunction = createWrapSubscribeFunction(patch, toObserver);
 
 export const animationFrame = createAnimationFrame(emitNotSupportedError, window, wrapSubscribeFunction);
 
+export const mutations = createMutations(emitNotSupportedError, window, wrapSubscribeFunction);
+
+const mapSubscribableThing = createMapSubscribableThing(wrapSubscribeFunction);
+const prependSubscribableThing = createPrependSubscribableThing(wrapSubscribeFunction);
+
+export const attribute = createAttribute(mapSubscribableThing, mutations, prependSubscribableThing);
+
 export const geolocation = createGeolocation(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const intersections = createIntersections(emitNotSupportedError, window, wrapSubscribeFunction);
@@ -45,8 +55,6 @@ export const metrics = createMetrics(emitNotSupportedError, window, wrapSubscrib
 export const midiInputs = createMidiInputs(wrapSubscribeFunction);
 
 export const midiOutputs = createMidiOutputs(wrapSubscribeFunction);
-
-export const mutations = createMutations(emitNotSupportedError, window, wrapSubscribeFunction);
 
 export const on = createOn(wrapSubscribeFunction);
 

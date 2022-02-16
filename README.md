@@ -130,6 +130,14 @@ function animationFrame(): SubscribableThing<number>;
 
 This function wraps the [`requestAnimationFrame()`](https://html.spec.whatwg.org/multipage/imagebitmap-and-animations.html#dom-animationframeprovider-requestanimationframe) method. It emits the current timestamp of each animation frame.
 
+### attribute(htmlElement, name)
+
+```ts
+function attribute(htmlElement: HTMLElement, name: string): TSubscribableThing<null | string>;
+```
+
+This function uses `mutations()` on the inside to emit the latest value of the attribute with the given name.
+
 ### geolocation([options])
 
 ```ts
