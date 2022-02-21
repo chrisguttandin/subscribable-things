@@ -1,8 +1,7 @@
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+import { first, from } from 'rxjs'; // eslint-disable-line sort-imports
 import { animationFrame } from '../../src/module';
 import { eachValueFrom } from 'rxjs-for-await';
-import { first } from 'rxjs/operators';
-import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
 import h from 'hyperf';

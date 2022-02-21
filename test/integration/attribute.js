@@ -1,8 +1,7 @@
 import { forEach, fromObs, pipe, scan, skip, take as takeCallbag } from 'callbag-basics';
-import { take as takeRxJS, toArray } from 'rxjs/operators';
+import { from, take as takeRxJS, toArray } from 'rxjs';
 import { attribute } from '../../src/module';
 import { eachValueFrom } from 'rxjs-for-await';
-import { from } from 'rxjs';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
 import h from 'hyperf';
