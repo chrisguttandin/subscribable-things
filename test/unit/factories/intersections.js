@@ -159,7 +159,7 @@ describe('intersections()', () => {
                 intersections('a fake HTML element');
             });
 
-            it('should call disonnect()', () => {
+            it('should call disconnect()', () => {
                 unsubscribe();
 
                 expect(intersectionObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();

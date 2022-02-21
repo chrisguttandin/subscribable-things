@@ -168,7 +168,7 @@ describe('mutations()', () => {
                 mutations('a fake HTML element', {});
             });
 
-            it('should call disonnect()', () => {
+            it('should call disconnect()', () => {
                 unsubscribe();
 
                 expect(mutationObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();

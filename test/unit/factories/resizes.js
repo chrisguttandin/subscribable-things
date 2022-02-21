@@ -158,7 +158,7 @@ describe('resizes()', () => {
                 resizes('a fake HTML element');
             });
 
-            it('should call disonnect()', () => {
+            it('should call disconnect()', () => {
                 unsubscribe();
 
                 expect(resizeObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();

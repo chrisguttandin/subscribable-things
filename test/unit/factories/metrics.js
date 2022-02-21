@@ -167,7 +167,7 @@ describe('metrics()', () => {
                 metrics({});
             });
 
-            it('should call disonnect()', () => {
+            it('should call disconnect()', () => {
                 unsubscribe();
 
                 expect(performanceObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();

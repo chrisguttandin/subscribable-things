@@ -157,7 +157,7 @@ describe('reports()', () => {
                 reports();
             });
 
-            it('should call disonnect()', () => {
+            it('should call disconnect()', () => {
                 unsubscribe();
 
                 expect(reportingObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
