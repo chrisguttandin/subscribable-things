@@ -235,6 +235,7 @@ module.exports = (config) => {
                 FirefoxDeveloperWithPrefs: {
                     base: 'FirefoxDeveloperHeadless',
                     prefs: {
+                        'dom.webmidi.enabled': false,
                         'geo.provider.network.url': `data:application/json,${JSON.stringify({
                             accuracy: GEOLOCATION.accuracy,
                             location: { lat: GEOLOCATION.latitude, lng: GEOLOCATION.longitude }
@@ -246,6 +247,7 @@ module.exports = (config) => {
                 FirefoxHeadlessWithPrefs: {
                     base: 'FirefoxHeadless',
                     prefs: {
+                        'dom.webmidi.enabled': false,
                         'geo.provider.network.url': `data:application/json,${JSON.stringify({
                             accuracy: GEOLOCATION.accuracy,
                             location: { lat: GEOLOCATION.latitude, lng: GEOLOCATION.longitude }
