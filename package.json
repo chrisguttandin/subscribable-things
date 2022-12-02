@@ -15,7 +15,7 @@
         }
     ],
     "dependencies": {
-        "@babel/runtime": "^7.20.1",
+        "@babel/runtime": "^7.20.6",
         "rxjs-interop": "^2.0.0",
         "tslib": "^2.4.1"
     },
