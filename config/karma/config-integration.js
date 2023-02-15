@@ -90,12 +90,12 @@ module.exports = (config) => {
 
                         return (req, res, next) => {
                             if (req.url === '/clear-geolocation') {
-                                fetch('http://localhost:9222/json')
+                                fetch()
                                     .then(([{ webSocketDebuggerUrl }]) => send(webSocketDebuggerUrl, 'Emulation.clearGeolocationOverride'))
                                     .then(() => respond(res));
                             } else if (req.url === '/grant-permissions') {
                                 jsonMiddleware(req, res, () => {
-                                    fetch('http://localhost:9222/json')
+                                    fetch()
                                         .then(([{ webSocketDebuggerUrl }]) =>
                                             send(webSocketDebuggerUrl, 'Browser.grantPermissions', {
                                                 origin: 'http://localhost:9876',
@@ -115,13 +115,13 @@ module.exports = (config) => {
                                         });
                                 });
                             } else if (req.url === '/emulate-geolocation') {
-                                fetch('http://localhost:9222/json')
+                                fetch()
                                     .then(([{ webSocketDebuggerUrl }]) =>
                                         send(webSocketDebuggerUrl, 'Emulation.setGeolocationOverride', GEOLOCATION)
                                     )
                                     .then(() => respond(res));
                             } else if (req.url === '/reset-permissions') {
-                                fetch('http://localhost:9222/json')
+                                fetch()
                                     .then(([{ webSocketDebuggerUrl }]) =>
                                         send(webSocketDebuggerUrl, 'Browser.resetPermissions', { origin: 'http://localhost:9876' })
                                     )
