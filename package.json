@@ -40,7 +40,7 @@
         "grunt-cli": "^1.4.3",
         "grunt-sh": "^0.2.1",
         "husky": "^8.0.3",
-        "hyperf": "^1.5.0",
+        "hyperf": "^1.6.0",
         "karma": "^6.4.1",
         "karma-browserstack-launcher": "^1.6.0",
         "karma-chrome-launcher": "^3.1.1",
