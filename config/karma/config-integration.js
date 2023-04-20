@@ -12,7 +12,7 @@ const GEOLOCATION = { accuracy: 1, latitude: 50, longitude: 50 };
 // eslint-disable-next-line padding-line-between-statements
 const fetch = () =>
     new Promise((resolve) => {
-        request('http://localhost:9222/json', (response) => {
+        request('http://127.0.0.1:9222/json', (response) => {
             let buffer = null;
 
             response
