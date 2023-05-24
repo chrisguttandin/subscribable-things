@@ -17,7 +17,7 @@
     "dependencies": {
         "@babel/runtime": "^7.21.5",
         "rxjs-interop": "^2.0.0",
-        "tslib": "^2.5.0"
+        "tslib": "^2.5.2"
     },
     "description": "A collection of reactive wrappers for various browser APIs.",
     "devDependencies": {
