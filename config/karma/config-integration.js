@@ -97,13 +97,10 @@ module.exports = (config) => {
                                 jsonMiddleware(req, res, () => {
                                     fetch()
                                         .then(([{ webSocketDebuggerUrl }]) =>
-                                            send(webSocketDebuggerUrl, 'Browser.grantPermissions', {
-                                                origin: 'http://localhost:9876',
-                                                permissions: req.body
-                                            })
+                                            send(webSocketDebuggerUrl, 'Browser.grantPermissions', req.body)
                                         )
                                         .then(() => {
-                                            if (req.body.includes('midi')) {
+                                            if (req.body.permissions.includes('midi')) {
                                                 virtualInputDevice = new MidiSrc('Virtual Input Device');
                                                 virtualInputDevice.connect();
 
@@ -121,16 +118,18 @@ module.exports = (config) => {
                                     )
                                     .then(() => respond(res));
                             } else if (req.url === '/reset-permissions') {
-                                fetch()
-                                    .then(([{ webSocketDebuggerUrl }]) =>
-                                        send(webSocketDebuggerUrl, 'Browser.resetPermissions', { origin: 'http://localhost:9876' })
-                                    )
-                                    .then(() => {
-                                        virtualInputDevice?.disconnect();
-                                        virtualOutputDevice?.disconnect();
+                                jsonMiddleware(req, res, () => {
+                                    fetch()
+                                        .then(([{ webSocketDebuggerUrl }]) =>
+                                            send(webSocketDebuggerUrl, 'Browser.resetPermissions', req.body)
+                                        )
+                                        .then(() => {
+                                            virtualInputDevice?.disconnect();
+                                            virtualOutputDevice?.disconnect();
 
-                                        respond(res);
-                                    });
+                                            respond(res);
+                                        });
+                                });
                             } else {
                                 next();
                             }

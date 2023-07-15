@@ -12,11 +12,11 @@ describe('midiOutputs()', () => {
     if (navigator.requestMIDIAccess) {
         let midiAccess;
 
-        after(() => fetch('/reset-permissions'));
+        after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
 
         before(async () => {
             await fetch('/grant-permissions', {
-                body: JSON.stringify(['midi', 'midiSysex']),
+                body: JSON.stringify({ origin: location.origin, permissions: ['midi', 'midiSysex'] }),
                 headers: { 'content-type': 'application/json' },
                 method: 'POST'
             });

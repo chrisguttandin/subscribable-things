@@ -9,11 +9,11 @@ import xs from 'xstream';
 
 describe('wakeLock', () => {
     if (navigator.wakeLock !== undefined && navigator.userAgent.includes('Chrome')) {
-        after(() => fetch('/reset-permissions'));
+        after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
 
         before(() =>
             fetch('/grant-permissions', {
-                body: JSON.stringify(['wakeLockScreen']),
+                body: JSON.stringify({ origin: location.origin, permissions: ['wakeLockScreen'] }),
                 headers: { 'content-type': 'application/json' },
                 method: 'POST'
             })

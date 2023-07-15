@@ -12,13 +12,13 @@ describe('geolocation', () => {
     // eslint-disable-next-line no-undef
     if (navigator.userAgent.includes('Chrome') || (!process.env.CI && navigator.userAgent.includes('Firefox'))) {
         if (navigator.userAgent.includes('Chrome')) {
-            after(() => fetch('/reset-permissions'));
+            after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
 
             afterEach(() => fetch('/clear-geolocation'));
 
             before(() =>
                 fetch('/grant-permissions', {
-                    body: JSON.stringify(['geolocation']),
+                    body: JSON.stringify({ origin: location.origin, permissions: ['geolocation'] }),
                     headers: { 'content-type': 'application/json' },
                     method: 'POST'
                 })
