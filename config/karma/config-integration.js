@@ -241,6 +241,7 @@ module.exports = (config) => {
                             location: { lat: GEOLOCATION.latitude, lng: GEOLOCATION.longitude }
                         })}`,
                         'geo.provider.testing': true,
+                        'media.devices.insecure.enabled': true,
                         'permissions.default.geo': 1
                     }
                 },
