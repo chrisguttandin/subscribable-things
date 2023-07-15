@@ -8,7 +8,7 @@ import { wakeLock } from '../../src/module';
 import xs from 'xstream';
 
 describe('wakeLock', () => {
-    if (navigator.wakeLock !== undefined) {
+    if (navigator.wakeLock !== undefined && navigator.userAgent.includes('Chrome')) {
         after(() => fetch('/reset-permissions'));
 
         before(() =>
@@ -29,6 +29,14 @@ describe('wakeLock', () => {
                     done();
                 }
             });
+        } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
+            from(wakeLock('screen')).subscribe({
+                error(err) {
+                    expect(err.name).to.equal('NotAllowedError');
+
+                    done();
+                }
+            });
         } else {
             from(wakeLock('screen'))
                 .pipe(first())
@@ -45,6 +53,14 @@ describe('wakeLock', () => {
             xs.fromObservable(wakeLock('screen')).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                    done();
+                }
+            });
+        } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
+            xs.fromObservable(wakeLock('screen')).subscribe({
+                error(err) {
+                    expect(err.name).to.equal('NotAllowedError');
 
                     done();
                 }
@@ -71,6 +87,14 @@ describe('wakeLock', () => {
 
                 done();
             });
+        } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
+            fromObs(wakeLock('screen'))(0, (code, err) => {
+                if (code === 2) {
+                    expect(err.name).to.equal('NotAllowedError');
+                }
+
+                done();
+            });
         } else {
             pipe(
                 fromObs(wakeLock('screen')),
@@ -91,6 +115,12 @@ describe('wakeLock', () => {
 
                 done();
             });
+        } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
+            fromESObservableBaconJs(wakeLock('screen')).onError((err) => {
+                expect(err.name).to.equal('NotAllowedError');
+
+                done();
+            });
         } else {
             fromESObservableBaconJs(wakeLock('screen'))
                 .first()
@@ -106,6 +136,12 @@ describe('wakeLock', () => {
         if (navigator.wakeLock === undefined) {
             fromESObservableKefirJs(wakeLock('screen')).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
+
+                done();
+            });
+        } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
+            fromESObservableKefirJs(wakeLock('screen')).onError((err) => {
+                expect(err.name).to.equal('NotAllowedError');
 
                 done();
             });
@@ -128,6 +164,12 @@ describe('wakeLock', () => {
                 eachValueFrom(source$)[Symbol.asyncIterator]();
             } catch (err) {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
+            }
+        } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
+            try {
+                eachValueFrom(source$)[Symbol.asyncIterator]();
+            } catch (err) {
+                expect(err.name).to.equal('NotAllowedError');
             }
         } else {
             // eslint-disable-next-line no-unreachable-loop
