@@ -31,7 +31,7 @@
         "baconjs": "^3.0.17",
         "body-parser": "^1.20.2",
         "callbag-basics": "^4.0.0",
-        "chai": "^4.3.7",
+        "chai": "^4.3.8",
         "commitizen": "^4.3.0",
         "cz-conventional-changelog": "^3.3.0",
         "eslint": "^8.49.0",
