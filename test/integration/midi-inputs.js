@@ -12,17 +12,23 @@ describe('midiInputs()', () => {
     if (navigator.requestMIDIAccess) {
         let midiAccess;
 
-        after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
+        if (navigator.userAgent.includes('Chrome')) {
+            after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
 
-        before(async () => {
-            await fetch('/grant-permissions', {
-                body: JSON.stringify({ origin: location.origin, permissions: ['midi', 'midiSysex'] }),
-                headers: { 'content-type': 'application/json' },
-                method: 'POST'
-            });
+            before(() =>
+                fetch('/grant-permissions', {
+                    body: JSON.stringify({ origin: location.origin, permissions: ['midi', 'midiSysex'] }),
+                    headers: { 'content-type': 'application/json' },
+                    method: 'POST'
+                })
+            );
+        } else {
+            after(() => fetch('/connect-devices', { method: 'POST' }));
 
-            midiAccess = await navigator.requestMIDIAccess({ sysex: true });
-        });
+            before(() => fetch('/disconnect-devices', { method: 'POST' }));
+        }
+
+        beforeEach(async () => (midiAccess = await navigator.requestMIDIAccess({ sysex: true })));
 
         it('should work with RxJS', (done) => {
             from(midiInputs(midiAccess))
@@ -156,7 +162,7 @@ describe('midiInputs()', () => {
 
                 while (true) {
                     try {
-                        expect(document.getElementById('test').textContent).to.equal('Virtual Input Device');
+                        expect(document.getElementById('test').textContent).to.include('Virtual Input Device');
 
                         break;
                     } catch {

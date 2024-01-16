@@ -93,6 +93,19 @@ module.exports = (config) => {
                                 fetch()
                                     .then(([{ webSocketDebuggerUrl }]) => send(webSocketDebuggerUrl, 'Emulation.clearGeolocationOverride'))
                                     .then(() => respond(res));
+                            } else if (req.url === '/connect-devices') {
+                                virtualInputDevice = new MidiSrc('Virtual Input Device');
+                                virtualInputDevice.connect();
+
+                                virtualOutputDevice = new MidiDst('Virtual Output Device');
+                                virtualOutputDevice.connect();
+
+                                respond(res);
+                            } else if (req.url === '/disconnect-devices') {
+                                virtualInputDevice?.disconnect();
+                                virtualOutputDevice?.disconnect();
+
+                                respond(res);
                             } else if (req.url === '/grant-permissions') {
                                 jsonMiddleware(req, res, () => {
                                     fetch()
@@ -198,10 +211,10 @@ module.exports = (config) => {
                 env.TARGET === 'chrome'
                     ? ['ChromeHeadlessWithFakeDevice']
                     : env.TARGET === 'firefox'
-                    ? ['FirefoxBrowserStack']
-                    : env.TARGET === 'safari'
-                    ? ['SafariBrowserStack']
-                    : ['ChromeHeadlessWithFakeDevice', 'FirefoxBrowserStack', 'SafariBrowserStack'],
+                      ? ['FirefoxBrowserStack']
+                      : env.TARGET === 'safari'
+                        ? ['SafariBrowserStack']
+                        : ['ChromeHeadlessWithFakeDevice', 'FirefoxBrowserStack', 'SafariBrowserStack'],
 
             captureTimeout: 300000,
 
