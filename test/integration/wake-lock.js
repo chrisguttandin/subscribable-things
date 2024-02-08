@@ -190,15 +190,18 @@ describe('wakeLock', () => {
                 this.timeout(0);
 
                 const arrayBuffers = [];
+
+                let byteLength = 100;
+
                 const interval = setInterval(() => {
                     try {
-                        arrayBuffers.push(
-                            new ArrayBuffer(arrayBuffers.length === 0 ? 100 : arrayBuffers[arrayBuffers.length - 1].byteLength * 10)
-                        );
+                        arrayBuffers.push(new ArrayBuffer(byteLength));
+
+                        byteLength *= 10;
                     } catch {
-                        arrayBuffers.pop();
+                        byteLength /= 10;
                     }
-                }, 100);
+                });
 
                 whenCollected = () => {
                     clearInterval(interval);
