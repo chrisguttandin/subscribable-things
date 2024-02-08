@@ -160,7 +160,7 @@ describe('midiInputs()', () => {
                     midiInputsArray.map(({ name }) => name).join(',')
                 )}</div>`;
 
-                document.body.appendChild(test);
+                setTimeout(() => document.body.appendChild(test));
                 finalizationRegistry.register(test);
 
                 while (true) {

@@ -177,7 +177,7 @@ describe('reports', () => {
                         reportList.map(({ type }) => type).join(',')
                     )}</div>`;
 
-                    document.body.appendChild(test);
+                    setTimeout(() => document.body.appendChild(test));
                     finalizationRegistry.register(test);
 
                     while (true) {

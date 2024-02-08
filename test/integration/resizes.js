@@ -127,7 +127,7 @@ describe('resizes', () => {
                 entries.map(({ target }) => target.nodeName).join(',')
             )}</div>`;
 
-            document.body.appendChild(test);
+            setTimeout(() => document.body.appendChild(test));
             finalizationRegistry.register(test);
 
             while (true) {

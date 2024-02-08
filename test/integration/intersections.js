@@ -123,7 +123,7 @@ describe('intersections', () => {
         it('should work with hyperf', async () => {
             const test = h`<div id="test">${map(intersections(document.body), (entries) => entries.length)}</div>`;
 
-            document.body.appendChild(test);
+            setTimeout(() => document.body.appendChild(test));
             finalizationRegistry.register(test);
 
             while (true) {

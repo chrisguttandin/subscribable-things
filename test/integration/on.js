@@ -117,7 +117,7 @@ describe('on', () => {
         it('should work with hyperf', async () => {
             const test = h`<div id="test">${map(on(htmlElement, 'click'), ({ target }) => target.nodeName)}</div>`;
 
-            document.body.appendChild(test);
+            setTimeout(() => document.body.appendChild(test));
             finalizationRegistry.register(test);
 
             while (true) {

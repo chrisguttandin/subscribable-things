@@ -145,7 +145,7 @@ describe('metrics', () => {
         it('should work with hyperf', async () => {
             const test = h`<div id="test">${map(metrics({ type: 'mark' }), (entries) => entries.map(({ name }) => name).join(','))}</div>`;
 
-            document.body.appendChild(test);
+            setTimeout(() => document.body.appendChild(test));
             finalizationRegistry.register(test);
 
             while (true) {

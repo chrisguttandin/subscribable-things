@@ -115,7 +115,7 @@ describe('unhandledRejection', () => {
         it('should work with hyperf', async () => {
             const test = h`<div id="test">${map(unhandledRejection(100), ({ message }) => message)}</div>`;
 
-            document.body.appendChild(test);
+            setTimeout(() => document.body.appendChild(test));
             finalizationRegistry.register(test);
 
             while (true) {

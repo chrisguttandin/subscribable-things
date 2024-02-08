@@ -161,7 +161,7 @@ describe('permissionState', () => {
             it('should work with hyperf', async () => {
                 const test = h`<div id="test">${permissionState({ name: 'notifications' })}</div>`;
 
-                document.body.appendChild(test);
+                setTimeout(() => document.body.appendChild(test));
                 finalizationRegistry.register(test);
 
                 while (true) {

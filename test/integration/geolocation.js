@@ -146,7 +146,7 @@ describe('geolocation', () => {
                     ({ coords: { accuracy, latitude, longitude } }) => `${accuracy}-${latitude}-${longitude}`
                 )}</div>`;
 
-                document.body.appendChild(test);
+                setTimeout(() => document.body.appendChild(test));
                 finalizationRegistry.register(test);
 
                 while (true) {
