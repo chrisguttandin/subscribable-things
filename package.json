@@ -52,7 +52,7 @@
         "kefir": "^3.8.8",
         "lint-staged": "^15.2.2",
         "load-grunt-config": "^4.0.1",
-        "midi-test": "^1.2.8",
+        "midi-test": "^1.2.9",
         "mocha": "^10.3.0",
         "prettier": "^3.2.5",
         "rimraf": "^5.0.5",
