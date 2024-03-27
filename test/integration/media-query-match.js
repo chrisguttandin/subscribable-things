@@ -9,7 +9,7 @@ import xs from 'xstream';
 
 describe('mediaQueryMatch', () => {
     it('should work with RxJS', (done) => {
-        from(mediaQueryMatch('(max-width:600px)'))
+        from(mediaQueryMatch('(resolution:777dpi)'))
             .pipe(first())
             .subscribe((isMatching) => {
                 expect(isMatching).to.be.a('boolean');
@@ -19,7 +19,7 @@ describe('mediaQueryMatch', () => {
     });
 
     it('should work with XStream', (done) => {
-        xs.fromObservable(mediaQueryMatch('(max-width:600px)'))
+        xs.fromObservable(mediaQueryMatch('(resolution:777dpi)'))
             .take(1)
             .subscribe({
                 next(isMatching) {
@@ -32,7 +32,7 @@ describe('mediaQueryMatch', () => {
 
     it('should work with callbags', (done) => {
         pipe(
-            fromObs(mediaQueryMatch('(max-width:600px)')),
+            fromObs(mediaQueryMatch('(resolution:777dpi)')),
             take(1),
             forEach((isMatching) => {
                 expect(isMatching).to.be.a('boolean');
@@ -43,7 +43,7 @@ describe('mediaQueryMatch', () => {
     });
 
     it('should work with Bacon.js', (done) => {
-        fromESObservableBaconJs(mediaQueryMatch('(max-width:600px)'))
+        fromESObservableBaconJs(mediaQueryMatch('(resolution:777dpi)'))
             .first()
             .onValue((isMatching) => {
                 expect(isMatching).to.be.a('boolean');
@@ -53,7 +53,7 @@ describe('mediaQueryMatch', () => {
     });
 
     it('should work with Kefir.js', (done) => {
-        fromESObservableKefirJs(mediaQueryMatch('(max-width:600px)'))
+        fromESObservableKefirJs(mediaQueryMatch('(resolution:777dpi)'))
             .take(1)
             .onValue((isMatching) => {
                 expect(isMatching).to.be.a('boolean');
@@ -63,7 +63,7 @@ describe('mediaQueryMatch', () => {
     });
 
     it('should work with rxjs-for-await', async () => {
-        const source$ = from(mediaQueryMatch('(max-width:600px)'));
+        const source$ = from(mediaQueryMatch('(resolution:777dpi)'));
 
         // eslint-disable-next-line no-unreachable-loop
         for await (const isMatching of eachValueFrom(source$)) {
@@ -104,7 +104,7 @@ describe('mediaQueryMatch', () => {
         beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));
 
         it('should work with hyperf', async () => {
-            const test = h`<div id="test">${mediaQueryMatch('(max-width:600px)')}</div>`;
+            const test = h`<div id="test">${mediaQueryMatch('(resolution:777dpi)')}</div>`;
 
             setTimeout(() => document.body.appendChild(test));
             finalizationRegistry.register(test);
