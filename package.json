@@ -21,7 +21,7 @@
     },
     "description": "A collection of reactive wrappers for various browser APIs.",
     "devDependencies": {
-        "@babel/core": "^7.25.2",
+        "@babel/core": "^7.25.7",
         "@babel/plugin-external-helpers": "^7.24.7",
         "@babel/plugin-transform-runtime": "^7.25.4",
         "@babel/preset-env": "^7.25.4",
