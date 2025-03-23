@@ -97,9 +97,9 @@
         "lint:test": "eslint --config config/eslint/test.json --ext .js --report-unused-disable-directives test/",
         "prepare": "husky",
         "prepublishOnly": "npm run build",
-        "test": "npm run lint && grunt test",
-        "test:integration": "karma start config/karma/config-integration.js --single-run",
-        "test:unit": "karma start config/karma/config-unit.js --single-run"
+        "test": "npm run lint && npm run build && npm run test:integration && npm run test:unit",
+        "test:integration": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ]; then karma start config/karma/config-integration.js --single-run; fi",
+        "test:unit": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"unit\" ]; then karma start config/karma/config-unit.js --single-run; fi"
     },
     "types": "build/es2019/module.d.ts",
     "version": "2.1.50"
