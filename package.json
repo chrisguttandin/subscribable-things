@@ -28,7 +28,7 @@
         "@commitlint/cli": "^19.8.0",
         "@commitlint/config-angular": "^19.8.0",
         "@rollup/plugin-babel": "^6.0.4",
-        "baconjs": "^3.0.20",
+        "baconjs": "^3.0.21",
         "body-parser": "^2.2.0",
         "callbag-basics": "^4.0.0",
         "chai": "^4.3.10",
