@@ -29,7 +29,7 @@
         "@commitlint/config-angular": "^19.8.1",
         "@rollup/plugin-babel": "^6.1.0",
         "baconjs": "^3.0.23",
-        "body-parser": "^2.2.0",
+        "body-parser": "^2.2.1",
         "callbag-basics": "^4.0.0",
         "chai": "^4.3.10",
         "commitizen": "^4.3.1",
