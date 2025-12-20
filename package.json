@@ -52,7 +52,7 @@
         "mocha": "^11.7.5",
         "prettier": "^3.7.4",
         "rimraf": "^6.1.2",
-        "rollup": "^4.53.4",
+        "rollup": "^4.54.0",
         "rxjs": "^7.8.2",
         "rxjs-for-await": "^1.0.0",
         "sinon": "^17.0.2",
