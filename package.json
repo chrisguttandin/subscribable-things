@@ -28,6 +28,7 @@
         "@commitlint/cli": "^20.4.1",
         "@commitlint/config-angular": "^20.4.1",
         "@rollup/plugin-babel": "^6.1.0",
+        "@vitest/browser-webdriverio": "^4.1.0",
         "baconjs": "^3.0.23",
         "body-parser": "^2.2.2",
         "callbag-basics": "^4.0.0",
