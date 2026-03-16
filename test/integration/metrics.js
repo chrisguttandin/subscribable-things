@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -11,7 +13,9 @@ import xs from 'xstream';
 describe('metrics', () => {
     beforeEach(() => setTimeout(() => performance.mark('a fake name')));
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         from(metrics({ type: 'mark' }))
             .pipe(first())
             .subscribe((entries) => {
@@ -23,11 +27,15 @@ describe('metrics', () => {
                 expect(entry.entryType).to.equal('mark');
                 expect(entry.name).to.equal('a fake name');
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         xs.fromObservable(metrics({ type: 'mark' }))
             .take(1)
             .subscribe({
@@ -40,12 +48,16 @@ describe('metrics', () => {
                     expect(entry.entryType).to.equal('mark');
                     expect(entry.name).to.equal('a fake name');
 
-                    done();
+                    resolve();
                 }
             });
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         pipe(
             fromObs(metrics({ type: 'mark' })),
             take(1),
@@ -58,12 +70,16 @@ describe('metrics', () => {
                 expect(entry.entryType).to.equal('mark');
                 expect(entry.name).to.equal('a fake name');
 
-                done();
+                resolve();
             })
         );
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableBaconJs(metrics({ type: 'mark' }))
             .first()
             .onValue((entries) => {
@@ -75,11 +91,15 @@ describe('metrics', () => {
                 expect(entry.entryType).to.equal('mark');
                 expect(entry.name).to.equal('a fake name');
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableKefirJs(metrics({ type: 'mark' }))
             .take(1)
             .onValue((entries) => {
@@ -91,8 +111,10 @@ describe('metrics', () => {
                 expect(entry.entryType).to.equal('mark');
                 expect(entry.name).to.equal('a fake name');
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -116,9 +138,7 @@ describe('metrics', () => {
         let finalizationRegistry;
         let whenCollected;
 
-        afterEach(function (done) {
-            this.timeout(0);
-
+        afterEach(() => {
             const arrayBuffers = [];
 
             let byteLength = 100;
@@ -132,12 +152,15 @@ describe('metrics', () => {
                     byteLength /= 10;
                 }
             });
+            const { promise, resolve } = Promise.withResolvers();
 
             whenCollected = () => {
                 clearInterval(interval);
-                done();
+                resolve();
             };
-        });
+
+            return promise;
+        }, 0);
 
         // eslint-disable-next-line no-undef
         beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

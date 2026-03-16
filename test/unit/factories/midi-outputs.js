@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMidiOutputs } from '../../../src/factories/midi-outputs';
 
 describe('midiOutputs()', () => {
@@ -6,7 +6,7 @@ describe('midiOutputs()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        wrapSubscribeFunction = stub();
+        wrapSubscribeFunction = vi.fn();
 
         midiOutputs = createMidiOutputs(wrapSubscribeFunction);
     });
@@ -15,15 +15,13 @@ describe('midiOutputs()', () => {
         midiOutputs({ a: 'fake', midiAccess: 'object' });
 
         expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-        expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-        expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+        expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
     });
 
     it('should return the value returned by wrapSubscribeFunction()', () => {
         const value = 'a fake return value';
 
-        wrapSubscribeFunction.returns(value);
+        wrapSubscribeFunction.mockReturnValue(value);
 
         expect(midiOutputs({ a: 'fake', midiAccess: 'object' })).to.equal(value);
     });
@@ -36,14 +34,14 @@ describe('midiOutputs()', () => {
 
         beforeEach(() => {
             midiAccess = {
-                addEventListener: stub(),
+                addEventListener: vi.fn(),
                 outputs: new Map([['a-fake-id', { a: 'fake midi output', id: 'a-fake-id' }]]),
-                removeEventListener: spy()
+                removeEventListener: vi.fn()
             };
-            observer = { next: spy() };
+            observer = { next: vi.fn() };
 
-            midiAccess.addEventListener.callsFake((_, value) => (eventListener = value));
-            wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+            midiAccess.addEventListener.mockImplementation((_, value) => (eventListener = value));
+            wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
             midiOutputs(midiAccess);
         });
@@ -51,31 +49,31 @@ describe('midiOutputs()', () => {
         it('should register a statechange event listener', () => {
             subscribe(observer);
 
-            expect(midiAccess.addEventListener).to.have.been.calledOnce.and.calledWithExactly('statechange', eventListener);
+            expect(midiAccess.addEventListener).to.have.been.calledOnce.and.calledWith('statechange', eventListener);
         });
 
         it('should call next() with the transformed value of midiAccess.outputs right away', () => {
             subscribe(observer);
 
-            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(Array.from(midiAccess.outputs.values()));
+            expect(observer.next).to.have.been.calledOnce.and.calledWith(Array.from(midiAccess.outputs.values()));
         });
 
         it('should call next() with the transformed value of midiAccess.outputs on each statechange event', () => {
             subscribe(observer);
 
-            observer.next.resetHistory();
+            observer.next.mockClear();
 
             midiAccess.outputs = new Map([['another-fake-id', { another: 'fake midi output', id: 'another-fake-id' }]]);
 
             eventListener();
 
-            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(Array.from(midiAccess.outputs.values()));
+            expect(observer.next).to.have.been.calledOnce.and.calledWith(Array.from(midiAccess.outputs.values()));
         });
 
         it('should not call next() on a statechange event if the outputs remain the same', () => {
             subscribe(observer);
 
-            observer.next.resetHistory();
+            observer.next.mockClear();
 
             midiAccess.outputs = new Map([['a-fake-id', { a: 'fake midi output', id: 'a-fake-id' }]]);
 
@@ -96,13 +94,13 @@ describe('midiOutputs()', () => {
 
         beforeEach(() => {
             midiAccess = {
-                addEventListener: stub(),
+                addEventListener: vi.fn(),
                 outputs: new Map(),
-                removeEventListener: spy()
+                removeEventListener: vi.fn()
             };
 
-            midiAccess.addEventListener.callsFake((_, value) => (eventListener = value));
-            wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+            midiAccess.addEventListener.mockImplementation((_, value) => (eventListener = value));
+            wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
             midiOutputs(midiAccess);
         });
@@ -110,7 +108,7 @@ describe('midiOutputs()', () => {
         it('should remove the statechange event listener', () => {
             unsubscribe();
 
-            expect(midiAccess.removeEventListener).to.have.been.calledOnce.and.calledWithExactly('statechange', eventListener);
+            expect(midiAccess.removeEventListener).to.have.been.calledOnce.and.calledWith('statechange', eventListener);
         });
 
         it('should return undefined', () => {

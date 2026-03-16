@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createWakeLock } from '../../../src/factories/wake-lock';
 
 describe('wakeLock()', () => {
@@ -7,8 +7,8 @@ describe('wakeLock()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +24,13 @@ describe('wakeLock()', () => {
             wakeLock('screen');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(wakeLock('screen')).to.equal(value);
         });
@@ -44,7 +42,7 @@ describe('wakeLock()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 wakeLock('screen');
             });
@@ -52,13 +50,13 @@ describe('wakeLock()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +67,7 @@ describe('wakeLock()', () => {
         let window;
 
         beforeEach(() => {
-            window = { navigator: { wakeLock: { request: stub() } } };
+            window = { navigator: { wakeLock: { request: vi.fn() } } };
 
             wakeLock = createWakeLock(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +76,13 @@ describe('wakeLock()', () => {
             wakeLock('screen');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(wakeLock('screen')).to.equal(value);
         });
@@ -98,12 +94,12 @@ describe('wakeLock()', () => {
             let wakeLockType;
 
             beforeEach(() => {
-                observer = { error: spy(), next: spy() };
+                observer = { error: vi.fn(), next: vi.fn() };
                 wakeLockSentinel = {};
                 wakeLockType = 'screen';
 
-                window.navigator.wakeLock.request.resolves(wakeLockSentinel);
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                window.navigator.wakeLock.request.mockResolvedValue(wakeLockSentinel);
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 wakeLock(wakeLockType);
             });
@@ -111,7 +107,7 @@ describe('wakeLock()', () => {
             it('should call request() with the given wakeLockType', () => {
                 subscribe(observer);
 
-                expect(window.navigator.wakeLock.request).to.have.been.calledOnce.and.calledWithExactly(wakeLockType);
+                expect(window.navigator.wakeLock.request).to.have.been.calledOnce.and.calledWith(wakeLockType);
             });
 
             it('should call next() with true when the promise is resolved', async () => {
@@ -119,20 +115,20 @@ describe('wakeLock()', () => {
 
                 await Promise.resolve();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(true);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(true);
             });
 
             it('should call error() with an error when the promise is rejected', async () => {
                 const err = new Error('a fake error');
 
-                window.navigator.wakeLock.request.rejects(err);
+                window.navigator.wakeLock.request.mockRejectedValue(err);
 
                 subscribe(observer);
 
                 await Promise.resolve();
                 await Promise.resolve();
 
-                expect(observer.error).to.have.been.calledOnce.and.calledWithExactly(err);
+                expect(observer.error).to.have.been.calledOnce.and.calledWith(err);
             });
 
             it('should call next() with false on each release event', async () => {
@@ -140,11 +136,11 @@ describe('wakeLock()', () => {
 
                 await Promise.resolve();
 
-                observer.next.resetHistory();
+                observer.next.mockClear();
 
                 wakeLockSentinel.onrelease();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(false);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(false);
             });
 
             it('should remove the release event listener on each release event', async () => {
@@ -162,11 +158,11 @@ describe('wakeLock()', () => {
 
                 await Promise.resolve();
 
-                window.navigator.wakeLock.request.resetHistory();
+                window.navigator.wakeLock.request.mockClear();
 
                 wakeLockSentinel.onrelease();
 
-                expect(window.navigator.wakeLock.request).to.have.been.calledOnce.and.calledWithExactly(wakeLockType);
+                expect(window.navigator.wakeLock.request).to.have.been.calledOnce.and.calledWith(wakeLockType);
             });
 
             it('should return a function', () => {
@@ -182,17 +178,16 @@ describe('wakeLock()', () => {
 
             beforeEach(() => {
                 observer = { next: () => {} };
-                wakeLockSentinel = { release: stub() };
+                wakeLockSentinel = { release: vi.fn() };
                 wakeLockType = 'screen';
 
-                wakeLockSentinel.release.resolves();
-                window.navigator.wakeLock.request.resolves(wakeLockSentinel);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe(observer)));
-
-                wakeLock(wakeLockType);
+                wakeLockSentinel.release.mockResolvedValue();
+                window.navigator.wakeLock.request.mockResolvedValue(wakeLockSentinel);
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe(observer)));
             });
 
             it('should not assign the release event listener when calling unsubscribe() right away', async () => {
+                wakeLock(wakeLockType);
                 unsubscribe();
 
                 await Promise.resolve();
@@ -201,6 +196,8 @@ describe('wakeLock()', () => {
             });
 
             it('should not assign the release event listener when calling unsubscribe() during the first emission', async () => {
+                wakeLock(wakeLockType);
+
                 observer.next = () => unsubscribe();
 
                 await Promise.resolve();
@@ -209,6 +206,8 @@ describe('wakeLock()', () => {
             });
 
             it('should remove the release event listener', async () => {
+                wakeLock(wakeLockType);
+
                 await Promise.resolve();
 
                 unsubscribe();
@@ -217,14 +216,18 @@ describe('wakeLock()', () => {
             });
 
             it('should call release()', async () => {
+                wakeLock(wakeLockType);
+
                 await Promise.resolve();
 
                 unsubscribe();
 
-                expect(wakeLockSentinel.release).to.have.been.calledOnce.and.calledWithExactly();
+                expect(wakeLockSentinel.release).to.have.been.calledOnce.and.calledWith();
             });
 
             it('should return undefined', () => {
+                wakeLock(wakeLockType);
+
                 expect(unsubscribe()).to.be.undefined;
             });
         });

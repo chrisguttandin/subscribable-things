@@ -1,5 +1,8 @@
-import { first, from } from 'rxjs';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
+import { cdp } from 'vitest/browser';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -9,24 +12,20 @@ import xs from 'xstream';
 
 describe('wakeLock', () => {
     if (navigator.wakeLock !== undefined && navigator.userAgent.includes('Chrome')) {
-        after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
+        afterAll(() => cdp().send('Browser.resetPermissions', { origin: location.origin }));
 
-        before(() =>
-            fetch('/grant-permissions', {
-                body: JSON.stringify({ origin: location.origin, permissions: ['wakeLockScreen'] }),
-                headers: { 'content-type': 'application/json' },
-                method: 'POST'
-            })
-        );
+        beforeAll(() => cdp().send('Browser.grantPermissions', { origin: location.origin, permissions: ['wakeLockScreen'] }));
     }
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.wakeLock === undefined) {
             from(wakeLock('screen')).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 }
             });
         } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
@@ -34,7 +33,7 @@ describe('wakeLock', () => {
                 error(err) {
                     expect(err.name).to.equal('NotAllowedError');
 
-                    done();
+                    resolve();
                 }
             });
         } else {
@@ -43,18 +42,22 @@ describe('wakeLock', () => {
                 .subscribe((isLocked) => {
                     expect(isLocked).to.be.true;
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.wakeLock === undefined) {
             xs.fromObservable(wakeLock('screen')).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 }
             });
         } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
@@ -62,7 +65,7 @@ describe('wakeLock', () => {
                 error(err) {
                     expect(err.name).to.equal('NotAllowedError');
 
-                    done();
+                    resolve();
                 }
             });
         } else {
@@ -72,20 +75,24 @@ describe('wakeLock', () => {
                     next(isLocked) {
                         expect(isLocked).to.be.true;
 
-                        done();
+                        resolve();
                     }
                 });
         }
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.wakeLock === undefined) {
             fromObs(wakeLock('screen'))(0, (code, err) => {
                 if (code === 2) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
                 }
 
-                done();
+                resolve();
             });
         } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
             fromObs(wakeLock('screen'))(0, (code, err) => {
@@ -93,7 +100,7 @@ describe('wakeLock', () => {
                     expect(err.name).to.equal('NotAllowedError');
                 }
 
-                done();
+                resolve();
             });
         } else {
             pipe(
@@ -102,24 +109,28 @@ describe('wakeLock', () => {
                 forEach((isLocked) => {
                     expect(isLocked).to.be.true;
 
-                    done();
+                    resolve();
                 })
             );
         }
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.wakeLock === undefined) {
             fromESObservableBaconJs(wakeLock('screen')).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                resolve();
             });
         } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
             fromESObservableBaconJs(wakeLock('screen')).onError((err) => {
                 expect(err.name).to.equal('NotAllowedError');
 
-                done();
+                resolve();
             });
         } else {
             fromESObservableBaconJs(wakeLock('screen'))
@@ -127,23 +138,27 @@ describe('wakeLock', () => {
                 .onValue((isLocked) => {
                     expect(isLocked).to.be.true;
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.wakeLock === undefined) {
             fromESObservableKefirJs(wakeLock('screen')).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                resolve();
             });
         } else if (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent)) {
             fromESObservableKefirJs(wakeLock('screen')).onError((err) => {
                 expect(err.name).to.equal('NotAllowedError');
 
-                done();
+                resolve();
             });
         } else {
             fromESObservableKefirJs(wakeLock('screen'))
@@ -151,9 +166,11 @@ describe('wakeLock', () => {
                 .onValue((isLocked) => {
                     expect(isLocked).to.be.true;
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -181,14 +198,12 @@ describe('wakeLock', () => {
         }
     });
 
-    if (navigator.wakeLock !== undefined) {
+    if (navigator.wakeLock !== undefined && !(!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent))) {
         describe('with a finalization registry', () => {
             let finalizationRegistry;
             let whenCollected;
 
-            afterEach(function (done) {
-                this.timeout(0);
-
+            afterEach(() => {
                 const arrayBuffers = [];
 
                 let byteLength = 100;
@@ -202,12 +217,15 @@ describe('wakeLock', () => {
                         byteLength /= 10;
                     }
                 });
+                const { promise, resolve } = Promise.withResolvers();
 
                 whenCollected = () => {
                     clearInterval(interval);
-                    done();
+                    resolve();
                 };
-            });
+
+                return promise;
+            }, 0);
 
             // eslint-disable-next-line no-undef
             beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPermissionState } from '../../../src/factories/permission-state';
 
 describe('permissionState()', () => {
@@ -7,8 +7,8 @@ describe('permissionState()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +24,13 @@ describe('permissionState()', () => {
             permissionState({ name: 'midi' });
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(permissionState({ name: 'midi' })).to.equal(value);
         });
@@ -44,7 +42,7 @@ describe('permissionState()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 permissionState({ name: 'midi' });
             });
@@ -52,13 +50,13 @@ describe('permissionState()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +67,7 @@ describe('permissionState()', () => {
         let window;
 
         beforeEach(() => {
-            window = { navigator: { permissions: { query: stub() } } };
+            window = { navigator: { permissions: { query: vi.fn() } } };
 
             permissionState = createPermissionState(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +76,13 @@ describe('permissionState()', () => {
             permissionState({ name: 'midi' });
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(permissionState({ name: 'midi' })).to.equal(value);
         });
@@ -98,12 +94,12 @@ describe('permissionState()', () => {
             let subscribe;
 
             beforeEach(() => {
-                observer = { error: spy(), next: spy() };
+                observer = { error: vi.fn(), next: vi.fn() };
                 permissionDescriptor = { name: 'midi' };
                 permissionStatus = { state: 'granted' };
 
-                window.navigator.permissions.query.resolves(permissionStatus);
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                window.navigator.permissions.query.mockResolvedValue(permissionStatus);
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 permissionState(permissionDescriptor);
             });
@@ -111,7 +107,7 @@ describe('permissionState()', () => {
             it('should call query() with the given permissionDescriptor', () => {
                 subscribe(observer);
 
-                expect(window.navigator.permissions.query).to.have.been.calledOnce.and.calledWithExactly(permissionDescriptor);
+                expect(window.navigator.permissions.query).to.have.been.calledOnce.and.calledWith(permissionDescriptor);
             });
 
             it('should call next() with the value of permissionStatus.state when the promise is resolved', async () => {
@@ -119,20 +115,20 @@ describe('permissionState()', () => {
 
                 await Promise.resolve();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(permissionStatus.state);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(permissionStatus.state);
             });
 
             it('should call error() with an error when the promise is rejected', async () => {
                 const err = new Error('a fake error');
 
-                window.navigator.permissions.query.rejects(err);
+                window.navigator.permissions.query.mockRejectedValue(err);
 
                 subscribe(observer);
 
                 await Promise.resolve();
                 await Promise.resolve();
 
-                expect(observer.error).to.have.been.calledOnce.and.calledWithExactly(err);
+                expect(observer.error).to.have.been.calledOnce.and.calledWith(err);
             });
 
             it('should call next() with the value of permissionStatus.state on each change event', async () => {
@@ -140,12 +136,12 @@ describe('permissionState()', () => {
 
                 await Promise.resolve();
 
-                observer.next.resetHistory();
+                observer.next.mockClear();
 
                 permissionStatus.state = 'denied';
                 permissionStatus.onchange();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(permissionStatus.state);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(permissionStatus.state);
             });
 
             it('should return a function', () => {
@@ -162,13 +158,12 @@ describe('permissionState()', () => {
                 observer = { next: () => {} };
                 permissionStatus = { state: true };
 
-                window.navigator.permissions.query.resolves(permissionStatus);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe(observer)));
-
-                permissionState({ name: 'midi' });
+                window.navigator.permissions.query.mockResolvedValue(permissionStatus);
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe(observer)));
             });
 
             it('should not assign the change event listener when calling unsubscribe() right away', async () => {
+                permissionState({ name: 'midi' });
                 unsubscribe();
 
                 await Promise.resolve();
@@ -177,6 +172,8 @@ describe('permissionState()', () => {
             });
 
             it('should not assign the change event listener when calling unsubscribe() during the first emission', async () => {
+                permissionState({ name: 'midi' });
+
                 observer.next = () => unsubscribe();
 
                 await Promise.resolve();
@@ -185,6 +182,8 @@ describe('permissionState()', () => {
             });
 
             it('should remove the change event listener', async () => {
+                permissionState({ name: 'midi' });
+
                 await Promise.resolve();
 
                 unsubscribe();
@@ -193,6 +192,8 @@ describe('permissionState()', () => {
             });
 
             it('should return undefined', () => {
+                permissionState({ name: 'midi' });
+
                 expect(unsubscribe()).to.be.undefined;
             });
         });

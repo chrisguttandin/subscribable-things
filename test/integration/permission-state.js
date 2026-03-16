@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -8,13 +10,15 @@ import { permissionState } from '../../src/module';
 import xs from 'xstream';
 
 describe('permissionState', () => {
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.permissions === undefined) {
             from(permissionState({ name: 'notifications' })).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 }
             });
         } else {
@@ -23,18 +27,22 @@ describe('permissionState', () => {
                 .subscribe((state) => {
                     expect(state).to.equal('prompt');
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.permissions === undefined) {
             xs.fromObservable(permissionState({ name: 'notifications' })).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 }
             });
         } else {
@@ -44,20 +52,24 @@ describe('permissionState', () => {
                     next(state) {
                         expect(state).to.equal('prompt');
 
-                        done();
+                        resolve();
                     }
                 });
         }
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.permissions === undefined) {
             fromObs(permissionState({ name: 'notifications' }))(0, (code, err) => {
                 if (code === 2) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
                 }
 
-                done();
+                resolve();
             });
         } else {
             pipe(
@@ -66,18 +78,22 @@ describe('permissionState', () => {
                 forEach((state) => {
                     expect(state).to.equal('prompt');
 
-                    done();
+                    resolve();
                 })
             );
         }
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.permissions === undefined) {
             fromESObservableBaconJs(permissionState({ name: 'notifications' })).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                resolve();
             });
         } else {
             fromESObservableBaconJs(permissionState({ name: 'notifications' }))
@@ -85,17 +101,21 @@ describe('permissionState', () => {
                 .onValue((state) => {
                     expect(state).to.equal('prompt');
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (navigator.permissions === undefined) {
             fromESObservableKefirJs(permissionState({ name: 'notifications' })).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                resolve();
             });
         } else {
             fromESObservableKefirJs(permissionState({ name: 'notifications' }))
@@ -103,9 +123,11 @@ describe('permissionState', () => {
                 .onValue((state) => {
                     expect(state).to.equal('prompt');
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -132,9 +154,7 @@ describe('permissionState', () => {
             let finalizationRegistry;
             let whenCollected;
 
-            afterEach(function (done) {
-                this.timeout(0);
-
+            afterEach(() => {
                 const arrayBuffers = [];
 
                 let byteLength = 100;
@@ -148,12 +168,15 @@ describe('permissionState', () => {
                         byteLength /= 10;
                     }
                 });
+                const { promise, resolve } = Promise.withResolvers();
 
                 whenCollected = () => {
                     clearInterval(interval);
-                    done();
+                    resolve();
                 };
-            });
+
+                return promise;
+            }, 0);
 
             // eslint-disable-next-line no-undef
             beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createPrependSubscribableThing } from '../../../src/factories/prepend-subscribable-thing';
 
 describe('prependSubscribableThing()', () => {
@@ -9,8 +9,8 @@ describe('prependSubscribableThing()', () => {
 
     beforeEach(() => {
         prependedValue = 'a fake prepended value';
-        subscribableThing = stub();
-        wrapSubscribeFunction = stub();
+        subscribableThing = vi.fn();
+        wrapSubscribeFunction = vi.fn();
 
         prependSubscribableThing = createPrependSubscribableThing(wrapSubscribeFunction);
     });
@@ -19,15 +19,13 @@ describe('prependSubscribableThing()', () => {
         prependSubscribableThing(subscribableThing, prependedValue);
 
         expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-        expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-        expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+        expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
     });
 
     it('should return the value returned by wrapSubscribeFunction()', () => {
         const value = 'a fake return value';
 
-        wrapSubscribeFunction.returns(value);
+        wrapSubscribeFunction.mockReturnValue(value);
 
         expect(prependSubscribableThing(subscribableThing, prependedValue)).to.equal(value);
     });
@@ -37,9 +35,9 @@ describe('prependSubscribableThing()', () => {
         let subscribe;
 
         beforeEach(() => {
-            observer = { next: spy() };
+            observer = { next: vi.fn() };
 
-            wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+            wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
             prependSubscribableThing(subscribableThing, prependedValue);
         });
@@ -47,19 +45,19 @@ describe('prependSubscribableThing()', () => {
         it('should call next() with the prepended value', () => {
             subscribe(observer);
 
-            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(prependedValue);
+            expect(observer.next).to.have.been.calledOnce.and.calledWith(prependedValue);
         });
 
         it('should call subscribableThing() with the given observer', () => {
             subscribe(observer);
 
-            expect(subscribableThing).to.have.been.calledOnce.and.calledWithExactly(observer);
+            expect(subscribableThing).to.have.been.calledOnce.and.calledWith(observer);
         });
 
         it('should return the value returned by subscribableThing()', () => {
             const value = 'a fake return value';
 
-            subscribableThing.returns(value);
+            subscribableThing.mockReturnValue(value);
 
             expect(subscribe(observer)).to.equal(value);
         });

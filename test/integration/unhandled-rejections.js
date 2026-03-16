@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -17,58 +19,78 @@ describe('unhandledRejection', () => {
         Promise.reject(err);
     });
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         from(unhandledRejection(100))
             .pipe(first())
             .subscribe((reason) => {
                 expect(reason).to.equal(err);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         xs.fromObservable(unhandledRejection(100))
             .take(1)
             .subscribe({
                 next(reason) {
                     expect(reason).to.equal(err);
 
-                    done();
+                    resolve();
                 }
             });
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         pipe(
             fromObs(unhandledRejection(100)),
             take(1),
             forEach((reason) => {
                 expect(reason).to.equal(err);
 
-                done();
+                resolve();
             })
         );
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableBaconJs(unhandledRejection(100))
             .first()
             .onValue((reason) => {
                 expect(reason).to.equal(err);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableKefirJs(unhandledRejection(100))
             .take(1)
             .onValue((reason) => {
                 expect(reason).to.equal(err);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -86,9 +108,7 @@ describe('unhandledRejection', () => {
         let finalizationRegistry;
         let whenCollected;
 
-        afterEach(function (done) {
-            this.timeout(0);
-
+        afterEach(() => {
             const arrayBuffers = [];
 
             let byteLength = 100;
@@ -102,12 +122,15 @@ describe('unhandledRejection', () => {
                     byteLength /= 10;
                 }
             });
+            const { promise, resolve } = Promise.withResolvers();
 
             whenCollected = () => {
                 clearInterval(interval);
-                done();
+                resolve();
             };
-        });
+
+            return promise;
+        }, 0);
 
         // eslint-disable-next-line no-undef
         beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

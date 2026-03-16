@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -19,18 +21,24 @@ describe('mutations', () => {
         setTimeout(() => document.body.append(htmlElement));
     });
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         from(mutations(document.body, { childList: true }))
             .pipe(first())
             .subscribe((records) => {
                 expect(records.length).to.equal(1);
                 expect(records[0]).to.be.an.instanceof(MutationRecord);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         xs.fromObservable(mutations(document.body, { childList: true }))
             .take(1)
             .subscribe({
@@ -38,12 +46,16 @@ describe('mutations', () => {
                     expect(records.length).to.equal(1);
                     expect(records[0]).to.be.an.instanceof(MutationRecord);
 
-                    done();
+                    resolve();
                 }
             });
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         pipe(
             fromObs(mutations(document.body, { childList: true })),
             take(1),
@@ -51,31 +63,41 @@ describe('mutations', () => {
                 expect(records.length).to.equal(1);
                 expect(records[0]).to.be.an.instanceof(MutationRecord);
 
-                done();
+                resolve();
             })
         );
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableBaconJs(mutations(document.body, { childList: true }))
             .first()
             .onValue((records) => {
                 expect(records.length).to.equal(1);
                 expect(records[0]).to.be.an.instanceof(MutationRecord);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableKefirJs(mutations(document.body, { childList: true }))
             .take(1)
             .onValue((records) => {
                 expect(records.length).to.equal(1);
                 expect(records[0]).to.be.an.instanceof(MutationRecord);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -94,9 +116,7 @@ describe('mutations', () => {
         let finalizationRegistry;
         let whenCollected;
 
-        afterEach(function (done) {
-            this.timeout(0);
-
+        afterEach(() => {
             const arrayBuffers = [];
 
             let byteLength = 100;
@@ -110,12 +130,15 @@ describe('mutations', () => {
                     byteLength /= 10;
                 }
             });
+            const { promise, resolve } = Promise.withResolvers();
 
             whenCollected = () => {
                 clearInterval(interval);
-                done();
+                resolve();
             };
-        });
+
+            return promise;
+        }, 0);
 
         // eslint-disable-next-line no-undef
         beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

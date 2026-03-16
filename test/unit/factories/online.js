@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createOnline } from '../../../src/factories/online';
 
 describe('online()', () => {
@@ -7,8 +7,8 @@ describe('online()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +24,13 @@ describe('online()', () => {
             online();
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(online()).to.equal(value);
         });
@@ -44,7 +42,7 @@ describe('online()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 online();
             });
@@ -52,13 +50,13 @@ describe('online()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +67,7 @@ describe('online()', () => {
         let window;
 
         beforeEach(() => {
-            window = { addEventListener: stub(), navigator: { onLine: 'a fake value' }, removeEventListener: spy() };
+            window = { addEventListener: vi.fn(), navigator: { onLine: 'a fake value' }, removeEventListener: vi.fn() };
 
             online = createOnline(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +76,13 @@ describe('online()', () => {
             online();
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(online()).to.equal(value);
         });
@@ -98,16 +94,16 @@ describe('online()', () => {
             let subscribe;
 
             beforeEach(() => {
-                observer = { next: spy() };
+                observer = { next: vi.fn() };
 
-                window.addEventListener.callsFake((type, value) => {
+                window.addEventListener.mockImplementation((type, value) => {
                     if (type === 'offline') {
                         offlineEventListener = value;
                     } else {
                         onlineEventListener = value;
                     }
                 });
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 online();
             });
@@ -115,39 +111,39 @@ describe('online()', () => {
             it('should call next() with the value of navigator.onLine right away', () => {
                 subscribe(observer);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(window.navigator.onLine);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(window.navigator.onLine);
             });
 
             it('should register an offline event listener', () => {
                 subscribe(observer);
 
-                expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly('offline', offlineEventListener);
+                expect(window.addEventListener).to.have.been.calledTwice.and.calledWith('offline', offlineEventListener);
             });
 
             it('should register an online event listener', () => {
                 subscribe(observer);
 
-                expect(window.addEventListener).to.have.been.calledTwice.and.calledWithExactly('online', onlineEventListener);
+                expect(window.addEventListener).to.have.been.calledTwice.and.calledWith('online', onlineEventListener);
             });
 
             it('should call next() with false on each offline event', () => {
                 subscribe(observer);
 
-                observer.next.resetHistory();
+                observer.next.mockClear();
 
                 offlineEventListener();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(false);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(false);
             });
 
             it('should call next() with true on each online event', () => {
                 subscribe(observer);
 
-                observer.next.resetHistory();
+                observer.next.mockClear();
 
                 onlineEventListener();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(true);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(true);
             });
 
             it('should return a function', () => {
@@ -161,14 +157,14 @@ describe('online()', () => {
             let unsubscribe;
 
             beforeEach(() => {
-                window.addEventListener.callsFake((type, value) => {
+                window.addEventListener.mockImplementation((type, value) => {
                     if (type === 'offline') {
                         offlineEventListener = value;
                     } else {
                         onlineEventListener = value;
                     }
                 });
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 online();
             });
@@ -176,13 +172,13 @@ describe('online()', () => {
             it('should remove the offline event listener', () => {
                 unsubscribe();
 
-                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWithExactly('offline', offlineEventListener);
+                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWith('offline', offlineEventListener);
             });
 
             it('should remove the online event listener', () => {
                 unsubscribe();
 
-                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWithExactly('online', onlineEventListener);
+                expect(window.removeEventListener).to.have.been.calledTwice.and.calledWith('online', onlineEventListener);
             });
 
             it('should return undefined', () => {

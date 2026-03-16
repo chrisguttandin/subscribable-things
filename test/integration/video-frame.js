@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -26,7 +28,10 @@ describe('videoFrame', () => {
 
             videoElement.muted = true;
             videoElement.srcObject = canvas.captureStream();
-            videoElement.play();
+
+            videoElement.play().catch(() => {
+                // Ignore errors.
+            });
 
             canvas.height = 100;
             canvas.width = 100;
@@ -38,13 +43,15 @@ describe('videoFrame', () => {
         }
     });
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (videoElement.requestVideoFrameCallback === undefined) {
             from(videoFrame(videoElement)).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 }
             });
         } else {
@@ -59,18 +66,22 @@ describe('videoFrame', () => {
                     expect(videoFrameMetadata.presentedFrames).to.be.a('number');
                     expect(videoFrameMetadata.width).to.equal(100);
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (videoElement.requestVideoFrameCallback === undefined) {
             xs.fromObservable(videoFrame(videoElement)).subscribe({
                 error(err) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 }
             });
         } else {
@@ -86,20 +97,24 @@ describe('videoFrame', () => {
                         expect(videoFrameMetadata.presentedFrames).to.be.a('number');
                         expect(videoFrameMetadata.width).to.equal(100);
 
-                        done();
+                        resolve();
                     }
                 });
         }
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (videoElement.requestVideoFrameCallback === undefined) {
             fromObs(videoFrame(videoElement))(0, (code, err) => {
                 if (code === 2) {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
                 }
 
-                done();
+                resolve();
             });
         } else {
             pipe(
@@ -114,18 +129,22 @@ describe('videoFrame', () => {
                     expect(videoFrameMetadata.presentedFrames).to.be.a('number');
                     expect(videoFrameMetadata.width).to.equal(100);
 
-                    done();
+                    resolve();
                 })
             );
         }
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (videoElement.requestVideoFrameCallback === undefined) {
             fromESObservableBaconJs(videoFrame(videoElement)).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                resolve();
             });
         } else {
             fromESObservableBaconJs(videoFrame(videoElement))
@@ -139,17 +158,21 @@ describe('videoFrame', () => {
                     expect(videoFrameMetadata.presentedFrames).to.be.a('number');
                     expect(videoFrameMetadata.width).to.equal(100);
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         if (videoElement.requestVideoFrameCallback === undefined) {
             fromESObservableKefirJs(videoFrame(videoElement)).onError((err) => {
                 expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                done();
+                resolve();
             });
         } else {
             fromESObservableKefirJs(videoFrame(videoElement))
@@ -163,9 +186,11 @@ describe('videoFrame', () => {
                     expect(videoFrameMetadata.presentedFrames).to.be.a('number');
                     expect(videoFrameMetadata.width).to.equal(100);
 
-                    done();
+                    resolve();
                 });
         }
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -198,9 +223,7 @@ describe('videoFrame', () => {
             let finalizationRegistry;
             let whenCollected;
 
-            afterEach(function (done) {
-                this.timeout(0);
-
+            afterEach(() => {
                 const arrayBuffers = [];
 
                 let byteLength = 100;
@@ -214,12 +237,15 @@ describe('videoFrame', () => {
                         byteLength /= 10;
                     }
                 });
+                const { promise, resolve } = Promise.withResolvers();
 
                 whenCollected = () => {
                     clearInterval(interval);
-                    done();
+                    resolve();
                 };
-            });
+
+                return promise;
+            }, 0);
 
             // eslint-disable-next-line no-undef
             beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

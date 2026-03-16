@@ -1,4 +1,5 @@
-import { spy, stub } from 'sinon';
+// eslint-disable-next-line max-classes-per-file
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMutations } from '../../../src/factories/mutations';
 
 describe('mutations()', () => {
@@ -7,8 +8,8 @@ describe('mutations()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +25,13 @@ describe('mutations()', () => {
             mutations('a fake HTML element', {});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(mutations('a fake HTML element', {})).to.equal(value);
         });
@@ -44,7 +43,7 @@ describe('mutations()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 mutations('a fake HTML element', {});
             });
@@ -52,13 +51,13 @@ describe('mutations()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +68,7 @@ describe('mutations()', () => {
         let window;
 
         beforeEach(() => {
-            window = { MutationObserver: stub() };
+            window = { MutationObserver: vi.fn() };
 
             mutations = createMutations(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +77,13 @@ describe('mutations()', () => {
             mutations('a fake HTML element', {});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(mutations('a fake HTML element', {})).to.equal(value);
         });
@@ -94,23 +91,27 @@ describe('mutations()', () => {
         describe('subscribe()', () => {
             let htmlElement;
             let mutationCallback;
-            let mutationObserver;
+            let observe;
             let observer;
             let options;
             let subscribe;
 
             beforeEach(() => {
                 htmlElement = 'a fake HTML element';
-                mutationObserver = { observe: stub() };
-                observer = { error: spy(), next: spy() };
+                observe = vi.fn();
+                observer = { error: vi.fn(), next: vi.fn() };
                 options = { a: 'fake', options: 'object' };
 
-                window.MutationObserver.callsFake((value) => {
-                    mutationCallback = value;
+                window.MutationObserver.mockImplementation(
+                    class {
+                        constructor(value) {
+                            this.observe = observe;
 
-                    return mutationObserver;
-                });
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                            mutationCallback = value;
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 mutations(htmlElement, options);
             });
@@ -119,25 +120,23 @@ describe('mutations()', () => {
                 subscribe(observer);
 
                 expect(window.MutationObserver).to.have.been.calledOnce;
-
-                expect(window.MutationObserver.firstCall.args.length).to.equal(1);
-                expect(window.MutationObserver.firstCall.args[0]).to.be.a('function');
+                expect(window.MutationObserver).to.have.been.calledWith(expect.any(Function));
             });
 
             it('should call observe() with the given htmlElement and options object', () => {
                 subscribe(observer);
 
-                expect(mutationObserver.observe).to.have.been.calledOnce.and.calledWithExactly(htmlElement, options);
+                expect(observe).to.have.been.calledOnce.and.calledWith(htmlElement, options);
             });
 
             it('should call error() with an error thrown by observe()', () => {
                 const err = new Error('a fake error');
 
-                mutationObserver.observe.throws(err);
+                observe.mockThrow(err);
 
                 subscribe(observer);
 
-                expect(observer.error).to.have.been.calledOnce.and.calledWithExactly(err);
+                expect(observer.error).to.have.been.calledOnce.and.calledWith(err);
             });
 
             it('should call next() with the current records on each invocation of the mutation callback', () => {
@@ -147,7 +146,7 @@ describe('mutations()', () => {
 
                 mutationCallback(records);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(records);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(records);
             });
 
             it('should return a function', () => {
@@ -156,14 +155,21 @@ describe('mutations()', () => {
         });
 
         describe('unsubscribe()', () => {
-            let mutationObserver;
+            let disconnect;
             let unsubscribe;
 
             beforeEach(() => {
-                mutationObserver = { disconnect: spy(), observe: spy() };
+                disconnect = vi.fn();
 
-                window.MutationObserver.returns(mutationObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
+                window.MutationObserver.mockImplementation(
+                    class {
+                        constructor() {
+                            this.disconnect = disconnect;
+                            this.observe = vi.fn();
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe()));
 
                 mutations('a fake HTML element', {});
             });
@@ -171,7 +177,7 @@ describe('mutations()', () => {
             it('should call disconnect()', () => {
                 unsubscribe();
 
-                expect(mutationObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
+                expect(disconnect).to.have.been.calledOnce.and.calledWith();
             });
 
             it('should return undefined', () => {

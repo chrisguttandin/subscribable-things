@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createOn } from '../../../src/factories/on';
 
 describe('on()', () => {
@@ -6,7 +6,7 @@ describe('on()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        wrapSubscribeFunction = stub();
+        wrapSubscribeFunction = vi.fn();
 
         on = createOn(wrapSubscribeFunction);
     });
@@ -15,15 +15,13 @@ describe('on()', () => {
         on('a fake EventTarget', 'a fake event type');
 
         expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-        expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-        expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+        expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
     });
 
     it('should return the value returned by wrapSubscribeFunction()', () => {
         const value = 'a fake return value';
 
-        wrapSubscribeFunction.returns(value);
+        wrapSubscribeFunction.mockReturnValue(value);
 
         expect(on('a fake EventTarget', 'a fake event type')).to.equal(value);
     });
@@ -37,15 +35,15 @@ describe('on()', () => {
         let subscribe;
 
         beforeEach(() => {
-            eventTarget = { addEventListener: stub(), removeEventListener: spy() };
+            eventTarget = { addEventListener: vi.fn(), removeEventListener: vi.fn() };
             eventType = 'a fake event type';
-            observer = { next: spy() };
+            observer = { next: vi.fn() };
             options = { a: 'fake', options: 'object' };
 
-            eventTarget.addEventListener.callsFake((_, value) => {
+            eventTarget.addEventListener.mockImplementation((_, value) => {
                 eventListener = value;
             });
-            wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+            wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
             on(eventTarget, eventType, options);
         });
@@ -53,7 +51,7 @@ describe('on()', () => {
         it('should register an event listener', () => {
             subscribe(observer);
 
-            expect(eventTarget.addEventListener).to.have.been.calledOnce.and.calledWithExactly(eventType, eventListener, options);
+            expect(eventTarget.addEventListener).to.have.been.calledOnce.and.calledWith(eventType, eventListener, options);
         });
 
         it('should call next() with the event on each event', () => {
@@ -63,7 +61,7 @@ describe('on()', () => {
 
             eventListener(event);
 
-            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(event);
+            expect(observer.next).to.have.been.calledOnce.and.calledWith(event);
         });
 
         it('should return a function', () => {
@@ -79,14 +77,14 @@ describe('on()', () => {
         let unsubscribe;
 
         beforeEach(() => {
-            eventTarget = { addEventListener: stub(), removeEventListener: spy() };
+            eventTarget = { addEventListener: vi.fn(), removeEventListener: vi.fn() };
             eventType = 'a fake event type';
             options = { a: 'fake', options: 'object' };
 
-            eventTarget.addEventListener.callsFake((_, value) => {
+            eventTarget.addEventListener.mockImplementation((_, value) => {
                 eventListener = value;
             });
-            wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+            wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
             on(eventTarget, eventType, options);
         });
@@ -94,7 +92,7 @@ describe('on()', () => {
         it('should remove the event listener', () => {
             unsubscribe();
 
-            expect(eventTarget.removeEventListener).to.have.been.calledOnce.and.calledWithExactly(eventType, eventListener, options);
+            expect(eventTarget.removeEventListener).to.have.been.calledOnce.and.calledWith(eventType, eventListener, options);
         });
 
         it('should return undefined', () => {

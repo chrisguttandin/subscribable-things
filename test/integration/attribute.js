@@ -1,3 +1,4 @@
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, scan, skip, take as takeCallbag } from 'callbag-basics';
 import { from, take as takeRxJS, toArray } from 'rxjs';
 import { attribute } from '../../src/module';
@@ -18,17 +19,23 @@ describe('attribute', () => {
         setTimeout(() => htmlElement.setAttribute('name', 'value'));
     });
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         from(attribute(htmlElement, 'name'))
             .pipe(takeRxJS(2), toArray())
             .subscribe((values) => {
                 expect(values).to.deep.equal([null, 'value']);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         xs.fromObservable(attribute(htmlElement, 'name'))
             .take(2)
             .fold((values, value) => [...values, value], [])
@@ -37,12 +44,16 @@ describe('attribute', () => {
                 next(values) {
                     expect(values).to.deep.equal([null, 'value']);
 
-                    done();
+                    resolve();
                 }
             });
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         pipe(
             fromObs(attribute(htmlElement, 'name')),
             takeCallbag(2),
@@ -51,23 +62,31 @@ describe('attribute', () => {
             forEach((values) => {
                 expect(values).to.deep.equal([null, 'value']);
 
-                done();
+                resolve();
             })
         );
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableBaconJs(attribute(htmlElement, 'name'))
             .take(2)
             .reduce([], (values, value) => [...values, value])
             .onValue((values) => {
                 expect(values).to.deep.equal([null, 'value']);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableKefirJs(attribute(htmlElement, 'name'))
             .take(2)
             .scan((values, value) => [...values, value], [])
@@ -75,8 +94,10 @@ describe('attribute', () => {
             .onValue((values) => {
                 expect(values).to.deep.equal([null, 'value']);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -98,9 +119,7 @@ describe('attribute', () => {
         let finalizationRegistry;
         let whenCollected;
 
-        afterEach(function (done) {
-            this.timeout(0);
-
+        afterEach(() => {
             const arrayBuffers = [];
 
             let byteLength = 100;
@@ -114,12 +133,15 @@ describe('attribute', () => {
                     byteLength /= 10;
                 }
             });
+            const { promise, resolve } = Promise.withResolvers();
 
             whenCollected = () => {
                 clearInterval(interval);
-                done();
+                resolve();
             };
-        });
+
+            return promise;
+        }, 0);
 
         // eslint-disable-next-line no-undef
         beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

@@ -96,8 +96,13 @@
         "prepare": "husky",
         "prepublishOnly": "npm run build",
         "test": "npm run lint && npm run build && npm run test:integration && npm run test:unit",
-        "test:integration": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ]; then karma start config/karma/config-integration.js --single-run; fi",
-        "test:unit": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"unit\" ]; then karma start config/karma/config-unit.js --single-run; fi"
+        "test:integration": "npm run test:integration-chrome && npm run test:integration-chrome-canary && npm run test:integration-firefox && npm run test:integration-firefox-developer && npm run test:integration-safari",
+        "test:integration-chrome": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ] && [ \"$TARGET\" = \"\" -o \"$TARGET\" = \"chrome\" ]; then npx vitest --config config/vitest/integration-chrome-current.ts; fi",
+        "test:integration-chrome-canary": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ] && [ \"$TARGET\" = \"\" -o \"$TARGET\" = \"chrome-canary\" ]; then npx vitest --config config/vitest/integration-chrome-canary.ts; fi",
+        "test:integration-firefox": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ] && [ \"$TARGET\" = \"\" -o \"$TARGET\" = \"firefox\" ]; then npx vitest --config config/vitest/integration-firefox-current.ts; fi",
+        "test:integration-firefox-developer": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ] && [ \"$TARGET\" = \"\" -o \"$TARGET\" = \"firefox-developer\" ]; then npx vitest --config config/vitest/integration-firefox-developer.ts; fi",
+        "test:integration-safari": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"integration\" ] && [ \"$TARGET\" = \"\" -o \"$TARGET\" = \"safari\" ]; then npx vitest --config config/vitest/integration-safari-current.ts; fi",
+        "test:unit": "if [ \"$TYPE\" = \"\" -o \"$TYPE\" = \"unit\" ]; then npx vitest --config config/vitest/unit.ts; fi"
     },
     "types": "build/es2019/module.d.ts",
     "version": "2.1.57"

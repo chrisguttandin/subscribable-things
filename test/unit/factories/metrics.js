@@ -1,4 +1,5 @@
-import { spy, stub } from 'sinon';
+// eslint-disable-next-line max-classes-per-file
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMetrics } from '../../../src/factories/metrics';
 
 describe('metrics()', () => {
@@ -7,8 +8,8 @@ describe('metrics()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +25,13 @@ describe('metrics()', () => {
             metrics({});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(metrics({})).to.equal(value);
         });
@@ -44,7 +43,7 @@ describe('metrics()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 metrics({});
             });
@@ -52,13 +51,13 @@ describe('metrics()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +68,7 @@ describe('metrics()', () => {
         let window;
 
         beforeEach(() => {
-            window = { PerformanceObserver: stub() };
+            window = { PerformanceObserver: vi.fn() };
 
             metrics = createMetrics(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,37 +77,39 @@ describe('metrics()', () => {
             metrics({});
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(metrics({})).to.equal(value);
         });
 
         describe('subscribe()', () => {
             let callback;
+            let observe;
             let observer;
             let options;
-            let performanceObserver;
             let subscribe;
 
             beforeEach(() => {
-                observer = { error: spy(), next: spy() };
+                observe = vi.fn();
+                observer = { error: vi.fn(), next: vi.fn() };
                 options = { a: 'fake', options: 'object' };
-                performanceObserver = { observe: stub() };
 
-                window.PerformanceObserver.callsFake((value) => {
-                    callback = value;
+                window.PerformanceObserver.mockImplementation(
+                    class {
+                        constructor(value) {
+                            this.observe = observe;
 
-                    return performanceObserver;
-                });
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                            callback = value;
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 metrics(options);
             });
@@ -117,25 +118,23 @@ describe('metrics()', () => {
                 subscribe(observer);
 
                 expect(window.PerformanceObserver).to.have.been.calledOnce;
-
-                expect(window.PerformanceObserver.firstCall.args.length).to.equal(1);
-                expect(window.PerformanceObserver.firstCall.args[0]).to.be.a('function');
+                expect(window.PerformanceObserver).to.have.been.calledWith(expect.any(Function));
             });
 
             it('should call observe() with the given options object', () => {
                 subscribe(observer);
 
-                expect(performanceObserver.observe).to.have.been.calledOnce.and.calledWithExactly(options);
+                expect(observe).to.have.been.calledOnce.and.calledWith(options);
             });
 
             it('should call error() with an error thrown by observe()', () => {
                 const err = new Error('a fake error');
 
-                performanceObserver.observe.throws(err);
+                observe.mockThrow(err);
 
                 subscribe(observer);
 
-                expect(observer.error).to.have.been.calledOnce.and.calledWithExactly(err);
+                expect(observer.error).to.have.been.calledOnce.and.calledWith(err);
             });
 
             it('should call next() with the current metrics on each invocation of the callback', () => {
@@ -146,7 +145,7 @@ describe('metrics()', () => {
 
                 callback(entryList);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(entries);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(entries);
             });
 
             it('should return a function', () => {
@@ -155,14 +154,21 @@ describe('metrics()', () => {
         });
 
         describe('unsubscribe()', () => {
-            let performanceObserver;
+            let disconnect;
             let unsubscribe;
 
             beforeEach(() => {
-                performanceObserver = { disconnect: spy(), observe: spy() };
+                disconnect = vi.fn();
 
-                window.PerformanceObserver.returns(performanceObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
+                window.PerformanceObserver.mockImplementation(
+                    class {
+                        constructor() {
+                            this.disconnect = disconnect;
+                            this.observe = vi.fn();
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe()));
 
                 metrics({});
             });
@@ -170,7 +176,7 @@ describe('metrics()', () => {
             it('should call disconnect()', () => {
                 unsubscribe();
 
-                expect(performanceObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
+                expect(disconnect).to.have.been.calledOnce.and.calledWith();
             });
 
             it('should return undefined', () => {

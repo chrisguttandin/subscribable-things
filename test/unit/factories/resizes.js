@@ -1,4 +1,5 @@
-import { spy, stub } from 'sinon';
+// eslint-disable-next-line max-classes-per-file
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createResizes } from '../../../src/factories/resizes';
 
 describe('resizes()', () => {
@@ -7,8 +8,8 @@ describe('resizes()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +25,13 @@ describe('resizes()', () => {
             resizes('a fake HTML element');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(resizes('a fake HTML element')).to.equal(value);
         });
@@ -44,7 +43,7 @@ describe('resizes()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 resizes('a fake HTML element');
             });
@@ -52,13 +51,13 @@ describe('resizes()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +68,7 @@ describe('resizes()', () => {
         let window;
 
         beforeEach(() => {
-            window = { ResizeObserver: stub() };
+            window = { ResizeObserver: vi.fn() };
 
             resizes = createResizes(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +77,13 @@ describe('resizes()', () => {
             resizes('a fake HTML element');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(resizes('a fake HTML element')).to.equal(value);
         });
@@ -94,23 +91,27 @@ describe('resizes()', () => {
         describe('subscribe()', () => {
             let htmlElement;
             let callback;
+            let observe;
             let observer;
             let options;
-            let resizeObserver;
             let subscribe;
 
             beforeEach(() => {
                 htmlElement = 'a fake HTML element';
-                observer = { error: spy(), next: spy() };
+                observe = vi.fn();
+                observer = { error: vi.fn(), next: vi.fn() };
                 options = { a: 'fake', options: 'object' };
-                resizeObserver = { observe: spy() };
 
-                window.ResizeObserver.callsFake((value) => {
-                    callback = value;
+                window.ResizeObserver.mockImplementation(
+                    class {
+                        constructor(value) {
+                            this.observe = observe;
 
-                    return resizeObserver;
-                });
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                            callback = value;
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 resizes(htmlElement, options);
             });
@@ -119,15 +120,13 @@ describe('resizes()', () => {
                 subscribe(observer);
 
                 expect(window.ResizeObserver).to.have.been.calledOnce;
-
-                expect(window.ResizeObserver.firstCall.args.length).to.equal(1);
-                expect(window.ResizeObserver.firstCall.args[0]).to.be.a('function');
+                expect(window.ResizeObserver).to.have.been.calledWith(expect.any(Function));
             });
 
             it('should call observe() with the given htmlElement and options object', () => {
                 subscribe(observer);
 
-                expect(resizeObserver.observe).to.have.been.calledOnce.and.calledWithExactly(htmlElement, options);
+                expect(observe).to.have.been.calledOnce.and.calledWith(htmlElement, options);
             });
 
             it('should call next() with the current resizes on each invocation of the callback', () => {
@@ -137,7 +136,7 @@ describe('resizes()', () => {
 
                 callback(entries);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(entries);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(entries);
             });
 
             it('should return a function', () => {
@@ -146,14 +145,21 @@ describe('resizes()', () => {
         });
 
         describe('unsubscribe()', () => {
-            let resizeObserver;
+            let disconnect;
             let unsubscribe;
 
             beforeEach(() => {
-                resizeObserver = { disconnect: spy(), observe: spy() };
+                disconnect = vi.fn();
 
-                window.ResizeObserver.returns(resizeObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
+                window.ResizeObserver.mockImplementation(
+                    class {
+                        constructor() {
+                            this.disconnect = disconnect;
+                            this.observe = vi.fn();
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe()));
 
                 resizes('a fake HTML element');
             });
@@ -161,7 +167,7 @@ describe('resizes()', () => {
             it('should call disconnect()', () => {
                 unsubscribe();
 
-                expect(resizeObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
+                expect(disconnect).to.have.been.calledOnce.and.calledWith();
             });
 
             it('should return undefined', () => {

@@ -1,5 +1,8 @@
-import { first, from } from 'rxjs';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { cdp, commands } from 'vitest/browser';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -8,29 +11,39 @@ import { map } from '../helpers/map';
 import { midiOutputs } from '../../src/module';
 import xs from 'xstream';
 
-describe('midiOutputs()', () => {
+describe('midiOutputs()', { skip: typeof navigator.requestMIDIAccess === 'undefined' }, () => {
     if (navigator.requestMIDIAccess) {
         let midiAccess;
 
         if (navigator.userAgent.includes('Chrome')) {
-            after(() => fetch('/reset-permissions', { body: JSON.stringify({ origin: location.origin }), method: 'POST' }));
+            afterAll(() => cdp().send('Browser.resetPermissions', { origin: location.origin }));
 
-            before(() =>
-                fetch('/grant-permissions', {
-                    body: JSON.stringify({ origin: location.origin, permissions: ['midi', 'midiSysex'] }),
-                    headers: { 'content-type': 'application/json' },
-                    method: 'POST'
-                })
-            );
-        } else {
-            after(() => fetch('/connect-devices', { method: 'POST' }));
-
-            before(() => fetch('/disconnect-devices', { method: 'POST' }));
+            beforeAll(() => cdp().send('Browser.grantPermissions', { origin: location.origin, permissions: ['midi', 'midiSysex'] }));
         }
 
-        beforeEach(async () => (midiAccess = await navigator.requestMIDIAccess({ sysex: true })));
+        afterAll(() => commands.disconnectMidiDevices());
 
-        it('should work with RxJS', (done) => {
+        beforeAll(() => commands.connectMidiDevices(), 0);
+
+        beforeEach(async () => {
+            midiAccess = await navigator.requestMIDIAccess({ sysex: true });
+
+            if (midiAccess.outputs.size === 0) {
+                return new Promise((resolve) => {
+                    midiAccess.onstatechange = () => {
+                        if (midiAccess.outputs.size > 0) {
+                            midiAccess.onstatechange = null;
+
+                            resolve();
+                        }
+                    };
+                });
+            }
+        });
+
+        it('should work with RxJS', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             from(midiOutputs(midiAccess))
                 .pipe(first())
                 .subscribe((midiOutputsArray) => {
@@ -41,11 +54,15 @@ describe('midiOutputs()', () => {
                     expect(midiOutput).to.be.an.instanceof(MIDIOutput);
                     expect(midiOutput.name).to.equal('Virtual Output Device');
 
-                    done();
+                    resolve();
                 });
+
+            return promise;
         });
 
-        it('should work with XStream', (done) => {
+        it('should work with XStream', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             xs.fromObservable(midiOutputs(midiAccess))
                 .take(1)
                 .subscribe({
@@ -57,12 +74,16 @@ describe('midiOutputs()', () => {
                         expect(midiOutput).to.be.an.instanceof(MIDIOutput);
                         expect(midiOutput.name).to.equal('Virtual Output Device');
 
-                        done();
+                        resolve();
                     }
                 });
+
+            return promise;
         });
 
-        it('should work with callbags', (done) => {
+        it('should work with callbags', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             pipe(
                 fromObs(midiOutputs(midiAccess)),
                 take(1),
@@ -74,12 +95,16 @@ describe('midiOutputs()', () => {
                     expect(midiOutput).to.be.an.instanceof(MIDIOutput);
                     expect(midiOutput.name).to.equal('Virtual Output Device');
 
-                    done();
+                    resolve();
                 })
             );
+
+            return promise;
         });
 
-        it('should work with Bacon.js', (done) => {
+        it('should work with Bacon.js', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             fromESObservableBaconJs(midiOutputs(midiAccess))
                 .first()
                 .onValue((midiOutputsArray) => {
@@ -90,11 +115,15 @@ describe('midiOutputs()', () => {
                     expect(midiOutput).to.be.an.instanceof(MIDIOutput);
                     expect(midiOutput.name).to.equal('Virtual Output Device');
 
-                    done();
+                    resolve();
                 });
+
+            return promise;
         });
 
-        it('should work with Kefir.js', (done) => {
+        it('should work with Kefir.js', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             fromESObservableKefirJs(midiOutputs(midiAccess))
                 .take(1)
                 .onValue((midiOutputsArray) => {
@@ -105,8 +134,10 @@ describe('midiOutputs()', () => {
                     expect(midiOutput).to.be.an.instanceof(MIDIOutput);
                     expect(midiOutput.name).to.equal('Virtual Output Device');
 
-                    done();
+                    resolve();
                 });
+
+            return promise;
         });
 
         it('should work with rxjs-for-await', async () => {
@@ -129,9 +160,7 @@ describe('midiOutputs()', () => {
             let finalizationRegistry;
             let whenCollected;
 
-            afterEach(function (done) {
-                this.timeout(0);
-
+            afterEach(() => {
                 const arrayBuffers = [];
 
                 let byteLength = 100;
@@ -145,12 +174,15 @@ describe('midiOutputs()', () => {
                         byteLength /= 10;
                     }
                 });
+                const { promise, resolve } = Promise.withResolvers();
 
                 whenCollected = () => {
                     clearInterval(interval);
-                    done();
+                    resolve();
                 };
-            });
+
+                return promise;
+            }, 0);
 
             // eslint-disable-next-line no-undef
             beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -21,18 +23,24 @@ describe('resizes', () => {
         setTimeout(() => document.body.append(htmlElement));
     });
 
-    it('should work with RxJS', (done) => {
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         from(resizes(htmlElement))
             .pipe(first())
             .subscribe((entries) => {
                 expect(entries.length).to.equal(1);
                 expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with XStream', (done) => {
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         xs.fromObservable(resizes(htmlElement))
             .take(1)
             .subscribe({
@@ -40,12 +48,16 @@ describe('resizes', () => {
                     expect(entries.length).to.equal(1);
                     expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
 
-                    done();
+                    resolve();
                 }
             });
+
+        return promise;
     });
 
-    it('should work with callbags', (done) => {
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         pipe(
             fromObs(resizes(htmlElement)),
             take(1),
@@ -53,31 +65,41 @@ describe('resizes', () => {
                 expect(entries.length).to.equal(1);
                 expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
 
-                done();
+                resolve();
             })
         );
+
+        return promise;
     });
 
-    it('should work with Bacon.js', (done) => {
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableBaconJs(resizes(htmlElement))
             .first()
             .onValue((entries) => {
                 expect(entries.length).to.equal(1);
                 expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
-    it('should work with Kefir.js', (done) => {
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
         fromESObservableKefirJs(resizes(htmlElement))
             .take(1)
             .onValue((entries) => {
                 expect(entries.length).to.equal(1);
                 expect(entries[0]).to.be.an.instanceof(ResizeObserverEntry);
 
-                done();
+                resolve();
             });
+
+        return promise;
     });
 
     it('should work with rxjs-for-await', async () => {
@@ -96,9 +118,7 @@ describe('resizes', () => {
         let finalizationRegistry;
         let whenCollected;
 
-        afterEach(function (done) {
-            this.timeout(0);
-
+        afterEach(() => {
             const arrayBuffers = [];
 
             let byteLength = 100;
@@ -112,12 +132,15 @@ describe('resizes', () => {
                     byteLength /= 10;
                 }
             });
+            const { promise, resolve } = Promise.withResolvers();
 
             whenCollected = () => {
                 clearInterval(interval);
-                done();
+                resolve();
             };
-        });
+
+            return promise;
+        }, 0);
 
         // eslint-disable-next-line no-undef
         beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));

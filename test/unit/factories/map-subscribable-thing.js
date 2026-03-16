@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMapSubscribableThing } from '../../../src/factories/map-subscribable-thing';
 
 describe('mapSubscribableThing()', () => {
@@ -8,9 +8,9 @@ describe('mapSubscribableThing()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        map = stub();
-        subscribableThing = stub();
-        wrapSubscribeFunction = stub();
+        map = vi.fn();
+        subscribableThing = vi.fn();
+        wrapSubscribeFunction = vi.fn();
 
         mapSubscribableThing = createMapSubscribableThing(wrapSubscribeFunction);
     });
@@ -19,15 +19,13 @@ describe('mapSubscribableThing()', () => {
         mapSubscribableThing(subscribableThing, map);
 
         expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-        expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-        expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+        expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
     });
 
     it('should return the value returned by wrapSubscribeFunction()', () => {
         const value = 'a fake return value';
 
-        wrapSubscribeFunction.returns(value);
+        wrapSubscribeFunction.mockReturnValue(value);
 
         expect(mapSubscribableThing(subscribableThing, map)).to.equal(value);
     });
@@ -37,9 +35,9 @@ describe('mapSubscribableThing()', () => {
         let subscribe;
 
         beforeEach(() => {
-            observer = { complete: 'a fake complete function', error: 'a fake error function', next: spy() };
+            observer = { complete: 'a fake complete function', error: 'a fake error function', next: vi.fn() };
 
-            wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+            wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
             mapSubscribableThing(subscribableThing, map);
         });
@@ -48,9 +46,9 @@ describe('mapSubscribableThing()', () => {
             subscribe(observer);
 
             expect(subscribableThing).to.have.been.calledOnce;
-            expect(subscribableThing.firstCall.args.length).to.equal(1);
+            expect(subscribableThing).to.have.been.calledWith(expect.any(Object));
 
-            const arg = subscribableThing.firstCall.args[0];
+            const [arg] = subscribableThing.mock.calls[0];
 
             expect(arg.next).to.be.a('function');
             expect(arg.next).to.not.equal(observer.next);
@@ -60,7 +58,7 @@ describe('mapSubscribableThing()', () => {
         it('should return the value returned by subscribableThing()', () => {
             const value = 'a fake return value';
 
-            subscribableThing.returns(value);
+            subscribableThing.mockReturnValue(value);
 
             expect(subscribe(observer)).to.equal(value);
         });
@@ -69,7 +67,7 @@ describe('mapSubscribableThing()', () => {
             let next;
 
             beforeEach(() => {
-                subscribableThing.callsFake((value) => (next = value.next));
+                subscribableThing.mockImplementation((value) => (next = value.next));
 
                 subscribe(observer);
             });
@@ -79,17 +77,17 @@ describe('mapSubscribableThing()', () => {
 
                 next(value);
 
-                expect(map).to.have.been.calledOnce.and.calledWithExactly(value);
+                expect(map).to.have.been.calledOnce.and.calledWith(value);
             });
 
             it('should call next() with the mapped value', () => {
                 const mappedValue = 'a fake mapped value';
 
-                map.returns(mappedValue);
+                map.mockReturnValue(mappedValue);
 
                 next('a fake value');
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(mappedValue);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(mappedValue);
             });
         });
     });

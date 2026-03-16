@@ -1,4 +1,5 @@
-import { spy, stub } from 'sinon';
+// eslint-disable-next-line max-classes-per-file
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createIntersections } from '../../../src/factories/intersections';
 
 describe('intersections()', () => {
@@ -7,8 +8,8 @@ describe('intersections()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +25,13 @@ describe('intersections()', () => {
             intersections('a fake HTML element');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(intersections('a fake HTML element')).to.equal(value);
         });
@@ -44,7 +43,7 @@ describe('intersections()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 intersections('a fake HTML element');
             });
@@ -52,13 +51,13 @@ describe('intersections()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +68,7 @@ describe('intersections()', () => {
         let window;
 
         beforeEach(() => {
-            window = { IntersectionObserver: stub() };
+            window = { IntersectionObserver: vi.fn() };
 
             intersections = createIntersections(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +77,13 @@ describe('intersections()', () => {
             intersections('a fake HTML element');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(intersections('a fake HTML element')).to.equal(value);
         });
@@ -94,23 +91,27 @@ describe('intersections()', () => {
         describe('subscribe()', () => {
             let callback;
             let htmlElement;
-            let intersectionObserver;
+            let observe;
             let observer;
             let options;
             let subscribe;
 
             beforeEach(() => {
                 htmlElement = 'a fake HTML element';
-                intersectionObserver = { observe: spy() };
-                observer = { error: spy(), next: spy() };
+                observe = vi.fn();
+                observer = { error: vi.fn(), next: vi.fn() };
                 options = { a: 'fake', options: 'object' };
 
-                window.IntersectionObserver.callsFake((value) => {
-                    callback = value;
+                window.IntersectionObserver.mockImplementation(
+                    class {
+                        constructor(value) {
+                            this.observe = observe;
 
-                    return intersectionObserver;
-                });
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                            callback = value;
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 intersections(htmlElement, options);
             });
@@ -119,16 +120,13 @@ describe('intersections()', () => {
                 subscribe(observer);
 
                 expect(window.IntersectionObserver).to.have.been.calledOnce;
-
-                expect(window.IntersectionObserver.firstCall.args.length).to.equal(2);
-                expect(window.IntersectionObserver.firstCall.args[0]).to.be.a('function');
-                expect(window.IntersectionObserver.firstCall.args[1]).to.equal(options);
+                expect(window.IntersectionObserver).to.have.been.calledWith(expect.any(Function), options);
             });
 
             it('should call observe() with the given htmlElement', () => {
                 subscribe(observer);
 
-                expect(intersectionObserver.observe).to.have.been.calledOnce.and.calledWithExactly(htmlElement);
+                expect(observe).to.have.been.calledOnce.and.calledWith(htmlElement);
             });
 
             it('should call next() with the current intersections on each invocation of the callback', () => {
@@ -138,7 +136,7 @@ describe('intersections()', () => {
 
                 callback(entries);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(entries);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(entries);
             });
 
             it('should return a function', () => {
@@ -147,14 +145,21 @@ describe('intersections()', () => {
         });
 
         describe('unsubscribe()', () => {
-            let intersectionObserver;
+            let disconnect;
             let unsubscribe;
 
             beforeEach(() => {
-                intersectionObserver = { disconnect: spy(), observe: spy() };
+                disconnect = vi.fn();
 
-                window.IntersectionObserver.returns(intersectionObserver);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe()));
+                window.IntersectionObserver.mockImplementation(
+                    class {
+                        constructor() {
+                            this.disconnect = disconnect;
+                            this.observe = vi.fn();
+                        }
+                    }
+                );
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe()));
 
                 intersections('a fake HTML element');
             });
@@ -162,7 +167,7 @@ describe('intersections()', () => {
             it('should call disconnect()', () => {
                 unsubscribe();
 
-                expect(intersectionObserver.disconnect).to.have.been.calledOnce.and.calledWithExactly();
+                expect(disconnect).to.have.been.calledOnce.and.calledWith();
             });
 
             it('should return undefined', () => {

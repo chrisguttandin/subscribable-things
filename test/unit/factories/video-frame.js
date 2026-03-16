@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createVideoFrame } from '../../../src/factories/video-frame';
 
 describe('videoFrame()', () => {
@@ -7,8 +7,8 @@ describe('videoFrame()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
 
         videoFrame = createVideoFrame(emitNotSupportedError, wrapSubscribeFunction);
     });
@@ -17,15 +17,13 @@ describe('videoFrame()', () => {
         videoFrame({ a: 'fake', html: 'video element' });
 
         expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-        expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-        expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+        expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
     });
 
     it('should return the value returned by wrapSubscribeFunction()', () => {
         const value = 'a fake return value';
 
-        wrapSubscribeFunction.returns(value);
+        wrapSubscribeFunction.mockReturnValue(value);
 
         expect(videoFrame({ a: 'fake', html: 'video element' })).to.equal(value);
     });
@@ -38,13 +36,13 @@ describe('videoFrame()', () => {
 
         beforeEach(() => {
             videoElement = {
-                cancelVideoFrameCallback: spy(),
-                requestVideoFrameCallback: stub()
+                cancelVideoFrameCallback: vi.fn(),
+                requestVideoFrameCallback: vi.fn()
             };
-            observer = { next: spy() };
+            observer = { next: vi.fn() };
 
-            videoElement.requestVideoFrameCallback.callsFake((value) => (callback = value));
-            wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+            videoElement.requestVideoFrameCallback.mockImplementation((value) => (callback = value));
+            wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
             videoFrame(videoElement);
         });
@@ -53,22 +51,18 @@ describe('videoFrame()', () => {
             subscribe(observer);
 
             expect(videoElement.requestVideoFrameCallback).to.have.been.calledOnce;
-
-            expect(videoElement.requestVideoFrameCallback.firstCall.args.length).to.equal(1);
-            expect(videoElement.requestVideoFrameCallback.firstCall.args[0]).to.be.a('function');
+            expect(videoElement.requestVideoFrameCallback).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should request another video frame', () => {
             subscribe(observer);
 
-            videoElement.requestVideoFrameCallback.reset();
+            videoElement.requestVideoFrameCallback.mockReset();
 
             callback('a fake timestamp', { a: 'fake', metadata: 'object' }); // eslint-disable-line node/no-callback-literal
 
             expect(videoElement.requestVideoFrameCallback).to.have.been.calledOnce;
-
-            expect(videoElement.requestVideoFrameCallback.firstCall.args.length).to.equal(1);
-            expect(videoElement.requestVideoFrameCallback.firstCall.args[0]).to.be.a('function');
+            expect(videoElement.requestVideoFrameCallback).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should call next() with the given timestamp combined with the metadata on each video frame', () => {
@@ -79,13 +73,13 @@ describe('videoFrame()', () => {
 
             callback(now, metadata);
 
-            expect(observer.next).to.have.been.calledOnce.and.calledWithExactly({ now, ...metadata });
+            expect(observer.next).to.have.been.calledOnce.and.calledWith({ now, ...metadata });
         });
 
         it('should request another video frame before calling next()', () => {
             subscribe(observer);
 
-            videoElement.requestVideoFrameCallback.reset();
+            videoElement.requestVideoFrameCallback.mockReset();
 
             callback('a fake timestamp', { a: 'fake', metadata: 'object' }); // eslint-disable-line node/no-callback-literal
 
@@ -104,13 +98,13 @@ describe('videoFrame()', () => {
 
         beforeEach(() => {
             videoElement = {
-                cancelVideoFrameCallback: spy(),
-                requestVideoFrameCallback: stub()
+                cancelVideoFrameCallback: vi.fn(),
+                requestVideoFrameCallback: vi.fn()
             };
             videoFrameHandle = 'a fake video frame handle';
 
-            videoElement.requestVideoFrameCallback.callsFake(() => videoFrameHandle);
-            wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+            videoElement.requestVideoFrameCallback.mockImplementation(() => videoFrameHandle);
+            wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
             videoFrame(videoElement);
         });
@@ -118,7 +112,7 @@ describe('videoFrame()', () => {
         it('should cancel the requested video frame', () => {
             unsubscribe();
 
-            expect(videoElement.cancelVideoFrameCallback).to.have.been.calledOnce.and.calledWithExactly(videoFrameHandle);
+            expect(videoElement.cancelVideoFrameCallback).to.have.been.calledOnce.and.calledWith(videoFrameHandle);
         });
 
         it('should return undefined', () => {

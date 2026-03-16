@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createGeolocation } from '../../../src/factories/geolocation';
 
 describe('geolocation()', () => {
@@ -7,8 +7,8 @@ describe('geolocation()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +24,13 @@ describe('geolocation()', () => {
             geolocation();
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(geolocation()).to.equal(value);
         });
@@ -44,7 +42,7 @@ describe('geolocation()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 geolocation();
             });
@@ -52,13 +50,13 @@ describe('geolocation()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +67,7 @@ describe('geolocation()', () => {
         let window;
 
         beforeEach(() => {
-            window = { navigator: { geolocation: { clearWatch: stub(), watchPosition: stub() } } };
+            window = { navigator: { geolocation: { clearWatch: vi.fn(), watchPosition: vi.fn() } } };
 
             geolocation = createGeolocation(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +76,13 @@ describe('geolocation()', () => {
             geolocation();
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(geolocation()).to.equal(value);
         });
@@ -99,11 +95,11 @@ describe('geolocation()', () => {
             let successCallback;
 
             beforeEach(() => {
-                observer = { error: spy(), next: spy() };
+                observer = { error: vi.fn(), next: vi.fn() };
                 options = { a: 'fake', options: 'object' };
 
-                window.navigator.geolocation.watchPosition.callsFake((...args) => ([successCallback, errorCallback] = args));
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                window.navigator.geolocation.watchPosition.mockImplementation((...args) => ([successCallback, errorCallback] = args));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 geolocation(options);
             });
@@ -111,7 +107,7 @@ describe('geolocation()', () => {
             it('should call watchPosition()', () => {
                 subscribe(observer);
 
-                expect(window.navigator.geolocation.watchPosition).to.have.been.calledOnce.and.calledWithExactly(
+                expect(window.navigator.geolocation.watchPosition).to.have.been.calledOnce.and.calledWith(
                     successCallback,
                     errorCallback,
                     options
@@ -124,7 +120,7 @@ describe('geolocation()', () => {
                 subscribe(observer);
                 successCallback(postion);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(postion);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(postion);
             });
 
             it('should call error() with an error when the errorCallback gets called', () => {
@@ -133,7 +129,7 @@ describe('geolocation()', () => {
                 subscribe(observer);
                 errorCallback(err);
 
-                expect(observer.error).to.have.been.calledOnce.and.calledWithExactly(err);
+                expect(observer.error).to.have.been.calledOnce.and.calledWith(err);
             });
 
             it('should return a function', () => {
@@ -148,8 +144,8 @@ describe('geolocation()', () => {
             beforeEach(() => {
                 watchId = 'a fake watchId';
 
-                window.navigator.geolocation.watchPosition.returns(watchId);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+                window.navigator.geolocation.watchPosition.mockReturnValue(watchId);
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 geolocation();
             });
@@ -157,7 +153,7 @@ describe('geolocation()', () => {
             it('should call clearWatch()', () => {
                 unsubscribe();
 
-                expect(window.navigator.geolocation.clearWatch).to.have.been.calledOnce.and.calledWithExactly(watchId);
+                expect(window.navigator.geolocation.clearWatch).to.have.been.calledOnce.and.calledWith(watchId);
             });
 
             it('should return undefined', () => {

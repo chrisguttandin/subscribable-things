@@ -1,4 +1,4 @@
-import { spy, stub } from 'sinon';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createMediaQueryMatch } from '../../../src/factories/media-query-match';
 
 describe('mediaQueryMatch()', () => {
@@ -7,8 +7,8 @@ describe('mediaQueryMatch()', () => {
     let wrapSubscribeFunction;
 
     beforeEach(() => {
-        emitNotSupportedError = stub();
-        wrapSubscribeFunction = stub();
+        emitNotSupportedError = vi.fn();
+        wrapSubscribeFunction = vi.fn();
     });
 
     describe('without a window object', () => {
@@ -24,15 +24,13 @@ describe('mediaQueryMatch()', () => {
             mediaQueryMatch('(max-width:600px)');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(mediaQueryMatch('(max-width:600px)')).to.equal(value);
         });
@@ -44,7 +42,7 @@ describe('mediaQueryMatch()', () => {
             beforeEach(() => {
                 observer = { a: 'fake', observer: 'object' };
 
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 mediaQueryMatch('(max-width:600px)');
             });
@@ -52,13 +50,13 @@ describe('mediaQueryMatch()', () => {
             it('should call emitNotSupportedError() with the given observer', () => {
                 subscribe(observer);
 
-                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWithExactly(observer);
+                expect(emitNotSupportedError).to.have.been.calledOnce.and.calledWith(observer);
             });
 
             it('should return the value returned by emitNotSupportedError()', () => {
                 const value = 'a fake return value';
 
-                emitNotSupportedError.returns(value);
+                emitNotSupportedError.mockReturnValue(value);
 
                 expect(subscribe(observer)).to.equal(value);
             });
@@ -69,7 +67,7 @@ describe('mediaQueryMatch()', () => {
         let window;
 
         beforeEach(() => {
-            window = { matchMedia: stub() };
+            window = { matchMedia: vi.fn() };
 
             mediaQueryMatch = createMediaQueryMatch(emitNotSupportedError, window, wrapSubscribeFunction);
         });
@@ -78,15 +76,13 @@ describe('mediaQueryMatch()', () => {
             mediaQueryMatch('(max-width:600px)');
 
             expect(wrapSubscribeFunction).to.have.been.calledOnce;
-
-            expect(wrapSubscribeFunction.firstCall.args.length).to.equal(1);
-            expect(wrapSubscribeFunction.firstCall.args[0]).to.be.a('function');
+            expect(wrapSubscribeFunction).to.have.been.calledWith(expect.any(Function));
         });
 
         it('should return the value returned by wrapSubscribeFunction()', () => {
             const value = 'a fake return value';
 
-            wrapSubscribeFunction.returns(value);
+            wrapSubscribeFunction.mockReturnValue(value);
 
             expect(mediaQueryMatch('(max-width:600px)')).to.equal(value);
         });
@@ -100,10 +96,10 @@ describe('mediaQueryMatch()', () => {
             beforeEach(() => {
                 mediaQueryList = { matches: true };
                 mediaQueryString = '(max-width:600px)';
-                observer = { next: spy() };
+                observer = { next: vi.fn() };
 
-                window.matchMedia.returns(mediaQueryList);
-                wrapSubscribeFunction.callsFake((value) => (subscribe = value));
+                window.matchMedia.mockReturnValue(mediaQueryList);
+                wrapSubscribeFunction.mockImplementation((value) => (subscribe = value));
 
                 mediaQueryMatch(mediaQueryString);
             });
@@ -111,24 +107,24 @@ describe('mediaQueryMatch()', () => {
             it('should call matchMedia() with the given mediaQueryString', () => {
                 subscribe(observer);
 
-                expect(window.matchMedia).to.have.been.calledOnce.and.calledWithExactly(mediaQueryString);
+                expect(window.matchMedia).to.have.been.calledOnce.and.calledWith(mediaQueryString);
             });
 
             it('should call next() with the value of mediaQueryList.matches right away', () => {
                 subscribe(observer);
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(mediaQueryList.matches);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(mediaQueryList.matches);
             });
 
             it('should call next() with the value of mediaQueryList.matches on each change event', () => {
                 subscribe(observer);
 
-                observer.next.resetHistory();
+                observer.next.mockClear();
 
                 mediaQueryList.matches = false;
                 mediaQueryList.onchange();
 
-                expect(observer.next).to.have.been.calledOnce.and.calledWithExactly(mediaQueryList.matches);
+                expect(observer.next).to.have.been.calledOnce.and.calledWith(mediaQueryList.matches);
             });
 
             it('should return a function', () => {
@@ -143,8 +139,8 @@ describe('mediaQueryMatch()', () => {
             beforeEach(() => {
                 mediaQueryList = { matches: true };
 
-                window.matchMedia.returns(mediaQueryList);
-                wrapSubscribeFunction.callsFake((subscribe) => (unsubscribe = subscribe({ next() {} })));
+                window.matchMedia.mockReturnValue(mediaQueryList);
+                wrapSubscribeFunction.mockImplementation((subscribe) => (unsubscribe = subscribe({ next() {} })));
 
                 mediaQueryMatch('(max-width:600px)');
             });

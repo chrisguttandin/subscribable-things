@@ -1,5 +1,7 @@
-import { first, from } from 'rxjs';
+import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { forEach, fromObs, pipe, take } from 'callbag-basics';
+// eslint-disable-next-line sort-imports
+import { first, from } from 'rxjs';
 import { eachValueFrom } from 'rxjs-for-await';
 import { fromESObservable as fromESObservableBaconJs } from 'baconjs';
 import { fromESObservable as fromESObservableKefirJs } from 'kefir';
@@ -8,21 +10,33 @@ import { map } from '../helpers/map';
 import { reports } from '../../src/module';
 import xs from 'xstream';
 
-describe('reports', () => {
-    if (/Chrome/.test(navigator.userAgent) || !/Safari/.test(navigator.userAgent)) {
-        before(() => {
-            if (navigator.vibrate) {
+describe(
+    'reports',
+    {
+        skip: typeof window.ReportingObserver === 'undefined' || (!/Chrome/.test(navigator.userAgent) && /Safari/.test(navigator.userAgent))
+    },
+    () => {
+        beforeAll(() => {
+            if (navigator.mozGetUserMedia) {
+                navigator.mozGetUserMedia(
+                    {},
+                    () => {},
+                    () => {}
+                );
+            } else if (navigator.vibrate) {
                 navigator.vibrate(0);
             }
         });
 
-        it('should work with RxJS', (done) => {
+        it('should work with RxJS', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             if (window.ReportingObserver === undefined) {
                 from(reports({ buffered: true })).subscribe({
                     error(err) {
                         expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                        done();
+                        resolve();
                     }
                 });
             } else {
@@ -32,18 +46,22 @@ describe('reports', () => {
                         expect(reportList.length).to.equal(1);
                         expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
-                        done();
+                        resolve();
                     });
             }
+
+            return promise;
         });
 
-        it('should work with XStream', (done) => {
+        it('should work with XStream', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             if (window.ReportingObserver === undefined) {
                 xs.fromObservable(reports({ buffered: true })).subscribe({
                     error(err) {
                         expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                        done();
+                        resolve();
                     }
                 });
             } else {
@@ -54,20 +72,24 @@ describe('reports', () => {
                             expect(reportList.length).to.equal(1);
                             expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
-                            done();
+                            resolve();
                         }
                     });
             }
+
+            return promise;
         });
 
-        it('should work with callbags', (done) => {
+        it('should work with callbags', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             if (window.ReportingObserver === undefined) {
                 fromObs(reports({ buffered: true }))(0, (code, err) => {
                     if (code === 2) {
                         expect(err.message).to.equal('The required browser API seems to be not supported.');
                     }
 
-                    done();
+                    resolve();
                 });
             } else {
                 pipe(
@@ -77,18 +99,22 @@ describe('reports', () => {
                         expect(reportList.length).to.equal(1);
                         expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
-                        done();
+                        resolve();
                     })
                 );
             }
+
+            return promise;
         });
 
-        it('should work with Bacon.js', (done) => {
+        it('should work with Bacon.js', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             if (window.ReportingObserver === undefined) {
                 fromESObservableBaconJs(reports({ buffered: true })).onError((err) => {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 });
             } else {
                 fromESObservableBaconJs(reports({ buffered: true }))
@@ -97,17 +123,21 @@ describe('reports', () => {
                         expect(reportList.length).to.equal(1);
                         expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
-                        done();
+                        resolve();
                     });
             }
+
+            return promise;
         });
 
-        it('should work with Kefir.js', (done) => {
+        it('should work with Kefir.js', () => {
+            const { promise, resolve } = Promise.withResolvers();
+
             if (window.ReportingObserver === undefined) {
                 fromESObservableKefirJs(reports({ buffered: true })).onError((err) => {
                     expect(err.message).to.equal('The required browser API seems to be not supported.');
 
-                    done();
+                    resolve();
                 });
             } else {
                 fromESObservableKefirJs(reports({ buffered: true }))
@@ -116,9 +146,11 @@ describe('reports', () => {
                         expect(reportList.length).to.equal(1);
                         expect(reportList[0].toJSON()).to.have.keys(['body', 'type', 'url']);
 
-                        done();
+                        resolve();
                     });
             }
+
+            return promise;
         });
 
         it('should work with rxjs-for-await', async () => {
@@ -141,60 +173,61 @@ describe('reports', () => {
             }
         });
 
-        if (window.ReportingObserver !== undefined) {
-            describe('with a finalization registry', () => {
-                let finalizationRegistry;
-                let whenCollected;
+        describe('with a finalization registry', () => {
+            let finalizationRegistry;
+            let whenCollected;
 
-                afterEach(function (done) {
-                    this.timeout(0);
+            afterEach(() => {
+                const arrayBuffers = [];
 
-                    const arrayBuffers = [];
+                let byteLength = 100;
 
-                    let byteLength = 100;
+                const interval = setInterval(() => {
+                    try {
+                        arrayBuffers.push(new ArrayBuffer(byteLength));
 
-                    const interval = setInterval(() => {
-                        try {
-                            arrayBuffers.push(new ArrayBuffer(byteLength));
-
-                            byteLength *= 10;
-                        } catch {
-                            byteLength /= 10;
-                        }
-                    });
-
-                    whenCollected = () => {
-                        clearInterval(interval);
-                        done();
-                    };
-                });
-
-                // eslint-disable-next-line no-undef
-                beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));
-
-                it('should work with hyperf', async () => {
-                    const test = h`<div id="test">${map(reports({ buffered: true }), (reportList) =>
-                        reportList.map(({ type }) => type).join(',')
-                    )}</div>`;
-
-                    setTimeout(() => document.body.appendChild(test));
-                    finalizationRegistry.register(test);
-
-                    while (true) {
-                        try {
-                            expect(document.getElementById('test').textContent).to.equal('intervention');
-
-                            break;
-                        } catch {
-                            await new Promise((resolve) => {
-                                setTimeout(resolve, 100);
-                            });
-                        }
+                        byteLength *= 10;
+                    } catch {
+                        byteLength /= 10;
                     }
-
-                    document.body.removeChild(test);
                 });
+                const { promise, resolve } = Promise.withResolvers();
+
+                whenCollected = () => {
+                    clearInterval(interval);
+                    resolve();
+                };
+
+                return promise;
+            }, 0);
+
+            // eslint-disable-next-line no-undef
+            beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));
+
+            it('should work with hyperf', async () => {
+                const test = h`<div id="test">${map(reports({ buffered: true }), (reportList) =>
+                    reportList.map(({ type }) => type).join(',')
+                )}</div>`;
+
+                setTimeout(() => document.body.appendChild(test));
+                finalizationRegistry.register(test);
+
+                while (true) {
+                    try {
+                        expect(document.getElementById('test').textContent).to.equal(
+                            navigator.mozGetUserMedia ? 'deprecation' : 'intervention'
+                        );
+
+                        break;
+                    } catch {
+                        await new Promise((resolve) => {
+                            setTimeout(resolve, 100);
+                        });
+                    }
+                }
+
+                document.body.removeChild(test);
             });
-        }
+        });
     }
-});
+);
