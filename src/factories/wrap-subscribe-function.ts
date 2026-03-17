@@ -1,4 +1,4 @@
-import { Observer, Subscribable } from 'rxjs-interop';
+import type { Observer, Subscribable } from 'rxjs-interop';
 import { TObserverParameters, TSubscribableThing, TSubscribeFunction, TWrapSubscribeFunctionFactory } from '../types';
 
 export const createWrapSubscribeFunction: TWrapSubscribeFunctionFactory = (patch, toObserver) => {
