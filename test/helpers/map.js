@@ -3,9 +3,9 @@ import { createWrapSubscribeFunction } from '../../src/factories/wrap-subscribe-
 
 const wrapSubscribeFunction = createWrapSubscribeFunction(patch, toObserver);
 
-export const map = (observable, mapValue) =>
+export const map = (subscribe, mapValue) =>
     wrapSubscribeFunction(({ next, ...args }) => {
-        const { unsubscribe } = observable[Symbol.observable]().subscribe({
+        const unsubscribe = subscribe({
             ...args,
             next: (value) => next(mapValue(value))
         });
