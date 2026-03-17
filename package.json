@@ -64,7 +64,7 @@
         "tslint-config-holy-grail": "^56.0.7",
         "typescript": "^5.9.3",
         "vitest": "^4.1.0",
-        "webpack": "^5.105.0",
+        "webpack": "^5.105.4",
         "xstream": "^11.14.0"
     },
     "files": [
