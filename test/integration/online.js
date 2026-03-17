@@ -110,7 +110,9 @@ describe('online', () => {
 
                     byteLength *= 10;
                 } catch {
-                    byteLength /= 10;
+                    if (byteLength > 1) {
+                        byteLength /= 10;
+                    }
                 }
             });
             const { promise, resolve } = Promise.withResolvers();
