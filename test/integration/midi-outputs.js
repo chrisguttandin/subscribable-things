@@ -12,205 +12,203 @@ import { midiOutputs } from '../../src/module';
 import xs from 'xstream';
 
 describe('midiOutputs()', { skip: typeof navigator.requestMIDIAccess === 'undefined' }, () => {
-    if (navigator.requestMIDIAccess) {
-        let midiAccess;
+    let midiAccess;
 
-        if (navigator.userAgent.includes('Chrome')) {
-            afterAll(() => cdp().send('Browser.resetPermissions', { origin: location.origin }));
+    if (navigator.userAgent.includes('Chrome')) {
+        afterAll(() => cdp().send('Browser.resetPermissions', { origin: location.origin }));
 
-            beforeAll(() => cdp().send('Browser.grantPermissions', { origin: location.origin, permissions: ['midi', 'midiSysex'] }));
-        }
+        afterEach(() => commands.disconnectMidiDevices());
 
-        afterAll(() => commands.disconnectMidiDevices());
+        beforeAll(() => cdp().send('Browser.grantPermissions', { origin: location.origin, permissions: ['midi', 'midiSysex'] }));
 
-        beforeAll(() => commands.connectMidiDevices(), 0);
+        beforeEach(() => commands.connectMidiDevices(), 0);
+    }
 
-        beforeEach(async () => {
-            midiAccess = await navigator.requestMIDIAccess({ sysex: true });
+    beforeEach(async () => {
+        midiAccess = await navigator.requestMIDIAccess({ sysex: true });
 
-            if (midiAccess.outputs.size === 0) {
-                return new Promise((resolve) => {
-                    midiAccess.onstatechange = () => {
-                        if (midiAccess.outputs.size > 0) {
-                            midiAccess.onstatechange = null;
-
-                            resolve();
-                        }
-                    };
-                });
-            }
-        });
-
-        it('should work with RxJS', () => {
-            const { promise, resolve } = Promise.withResolvers();
-
-            from(midiOutputs(midiAccess))
-                .pipe(first())
-                .subscribe((midiOutputsArray) => {
-                    expect(midiOutputsArray.length).to.be.above(0);
-
-                    const midiOutput = midiOutputsArray.pop();
-
-                    expect(midiOutput).to.be.an.instanceof(MIDIOutput);
-                    expect(midiOutput.name).to.equal('Virtual Output Device');
-
-                    resolve();
-                });
-
-            return promise;
-        });
-
-        it('should work with XStream', () => {
-            const { promise, resolve } = Promise.withResolvers();
-
-            xs.fromObservable(midiOutputs(midiAccess))
-                .take(1)
-                .subscribe({
-                    next(midiOutputsArray) {
-                        expect(midiOutputsArray.length).to.be.above(0);
-
-                        const midiOutput = midiOutputsArray.pop();
-
-                        expect(midiOutput).to.be.an.instanceof(MIDIOutput);
-                        expect(midiOutput.name).to.equal('Virtual Output Device');
+        if (midiAccess.outputs.size === 0) {
+            return new Promise((resolve) => {
+                midiAccess.onstatechange = () => {
+                    if (midiAccess.outputs.size > 0) {
+                        midiAccess.onstatechange = null;
 
                         resolve();
                     }
-                });
+                };
+            });
+        }
+    });
 
-            return promise;
-        });
+    it('should work with RxJS', () => {
+        const { promise, resolve } = Promise.withResolvers();
 
-        it('should work with callbags', () => {
-            const { promise, resolve } = Promise.withResolvers();
-
-            pipe(
-                fromObs(midiOutputs(midiAccess)),
-                take(1),
-                forEach((midiOutputsArray) => {
-                    expect(midiOutputsArray.length).to.be.above(0);
-
-                    const midiOutput = midiOutputsArray.pop();
-
-                    expect(midiOutput).to.be.an.instanceof(MIDIOutput);
-                    expect(midiOutput.name).to.equal('Virtual Output Device');
-
-                    resolve();
-                })
-            );
-
-            return promise;
-        });
-
-        it('should work with Bacon.js', () => {
-            const { promise, resolve } = Promise.withResolvers();
-
-            fromESObservableBaconJs(midiOutputs(midiAccess))
-                .first()
-                .onValue((midiOutputsArray) => {
-                    expect(midiOutputsArray.length).to.be.above(0);
-
-                    const midiOutput = midiOutputsArray.pop();
-
-                    expect(midiOutput).to.be.an.instanceof(MIDIOutput);
-                    expect(midiOutput.name).to.equal('Virtual Output Device');
-
-                    resolve();
-                });
-
-            return promise;
-        });
-
-        it('should work with Kefir.js', () => {
-            const { promise, resolve } = Promise.withResolvers();
-
-            fromESObservableKefirJs(midiOutputs(midiAccess))
-                .take(1)
-                .onValue((midiOutputsArray) => {
-                    expect(midiOutputsArray.length).to.be.above(0);
-
-                    const midiOutput = midiOutputsArray.pop();
-
-                    expect(midiOutput).to.be.an.instanceof(MIDIOutput);
-                    expect(midiOutput.name).to.equal('Virtual Output Device');
-
-                    resolve();
-                });
-
-            return promise;
-        });
-
-        it('should work with rxjs-for-await', async () => {
-            const source$ = from(midiOutputs(midiAccess));
-
-            // eslint-disable-next-line no-unreachable-loop
-            for await (const midiOutputsArray of eachValueFrom(source$)) {
+        from(midiOutputs(midiAccess))
+            .pipe(first())
+            .subscribe((midiOutputsArray) => {
                 expect(midiOutputsArray.length).to.be.above(0);
 
-                const midiOutput = midiOutputsArray.pop();
+                const midiOutput = midiOutputsArray.shift();
 
                 expect(midiOutput).to.be.an.instanceof(MIDIOutput);
-                expect(midiOutput.name).to.equal('Virtual Output Device');
+                expect(midiOutput.name).to.equal('Test Control MIDI Device Output Port');
 
-                break;
-            }
-        });
+                resolve();
+            });
 
-        describe('with a finalization registry', () => {
-            let finalizationRegistry;
-            let whenCollected;
+        return promise;
+    });
 
-            afterEach(() => {
-                const arrayBuffers = [];
+    it('should work with XStream', () => {
+        const { promise, resolve } = Promise.withResolvers();
 
-                let byteLength = 100;
+        xs.fromObservable(midiOutputs(midiAccess))
+            .take(1)
+            .subscribe({
+                next(midiOutputsArray) {
+                    expect(midiOutputsArray.length).to.be.above(0);
 
-                const interval = setInterval(() => {
-                    try {
-                        arrayBuffers.push(new ArrayBuffer(byteLength));
+                    const midiOutput = midiOutputsArray.shift();
 
-                        byteLength *= 10;
-                    } catch {
-                        if (byteLength > 1) {
-                            byteLength /= 10;
-                        }
-                    }
-                });
-                const { promise, resolve } = Promise.withResolvers();
+                    expect(midiOutput).to.be.an.instanceof(MIDIOutput);
+                    expect(midiOutput.name).to.equal('Test Control MIDI Device Output Port');
 
-                whenCollected = () => {
-                    clearInterval(interval);
                     resolve();
-                };
+                }
+            });
 
-                return promise;
-            }, 0);
+        return promise;
+    });
 
-            // eslint-disable-next-line no-undef
-            beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));
+    it('should work with callbags', () => {
+        const { promise, resolve } = Promise.withResolvers();
 
-            it('should work with hyperf', async () => {
-                const test = h`<div id="test">${map(midiOutputs(midiAccess), (midiInputsArray) =>
-                    midiInputsArray.map(({ name }) => name).join(',')
-                )}</div>`;
+        pipe(
+            fromObs(midiOutputs(midiAccess)),
+            take(1),
+            forEach((midiOutputsArray) => {
+                expect(midiOutputsArray.length).to.be.above(0);
 
-                setTimeout(() => document.body.appendChild(test));
-                finalizationRegistry.register(test);
+                const midiOutput = midiOutputsArray.shift();
 
-                while (true) {
-                    try {
-                        expect(document.getElementById('test').textContent).to.include('Virtual Output Device');
+                expect(midiOutput).to.be.an.instanceof(MIDIOutput);
+                expect(midiOutput.name).to.equal('Test Control MIDI Device Output Port');
 
-                        break;
-                    } catch {
-                        await new Promise((resolve) => {
-                            setTimeout(resolve, 100);
-                        });
+                resolve();
+            })
+        );
+
+        return promise;
+    });
+
+    it('should work with Bacon.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
+        fromESObservableBaconJs(midiOutputs(midiAccess))
+            .first()
+            .onValue((midiOutputsArray) => {
+                expect(midiOutputsArray.length).to.be.above(0);
+
+                const midiOutput = midiOutputsArray.shift();
+
+                expect(midiOutput).to.be.an.instanceof(MIDIOutput);
+                expect(midiOutput.name).to.equal('Test Control MIDI Device Output Port');
+
+                resolve();
+            });
+
+        return promise;
+    });
+
+    it('should work with Kefir.js', () => {
+        const { promise, resolve } = Promise.withResolvers();
+
+        fromESObservableKefirJs(midiOutputs(midiAccess))
+            .take(1)
+            .onValue((midiOutputsArray) => {
+                expect(midiOutputsArray.length).to.be.above(0);
+
+                const midiOutput = midiOutputsArray.shift();
+
+                expect(midiOutput).to.be.an.instanceof(MIDIOutput);
+                expect(midiOutput.name).to.equal('Test Control MIDI Device Output Port');
+
+                resolve();
+            });
+
+        return promise;
+    });
+
+    it('should work with rxjs-for-await', async () => {
+        const source$ = from(midiOutputs(midiAccess));
+
+        // eslint-disable-next-line no-unreachable-loop
+        for await (const midiOutputsArray of eachValueFrom(source$)) {
+            expect(midiOutputsArray.length).to.be.above(0);
+
+            const midiOutput = midiOutputsArray.shift();
+
+            expect(midiOutput).to.be.an.instanceof(MIDIOutput);
+            expect(midiOutput.name).to.equal('Test Control MIDI Device Output Port');
+
+            break;
+        }
+    });
+
+    describe('with a finalization registry', () => {
+        let finalizationRegistry;
+        let whenCollected;
+
+        afterEach(() => {
+            const arrayBuffers = [];
+
+            let byteLength = 100;
+
+            const interval = setInterval(() => {
+                try {
+                    arrayBuffers.push(new ArrayBuffer(byteLength));
+
+                    byteLength *= 10;
+                } catch {
+                    if (byteLength > 1) {
+                        byteLength /= 10;
                     }
                 }
-
-                document.body.removeChild(test);
             });
+            const { promise, resolve } = Promise.withResolvers();
+
+            whenCollected = () => {
+                clearInterval(interval);
+                resolve();
+            };
+
+            return promise;
+        }, 0);
+
+        // eslint-disable-next-line no-undef
+        beforeEach(() => (finalizationRegistry = new FinalizationRegistry(() => whenCollected())));
+
+        it('should work with hyperf', async () => {
+            const test = h`<div id="test">${map(midiOutputs(midiAccess), (midiInputsArray) =>
+                midiInputsArray.map(({ name }) => name).join(',')
+            )}</div>`;
+
+            setTimeout(() => document.body.appendChild(test));
+            finalizationRegistry.register(test);
+
+            while (true) {
+                try {
+                    expect(document.getElementById('test').textContent).to.include('Test Control MIDI Device Output Port');
+
+                    break;
+                } catch {
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 100);
+                    });
+                }
+            }
+
+            document.body.removeChild(test);
         });
-    }
+    });
 });

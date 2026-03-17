@@ -15,8 +15,8 @@ export default defineConfig({
                         browser: {
                             commands: {
                                 connectMidiDevices: () => {
-                                    virtualInputDevice = new MidiSrc('Virtual Input Device');
-                                    virtualOutputDevice = new MidiDst('Virtual Output Device');
+                                    virtualInputDevice = new MidiSrc('Test Control MIDI Device Input Port');
+                                    virtualOutputDevice = new MidiDst('Test Control MIDI Device Output Port');
 
                                     virtualInputDevice.connect();
                                     virtualOutputDevice.connect();

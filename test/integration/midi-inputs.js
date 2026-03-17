@@ -17,12 +17,12 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
     if (navigator.userAgent.includes('Chrome')) {
         afterAll(() => cdp().send('Browser.resetPermissions', { origin: location.origin }));
 
+        afterEach(() => commands.disconnectMidiDevices());
+
         beforeAll(() => cdp().send('Browser.grantPermissions', { origin: location.origin, permissions: ['midi', 'midiSysex'] }));
+
+        beforeEach(() => commands.connectMidiDevices(), 0);
     }
-
-    afterAll(() => commands.disconnectMidiDevices());
-
-    beforeAll(() => commands.connectMidiDevices(), 0);
 
     beforeEach(async () => {
         midiAccess = await navigator.requestMIDIAccess({ sysex: true });
@@ -51,7 +51,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
                 const midiInput = midiInputsArray.pop();
 
                 expect(midiInput).to.be.an.instanceof(MIDIInput);
-                expect(midiInput.name).to.equal('Virtual Input Device');
+                expect(midiInput.name).to.equal('Test Control MIDI Device Input Port');
 
                 resolve();
             });
@@ -71,7 +71,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
                     const midiInput = midiInputsArray.pop();
 
                     expect(midiInput).to.be.an.instanceof(MIDIInput);
-                    expect(midiInput.name).to.equal('Virtual Input Device');
+                    expect(midiInput.name).to.equal('Test Control MIDI Device Input Port');
 
                     resolve();
                 }
@@ -92,7 +92,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
                 const midiInput = midiInputsArray.pop();
 
                 expect(midiInput).to.be.an.instanceof(MIDIInput);
-                expect(midiInput.name).to.equal('Virtual Input Device');
+                expect(midiInput.name).to.equal('Test Control MIDI Device Input Port');
 
                 resolve();
             })
@@ -112,7 +112,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
                 const midiInput = midiInputsArray.pop();
 
                 expect(midiInput).to.be.an.instanceof(MIDIInput);
-                expect(midiInput.name).to.equal('Virtual Input Device');
+                expect(midiInput.name).to.equal('Test Control MIDI Device Input Port');
 
                 resolve();
             });
@@ -131,7 +131,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
                 const midiInput = midiInputsArray.pop();
 
                 expect(midiInput).to.be.an.instanceof(MIDIInput);
-                expect(midiInput.name).to.equal('Virtual Input Device');
+                expect(midiInput.name).to.equal('Test Control MIDI Device Input Port');
 
                 resolve();
             });
@@ -149,7 +149,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
             const midiInput = midiInputsArray.pop();
 
             expect(midiInput).to.be.an.instanceof(MIDIInput);
-            expect(midiInput.name).to.equal('Virtual Input Device');
+            expect(midiInput.name).to.equal('Test Control MIDI Device Input Port');
 
             break;
         }
@@ -198,7 +198,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
 
             while (true) {
                 try {
-                    expect(document.getElementById('test').textContent).to.include('Virtual Input Device');
+                    expect(document.getElementById('test').textContent).to.include('Test Control MIDI Device Input Port');
 
                     break;
                 } catch {
