@@ -46,7 +46,6 @@
         "rollup": "^4.60.0",
         "rxjs": "^7.8.2",
         "rxjs-for-await": "^1.0.0",
-        "sinon": "^17.0.2",
         "sinon-chai": "^3.7.0",
         "ts-loader": "^9.5.4",
         "tsconfig-holy-grail": "^15.0.3",
