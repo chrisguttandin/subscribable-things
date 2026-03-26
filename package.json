@@ -38,7 +38,6 @@
         "eslint-config-holy-grail": "^61.0.12",
         "husky": "^9.1.7",
         "hyperf": "~1.6.2",
-        "karma-sinon-chai": "^2.0.2",
         "karma-webkit-launcher": "^2.6.0",
         "karma-webpack": "^5.0.1",
         "kefir": "^3.8.8",
