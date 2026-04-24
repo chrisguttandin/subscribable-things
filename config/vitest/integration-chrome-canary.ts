@@ -1,4 +1,3 @@
-import { env } from 'node:process';
 import { webdriverio } from '@vitest/browser-webdriverio';
 import { MidiDst, MidiSrc } from 'midi-test';
 import { defineConfig } from 'vitest/config';
@@ -37,22 +36,20 @@ export default defineConfig({
         bail: 1,
         browser: {
             enabled: true,
-            instances: env.CI
-                ? []
-                : [
-                      {
-                          browser: 'chrome',
-                          headless: true,
-                          name: 'Chrome Canary',
-                          provider: webdriverio({
-                              capabilities: {
-                                  'goog:chromeOptions': {
-                                      binary: '/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary'
-                                  }
-                              }
-                          })
-                      }
-                  ]
+            instances: [
+                {
+                    browser: 'chrome',
+                    headless: true,
+                    name: 'Chrome Canary',
+                    provider: webdriverio({
+                        capabilities: {
+                            'goog:chromeOptions': {
+                                binary: '/Applications/Google\ Chrome\ Canary.app/Contents/MacOS/Google\ Chrome\ Canary'
+                            }
+                        }
+                    })
+                }
+            ]
         },
         dir: 'test/integration/',
         include: ['**/*.js'],

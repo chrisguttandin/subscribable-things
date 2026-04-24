@@ -1,4 +1,3 @@
-import { env } from 'node:process';
 import { webdriverio } from '@vitest/browser-webdriverio';
 import { defineConfig } from 'vitest/config';
 
@@ -7,30 +6,28 @@ export default defineConfig({
         bail: 1,
         browser: {
             enabled: true,
-            instances: env.CI
-                ? []
-                : [
-                      {
-                          browser: 'firefox',
-                          headless: true,
-                          name: 'Firefox Developer',
-                          provider: webdriverio({
-                              capabilities: {
-                                  'moz:firefoxOptions': {
-                                      binary: '/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox',
-                                      prefs: {
-                                          'geo.provider.network.url': `data:application/json,${JSON.stringify({ accuracy: 1, location: { lat: 50, lng: 50 } })}`,
-                                          'geo.provider.testing': true,
-                                          'media.navigator.permission.disabled': true,
-                                          'midi.prompt.testing': true,
-                                          'midi.testing': true,
-                                          'permissions.default.geo': 1
-                                      }
-                                  }
-                              }
-                          })
-                      }
-                  ]
+            instances: [
+                {
+                    browser: 'firefox',
+                    headless: true,
+                    name: 'Firefox Developer',
+                    provider: webdriverio({
+                        capabilities: {
+                            'moz:firefoxOptions': {
+                                binary: '/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox',
+                                prefs: {
+                                    'geo.provider.network.url': `data:application/json,${JSON.stringify({ accuracy: 1, location: { lat: 50, lng: 50 } })}`,
+                                    'geo.provider.testing': true,
+                                    'media.navigator.permission.disabled': true,
+                                    'midi.prompt.testing': true,
+                                    'midi.testing': true,
+                                    'permissions.default.geo': 1
+                                }
+                            }
+                        }
+                    })
+                }
+            ]
         },
         dir: 'test/integration/',
         include: ['**/*.js'],
