@@ -201,7 +201,7 @@ describe('permissionState', () => {
                     }
                 }
 
-                document.body.removeChild(test);
+                test.remove();
             });
         });
     }

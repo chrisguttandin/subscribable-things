@@ -166,7 +166,7 @@ describe('attribute', () => {
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

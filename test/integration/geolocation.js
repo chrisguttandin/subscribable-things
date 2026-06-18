@@ -28,7 +28,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
         from(geolocation())
             .pipe(first())
             .subscribe((position) => {
-                expect(position).to.be.an.instanceof(GeolocationPosition); // eslint-disable-line no-undef
+                expect(position).to.be.an.instanceof(GeolocationPosition);
                 expect(position.coords.accuracy).to.equal(1);
                 expect(position.coords.latitude).to.equal(50);
                 expect(position.coords.longitude).to.equal(50);
@@ -46,7 +46,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
             .take(1)
             .subscribe({
                 next(position) {
-                    expect(position).to.be.an.instanceof(GeolocationPosition); // eslint-disable-line no-undef
+                    expect(position).to.be.an.instanceof(GeolocationPosition);
                     expect(position.coords.accuracy).to.equal(1);
                     expect(position.coords.latitude).to.equal(50);
                     expect(position.coords.longitude).to.equal(50);
@@ -65,7 +65,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
             fromObs(geolocation()),
             take(1),
             forEach((position) => {
-                expect(position).to.be.an.instanceof(GeolocationPosition); // eslint-disable-line no-undef
+                expect(position).to.be.an.instanceof(GeolocationPosition);
                 expect(position.coords.accuracy).to.equal(1);
                 expect(position.coords.latitude).to.equal(50);
                 expect(position.coords.longitude).to.equal(50);
@@ -83,7 +83,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
         fromESObservableBaconJs(geolocation())
             .first()
             .onValue((position) => {
-                expect(position).to.be.an.instanceof(GeolocationPosition); // eslint-disable-line no-undef
+                expect(position).to.be.an.instanceof(GeolocationPosition);
                 expect(position.coords.accuracy).to.equal(1);
                 expect(position.coords.latitude).to.equal(50);
                 expect(position.coords.longitude).to.equal(50);
@@ -100,7 +100,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
         fromESObservableKefirJs(geolocation())
             .take(1)
             .onValue((position) => {
-                expect(position).to.be.an.instanceof(GeolocationPosition); // eslint-disable-line no-undef
+                expect(position).to.be.an.instanceof(GeolocationPosition);
                 expect(position.coords.accuracy).to.equal(1);
                 expect(position.coords.latitude).to.equal(50);
                 expect(position.coords.longitude).to.equal(50);
@@ -116,7 +116,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
 
         // eslint-disable-next-line no-unreachable-loop
         for await (const position of eachValueFrom(source$)) {
-            expect(position).to.be.an.instanceof(GeolocationPosition); // eslint-disable-line no-undef
+            expect(position).to.be.an.instanceof(GeolocationPosition);
             expect(position.coords.accuracy).to.equal(1);
             expect(position.coords.latitude).to.equal(50);
             expect(position.coords.longitude).to.equal(50);
@@ -179,7 +179,7 @@ describe('geolocation', { skip: !/Chrome/.test(navigator.userAgent) && /Safari/.
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

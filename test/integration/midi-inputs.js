@@ -208,7 +208,7 @@ describe('midiInputs()', { skip: typeof navigator.requestMIDIAccess === 'undefin
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

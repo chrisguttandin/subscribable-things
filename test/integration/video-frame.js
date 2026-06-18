@@ -270,7 +270,7 @@ describe('videoFrame', () => {
                     }
                 }
 
-                document.body.removeChild(test);
+                test.remove();
             });
         });
     }

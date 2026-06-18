@@ -165,7 +165,7 @@ describe('mutations', () => {
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

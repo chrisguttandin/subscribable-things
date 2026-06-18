@@ -1,6 +1,7 @@
 import { webdriverio } from '@vitest/browser-webdriverio';
 import { defineConfig } from 'vitest/config';
 
+// eslint-disable-next-line import/no-default-export
 export default defineConfig({
     test: {
         bail: 1,
@@ -14,8 +15,9 @@ export default defineConfig({
                     provider: webdriverio({
                         capabilities: {
                             'moz:firefoxOptions': {
-                                binary: '/Applications/Firefox\ Developer\ Edition.app/Contents/MacOS/firefox',
+                                binary: '/Applications/Firefox Developer Edition.app/Contents/MacOS/firefox',
                                 prefs: {
+                                    // eslint-disable-next-line max-len
                                     'geo.provider.network.url': `data:application/json,${JSON.stringify({ accuracy: 1, location: { lat: 50, lng: 50 } })}`,
                                     'geo.provider.testing': true,
                                     'media.navigator.permission.disabled': true,

@@ -146,7 +146,7 @@ describe('animationFrame', () => {
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

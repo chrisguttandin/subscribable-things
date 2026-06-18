@@ -146,7 +146,7 @@ describe('mediaQueryMatch', () => {
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

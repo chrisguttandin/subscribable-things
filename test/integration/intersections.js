@@ -163,7 +163,7 @@ describe('intersections', () => {
                 }
             }
 
-            document.body.removeChild(test);
+            test.remove();
         });
     });
 });

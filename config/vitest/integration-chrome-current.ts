@@ -2,6 +2,7 @@ import { webdriverio } from '@vitest/browser-webdriverio';
 import { MidiDst, MidiSrc } from 'midi-test';
 import { defineConfig } from 'vitest/config';
 
+// eslint-disable-next-line import/no-default-export
 export default defineConfig({
     plugins: [
         {
