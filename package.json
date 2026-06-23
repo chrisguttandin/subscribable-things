@@ -30,7 +30,7 @@
         "@rollup/plugin-babel": "^7.1.0",
         "@vitest/browser-webdriverio": "^4.1.9",
         "baconjs": "^3.0.23",
-        "body-parser": "^2.2.2",
+        "body-parser": "^2.3.0",
         "callbag-basics": "^4.0.0",
         "commitizen": "^4.3.1",
         "cz-conventional-changelog": "^3.3.0",
