@@ -42,7 +42,7 @@
         "kefir": "^3.8.8",
         "lint-staged": "^17.0.8",
         "midi-test": "^1.3.2",
-        "prettier": "^3.8.4",
+        "prettier": "^3.9.5",
         "rimraf": "^6.1.3",
         "rollup": "^4.62.0",
         "rxjs": "^7.8.2",
