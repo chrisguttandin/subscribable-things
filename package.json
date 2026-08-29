@@ -1,4 +1,7 @@
 {
+    "allowScripts": {
+        "midi-test@1.3.2": true
+    },
     "author": "Christoph Guttandin",
     "bugs": {
         "url": "https://github.com/chrisguttandin/subscribable-things/issues"
